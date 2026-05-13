@@ -268,7 +268,7 @@ const CSS = (ac = "#e63946") => `
 `;
 
 // ─── LOGO COMPONENT ──────────────────────────────────────────────────────────
-function Logo({ size = 120, style = {} }) {
+function LogoSVG({ size = 140, style = {} }) {
   const [err, setErr] = useState(false);
   if (err) return (
     <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, textAlign: "center", ...style }}>
@@ -278,47 +278,11 @@ function Logo({ size = 120, style = {} }) {
   );
   return (
     <img
-      src="https://i.imgur.com/placeholder.png"
+      src="/Gemini_Generated_Image_e48llze48llze48l.png"
       alt="NotaCheia"
       style={{ width: size, height: "auto", objectFit: "contain", ...style }}
       onError={() => setErr(true)}
     />
-  );
-}
-
-// Inline logo SVG baseado na logo real (balão + roleta + NotaCheia)
-function LogoSVG({ size = 140, style = {} }) {
-  return (
-    <svg width={size} height={size * 0.6} viewBox="0 0 300 180" style={style}>
-      {/* Balão de chat azul */}
-      <ellipse cx="95" cy="80" rx="62" ry="55" fill="#1d6fa4"/>
-      <polygon points="70,128 85,108 110,118" fill="#1d6fa4"/>
-      {/* Estrelas no balão */}
-      {[[80,65],[100,55],[118,68],[90,82],[110,85]].map(([x,y],i) => (
-        <polygon key={i} points={`${x},${y-8} ${x+3},${y-2} ${x+9},${y-2} ${x+4},${y+2} ${x+6},${y+8} ${x},${y+4} ${x-6},${y+8} ${x-4},${y+2} ${x-9},${y-2} ${x-3},${y-2}`} fill="#4ade80" opacity="0.9"/>
-      ))}
-      {/* Roleta */}
-      <circle cx="175" cy="75" r="58" fill="#1a3a5c" stroke="#f0c96e" strokeWidth="3"/>
-      {/* Fatias da roleta */}
-      <path d="M175,75 L233,75 A58,58 0 0,0 204,25 Z" fill="#f0c96e"/>
-      <path d="M175,75 L204,25 A58,58 0 0,0 146,25 Z" fill="#2d9e6b"/>
-      <path d="M175,75 L146,25 A58,58 0 0,0 117,75 Z" fill="#f0c96e"/>
-      <path d="M175,75 L117,75 A58,58 0 0,0 146,125 Z" fill="#2d9e6b"/>
-      <path d="M175,75 L146,125 A58,58 0 0,0 204,125 Z" fill="#f0c96e"/>
-      <path d="M175,75 L204,125 A58,58 0 0,0 233,75 Z" fill="#2d9e6b"/>
-      <circle cx="175" cy="75" r="10" fill="#1a3a5c" stroke="#f0c96e" strokeWidth="2"/>
-      {/* Seta da roleta */}
-      <polygon points="215,30 222,18 228,32" fill="#fff"/>
-      {/* Faíscas */}
-      <text x="248" y="38" fontSize="14" fill="#f0c96e">✦</text>
-      <text x="258" y="62" fontSize="10" fill="#2d9e6b">✦</text>
-      <text x="244" y="110" fontSize="12" fill="#1d6fa4">✦</text>
-      {/* Texto NotaCheia */}
-      <text x="28" y="160" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="32" fill="#1a3a5c">Nota</text>
-      <text x="118" y="160" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="32" fill="#2d9e6b">Cheia</text>
-      {/* Tagline */}
-      <text x="28" y="176" fontFamily="Arial, sans-serif" fontSize="9" fill="#888" letterSpacing="1.5">AVALIAÇÕES. ENGAJAMENTO. RECOMPENSAS.</text>
-    </svg>
   );
 }
 
