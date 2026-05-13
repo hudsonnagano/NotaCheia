@@ -278,7 +278,7 @@ function LogoSVG({ size = 140, style = {} }) {
   );
   return (
     <img
-      src="/Gemini_Generated_Image_e48llze48llze48l.png"
+      src="/logo.png"
       alt="NotaCheia"
       style={{ width: size, height: "auto", objectFit: "contain", ...style }}
       onError={() => setErr(true)}
