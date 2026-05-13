@@ -643,21 +643,69 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div className="main-title">💬 Feedbacks ({est.feedbacks.length})</div>
             {est.feedbacks.length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 60 }}>Nenhum feedback ainda. Compartilhe o QR code!</div>}
             {[...est.feedbacks].reverse().map((f, i) => (
-              <div className="fb" key={f.id || i}>
+              <div className="fb" key={f.id || i} style={{ marginBottom: 16 }}>
+                {/* Header */}
                 <div className="fb-top">
                   <div className="fb-name">👤 {f.nome}</div>
                   <div className="fb-date">{f.data || "Agora"}</div>
                 </div>
-                <div className="fb-pills">
-                  {Object.entries(f.answers || {}).slice(0, 6).map(([k, v]) => {
-                    const q = est.questions.find(q => q.id === k);
-                    if (!q) return null;
-                    const val = q.type === "stars" ? "⭐".repeat(v) : q.type === "nps" ? `NPS: ${v}` : String(v).slice(0, 20);
-                    return <div className="fb-pill" key={k}>{val}</div>;
-                  })}
+
+                {/* Respostas organizadas por tipo */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+
+                  {/* Info rápida — choice e staff */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {Object.entries(f.answers || {}).map(([k, v]) => {
+                      const q = est.questions.find(q => q.id === k);
+                      if (!q || q.type === "stars" || q.type === "nps" || q.type === "text") return null;
+                      return (
+                        <div key={k} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "var(--text)", display: "flex", gap: 4, alignItems: "center" }}>
+                          <span style={{ color: "var(--muted)", fontSize: 11 }}>{q.label.replace("Quem realizou seu atendimento?", "Atendente").replace("É a sua primeira vez aqui?", "1ª vez").replace("Em qual horário foi o atendimento?", "Horário").replace("Quantas pessoas na mesa?", "Mesa").replace("Como conheceu o estabelecimento?", "Veio via").replace("O que achou do nosso preço?", "Preço")}:</span>
+                          <span>{String(v).replace("Outro:", "")}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* NPS */}
+                  {f.answers?.q_nps !== undefined && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 700 }}>NPS:</span>
+                      <div style={{ background: f.answers.q_nps >= 9 ? "#0a2a0a" : f.answers.q_nps >= 7 ? "#1a1a0a" : "#2a0a0a", border: `1px solid ${f.answers.q_nps >= 9 ? "#4ade80" : f.answers.q_nps >= 7 ? "#f0c96e" : "#f87171"}44`, borderRadius: 10, padding: "3px 12px", fontSize: 13, fontWeight: 800, color: f.answers.q_nps >= 9 ? "#4ade80" : f.answers.q_nps >= 7 ? "#f0c96e" : "#f87171" }}>
+                        {f.answers.q_nps}/10
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Estrelas por categoria */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {Object.entries(f.answers || {}).map(([k, v]) => {
+                      const q = est.questions.find(q => q.id === k);
+                      if (!q || q.type !== "stars") return null;
+                      return (
+                        <div key={k} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 12, color: "var(--muted)", minWidth: 140, fontWeight: 600 }}>{q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", "")}</span>
+                          <div style={{ display: "flex", gap: 2 }}>
+                            {[1,2,3,4,5].map(s => (
+                              <span key={s} style={{ fontSize: 14, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>
+                            ))}
+                          </div>
+                          <span style={{ fontSize: 12, color: v >= 4 ? "#4ade80" : v >= 3 ? "#f0c96e" : "#f87171", fontWeight: 700 }}>
+                            {["","Ruim","Regular","Bom","Ótimo","Excelente"][v]}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Comentário */}
+                  {f.answers?.q_sug && (
+                    <div className="fb-comment">💬 "{f.answers.q_sug}"</div>
+                  )}
+
+                  {/* Prêmio */}
+                  {f.premio && <div className="fb-prize">🎁 {f.premio}</div>}
                 </div>
-                {f.answers?.q_sug && <div className="fb-comment">"{f.answers.q_sug}"</div>}
-                {f.premio && <div className="fb-prize">🎁 {f.premio}</div>}
               </div>
             ))}
           </>
