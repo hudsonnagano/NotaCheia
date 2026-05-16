@@ -1,8 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+// ─── SUPABASE ────────────────────────────────────────────────────────────────
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://lhdbevkcpycikyudzqng.supabase.co";
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY || "sb_publishable_x98wrvkKncTzTV0QnZZjzA_MjD21sCw";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`;
 
-// ─── SEED DATA ───────────────────────────────────────────────────────────────
+// ─── SEED DATA (fallback se Supabase vazio) ───────────────────────────────────
 const makeDefaultQuestions = () => [
   { id: "q_atend", type: "staff",  label: "Quem realizou seu atendimento?",  options: ["Ana", "Carlos", "João", "Maria"], required: true },
   { id: "q_first", type: "choice", label: "É a sua primeira vez aqui?",      options: ["Sim", "Não"], required: true },
@@ -19,14 +25,6 @@ const makeDefaultQuestions = () => [
   { id: "q_sug",   type: "text",   label: "Sugestão ou elogio para nós!",     required: false },
 ];
 
-const makeFeedbacks = () => [
-  { id: 1, nome: "Carlos M.", data: "12/05/2026 14:32", answers: { q_atend: "João", q_first: "Não", q_hora: "De tarde", q_mesa: "2 pessoas", q_como: "Instagram", q_amb: 5, q_atd: 5, q_prat: 4, q_beb: 5, q_esp: 4, q_preco: "Ideal pelo que oferece", q_nps: 9, q_sug: "Melhor hambúrguer da cidade!" }, premio: "Fritas Grátis" },
-  { id: 2, nome: "Fernanda L.", data: "12/05/2026 19:15", answers: { q_atend: "Ana", q_first: "Sim", q_hora: "De noite", q_mesa: "3 a 6 pessoas", q_como: "Indicação de amigos", q_amb: 4, q_atd: 5, q_prat: 5, q_beb: 4, q_esp: 3, q_preco: "Ideal pelo que oferece", q_nps: 8, q_sug: "Ambiente incrível, voltarei!" }, premio: "10% Desconto" },
-  { id: 3, nome: "Ricardo S.", data: "13/05/2026 12:10", answers: { q_atend: "João", q_first: "Não", q_hora: "De manhã", q_mesa: "Vim sozinho", q_como: "TikTok", q_amb: 3, q_atd: 4, q_prat: 4, q_beb: 3, q_esp: 2, q_preco: "Caro pelo que oferece", q_nps: 5, q_sug: "Demora muito para sair o pedido" }, premio: "Brinde Surpresa" },
-  { id: 4, nome: "Julia M.", data: "14/05/2026 20:30", answers: { q_atend: "Maria", q_first: "Sim", q_hora: "De noite", q_mesa: "2 pessoas", q_como: "Instagram", q_amb: 5, q_atd: 5, q_prat: 5, q_beb: 5, q_esp: 5, q_preco: "Barato pelo que oferece", q_nps: 10, q_sug: "Perfeito em tudo!" }, premio: "Sobremesa Grátis" },
-  { id: 5, nome: "Pedro A.", data: "15/05/2026 13:45", answers: { q_atend: "Carlos", q_first: "Não", q_hora: "De tarde", q_mesa: "3 a 6 pessoas", q_como: "Família", q_amb: 4, q_atd: 3, q_prat: 4, q_beb: 4, q_esp: 3, q_preco: "Ideal pelo que oferece", q_nps: 7, q_sug: "" }, premio: "Refri Grátis" },
-];
-
 const SEED = [
   {
     id: "est_1", owner: "joao@burguer.com", pass: "123456", ativo: true,
@@ -41,7 +39,7 @@ const SEED = [
       { id: "p5", label: "20% Desconto",     emoji: "🎉", color: "#e63946" },
       { id: "p6", label: "Brinde Surpresa",  emoji: "🎁", color: "#111" },
     ],
-    feedbacks: makeFeedbacks(),
+    feedbacks: [],
     plano: "R$ 99/mês", desde: "01/05/2026",
   },
   {
@@ -55,9 +53,7 @@ const SEED = [
       { id: "p3", label: "10% Desconto",   emoji: "🏷️", color: "#8b5e3c" },
       { id: "p4", label: "Brinde Surpresa",emoji: "🎁", color: "#4a2f1a" },
     ],
-    feedbacks: [
-      { id: 1, nome: "Roberto S.", data: "11/05/2026 09:00", answers: { q_atend: "Ana", q_first: "Não", q_nps: 9, q_amb: 5, q_atd: 5, q_prat: 5, q_beb: 4, q_esp: 5, q_sug: "Café perfeito para trabalhar!" }, premio: "Café Grátis" },
-    ],
+    feedbacks: [],
     plano: "R$ 99/mês", desde: "05/05/2026",
   },
 ];
@@ -218,7 +214,6 @@ const CSS = (ac = "#e63946") => `
   .top-btn-red { background: var(--ac); color: #fff; }
   .top-btn-ghost { background: var(--d2); color: var(--muted2); border: 1px solid var(--border); }
   .top-btn-ghost:hover { color: var(--text); }
-  /* ── CHART ── */
   .chart-wrap { background: var(--d1); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
   .chart-title { font-size: 13px; font-weight: 800; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
   .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
@@ -226,7 +221,6 @@ const CSS = (ac = "#e63946") => `
   .bar { width: 100%; border-radius: 6px 6px 0 0; background: var(--ac); transition: height 0.4s ease; min-height: 4px; }
   .bar-val { font-size: 11px; font-weight: 800; color: var(--text); }
   .bar-lbl { font-size: 10px; color: var(--muted); }
-  /* ── RANK ── */
   .rank-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .rank-row:last-child { border-bottom: none; }
   .rank-num { font-family: var(--ff-head); font-size: 20px; color: var(--muted); width: 28px; }
@@ -234,26 +228,26 @@ const CSS = (ac = "#e63946") => `
   .rank-bar { flex: 2; height: 6px; background: var(--d3); border-radius: 3px; overflow: hidden; }
   .rank-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--ac), #ff8c69); }
   .rank-score { font-family: var(--ff-head); font-size: 18px; color: var(--ac); width: 40px; text-align: right; }
-  /* ── FILTER ── */
   .filter-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
   .filter-btn { padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--d2); color: var(--muted2); font-family: var(--ff-body); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
   .filter-btn.on { border-color: var(--ac); background: var(--ac)22; color: var(--text); }
-  /* ── INSIGHT ── */
   .insight { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--d2); border-radius: 12px; margin-bottom: 8px; border-left: 3px solid var(--ac); }
   .insight-icon { font-size: 20px; flex-shrink: 0; }
   .insight-text { font-size: 13px; color: var(--muted2); line-height: 1.5; }
   .insight-text strong { color: var(--text); }
-  /* ── QR ── */
   .qr-wrap { background: white; border-radius: 20px; padding: 24px; text-align: center; max-width: 320px; margin: 0 auto; }
   .qr-logo { font-family: var(--ff-head); font-size: 18px; color: #1d6fa4; margin-bottom: 4px; }
   .qr-logo span { color: #2d9e6b; }
   .qr-est { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 12px; }
   .qr-code { width: 160px; height: 160px; background: #111; border-radius: 12px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #888; border: 3px solid #eee; }
   .qr-inst { font-size: 12px; color: #888; margin-top: 8px; }
-  /* ── MODAL ── */
   .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .modal { background: var(--d1); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; }
   .modal-title { font-family: var(--ff-head); font-size: 22px; margin-bottom: 20px; }
+  .loading-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--dark); gap: 20px; }
+  .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--d3); border-top-color: var(--ac); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading-text { font-size: 13px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn { from { transform:scale(0.4); opacity:0; } to { transform:scale(1); opacity:1; } }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
@@ -271,6 +265,68 @@ function LogoSVG({ size = 140, style = {} }) {
     </div>
   );
   return <img src="/logo.png" alt="NotaCheia" style={{ width: size, height: "auto", objectFit: "contain", ...style }} onError={() => setErr(true)} />;
+}
+
+// ─── LOADING SCREEN ───────────────────────────────────────────────────────────
+function LoadingScreen() {
+  return (
+    <div className="loading-screen">
+      <LogoSVG size={160} />
+      <div className="loading-spinner" />
+      <div className="loading-text">Carregando...</div>
+    </div>
+  );
+}
+
+// ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
+async function loadEstabelecimentos() {
+  const { data, error } = await supabase.from("estabelecimentos").select("*");
+  if (error || !data || data.length === 0) return null;
+  return data.map(e => ({
+    ...e,
+    questions: e.questions || makeDefaultQuestions(),
+    prizes: e.prizes || [],
+    feedbacks: [],
+  }));
+}
+
+async function loadFeedbacks(estId) {
+  const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
+  if (error) return [];
+  return data.map(f => ({
+    id: f.id,
+    nome: f.nome,
+    data: new Date(f.created_at).toLocaleString("pt-BR"),
+    answers: f.answers,
+    premio: f.premio,
+  }));
+}
+
+async function saveFeedbackToSupabase(estId, fb) {
+  const { error } = await supabase.from("feedbacks").insert({
+    estabelecimento_id: estId,
+    nome: fb.nome,
+    answers: fb.answers,
+    premio: fb.premio,
+  });
+  return !error;
+}
+
+async function saveEstabelecimento(est) {
+  const { id, feedbacks, ...data } = est;
+  const { error } = await supabase.from("estabelecimentos").upsert({ id, ...data });
+  return !error;
+}
+
+async function deleteEstabelecimentoFromDB(id) {
+  await supabase.from("feedbacks").delete().eq("estabelecimento_id", id);
+  await supabase.from("estabelecimentos").delete().eq("id", id);
+}
+
+async function createEstabelecimento(est) {
+  const { feedbacks, ...data } = est;
+  const { error } = await supabase.from("estabelecimentos").insert(data);
+  return !error;
 }
 
 // ─── WHEEL ───────────────────────────────────────────────────────────────────
@@ -389,6 +445,7 @@ function ClientApp({ est, onSubmit }) {
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
   const [avgStars, setAvgStars] = useState(0);
+  const [saving, setSaving] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => {
     const a = answers[q.id];
@@ -400,6 +457,7 @@ function ClientApp({ est, onSubmit }) {
   const [savedNome, setSavedNome] = useState("");
   const prog = (answered.length / required.length) * 100;
   const allDone = answered.length === required.length;
+
   const handleSubmit = () => {
     const starQs = est.questions.filter(q => q.type === "stars");
     const avg = starQs.length ? starQs.reduce((s, q) => s + (answers[q.id] || 0), 0) / starQs.length : 5;
@@ -408,6 +466,7 @@ function ClientApp({ est, onSubmit }) {
     setSavedNome(nome || "Anônimo");
     setStep("confirm");
   };
+
   if (step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -421,6 +480,7 @@ function ClientApp({ est, onSubmit }) {
       </div>
     </div>
   );
+
   if (step === "survey") return (
     <div className="page fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}15, transparent 50%), var(--dark)` }}>
       <div className="card card-wide">
@@ -444,6 +504,7 @@ function ClientApp({ est, onSubmit }) {
       </div>
     </div>
   );
+
   if (step === "confirm") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card">
@@ -453,15 +514,19 @@ function ClientApp({ est, onSubmit }) {
           <div style={{ fontFamily: "var(--ff-head)", fontSize: 20, margin: "6px 0" }}>{est.name}</div>
           <div className="confirm-sub">Sua resposta foi registrada com sucesso!<br/>Agora gire a roleta e descubra seu prêmio 🎁</div>
           <div className="div" />
-          <Wheel prizes={est.prizes} onResult={p => {
+          <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p);
-            onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
-            setTimeout(() => setStep("prize"), 500);
+            setSaving(true);
+            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            setSaving(false);
+            setStep("prize");
           }} />
+          {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 10 }}>Salvando...</div>}
         </div>
       </div>
     </div>
   );
+
   if (step === "prize") {
     const isHappy = avgStars >= 4;
     return (
@@ -556,6 +621,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [tab, setTab] = useState("overview");
   const [ed, setEd] = useState({ ...est, questions: est.questions.map(q => ({ ...q })), prizes: est.prizes.map(p => ({ ...p })) });
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [newQ, setNewQ] = useState({ label: "", type: "stars", options: "" });
   const [newP, setNewP] = useState({ label: "", emoji: "🎁", color: "#e63946" });
   const [filter, setFilter] = useState("todos");
@@ -576,7 +642,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : "-";
   };
 
-  // Ranking de colaboradores
   const staffRanking = () => {
     const map = {};
     est.feedbacks.forEach(f => {
@@ -589,7 +654,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     return Object.entries(map).map(([name, d]) => ({ name, avg: d.count ? (d.total/d.count).toFixed(1) : 0 })).sort((a,b) => b.avg - a.avg);
   };
 
-  // Como conheceu
   const howKnew = () => {
     const map = {};
     est.feedbacks.forEach(f => {
@@ -599,13 +663,20 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     return Object.entries(map).sort((a,b) => b[1]-a[1]);
   };
 
-  // Feedbacks por dia (simulado)
-  const chartData = [
-    { lbl: "Seg", val: 2 }, { lbl: "Ter", val: 5 }, { lbl: "Qua", val: 3 },
-    { lbl: "Qui", val: 7 }, { lbl: "Sex", val: 8 }, { lbl: "Sáb", val: 12 }, { lbl: "Dom", val: 6 },
-  ];
+  // Feedbacks por dia (últimos 7 dias)
+  const chartData = (() => {
+    const days = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+    const result = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const lbl = days[d.getDay()];
+      const dateStr = d.toLocaleDateString("pt-BR");
+      const val = est.feedbacks.filter(f => f.data?.startsWith(dateStr.split("/").reverse().join("-")) || f.data?.includes(dateStr)).length;
+      result.push({ lbl, val });
+    }
+    return result;
+  })();
 
-  // Insights automáticos
   const insights = () => {
     const list = [];
     const ov = parseFloat(overall());
@@ -623,15 +694,22 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     return list;
   };
 
-  // Filtrar feedbacks
   const filteredFeedbacks = () => {
-    if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 8);
+    if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9);
     if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6);
     if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; });
     return est.feedbacks;
   };
 
-  const save = () => { onUpdate(ed); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const save = async () => {
+    setSaving(true);
+    await saveEstabelecimento(ed);
+    onUpdate(ed);
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
   const addQ = () => {
     if (!newQ.label) return;
     const opts = newQ.options.split(",").map(s => s.trim()).filter(Boolean);
@@ -649,11 +727,13 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [newPass, setNewPass] = useState({ atual: "", nova: "", confirma: "" });
   const [passMsg, setPassMsg] = useState("");
 
-  const trocarSenha = () => {
+  const trocarSenha = async () => {
     if (newPass.atual !== est.pass) { setPassMsg("❌ Senha atual incorreta."); setTimeout(() => setPassMsg(""), 3000); return; }
     if (newPass.nova.length < 6) { setPassMsg("❌ Nova senha deve ter pelo menos 6 caracteres."); setTimeout(() => setPassMsg(""), 3000); return; }
     if (newPass.nova !== newPass.confirma) { setPassMsg("❌ As senhas não coincidem."); setTimeout(() => setPassMsg(""), 3000); return; }
-    onUpdate({ ...est, pass: newPass.nova });
+    const updated = { ...est, pass: newPass.nova };
+    await saveEstabelecimento(updated);
+    onUpdate(updated);
     setPassMsg("✅ Senha alterada com sucesso!");
     setNewPass({ atual: "", nova: "", confirma: "" });
     setTimeout(() => setPassMsg(""), 3000);
@@ -686,26 +766,21 @@ function OwnerDash({ est, onUpdate, onLogout }) {
       </div>
 
       <div className="main">
-        {/* OVERVIEW */}
         {tab === "overview" && (
           <>
             <div className="main-title">{est.emoji} {est.name}</div>
             <div className="metrics">
-              <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div><div className="metric-trend" style={{color:"var(--green)"}}>↑ esta semana</div></div>
+              <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div><div className="metric-trend" style={{color:"var(--green)"}}>↑ total</div></div>
               <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
               <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
               <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length}</div><div className="metric-lbl">Promotores</div><div className="metric-trend" style={{color:"var(--green)"}}>NPS 9-10</div></div>
               <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
               <div className="metric"><div className="metric-val" style={{fontSize:22}}>{est.googleUrl ? "✅" : "❌"}</div><div className="metric-lbl">Google Reviews</div>{!est.googleUrl && <div style={{fontSize:11,color:"var(--ac)",marginTop:4}}>Configure em ⚙️</div>}</div>
             </div>
-
-            {/* Chart */}
             <div className="chart-wrap">
               <div className="chart-title">📅 Feedbacks por dia (últimos 7 dias)</div>
               <MiniBarChart data={chartData} />
             </div>
-
-            {/* Notas por categoria */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 10, marginBottom: 16 }}>
               {starQs.map(q => {
                 const s = starAvg(q.id);
@@ -720,8 +795,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                 );
               })}
             </div>
-
-            {/* Ranking colaboradores */}
             {staffRanking().length > 0 && (
               <div className="chart-wrap">
                 <div className="chart-title">🏆 Ranking de colaboradores</div>
@@ -735,8 +808,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                 ))}
               </div>
             )}
-
-            {/* Como conheceu */}
             {howKnew().length > 0 && (
               <div className="chart-wrap">
                 <div className="chart-title">📍 Como os clientes chegaram</div>
@@ -746,7 +817,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </>
         )}
 
-        {/* FEEDBACKS */}
         {tab === "feedbacks" && (
           <>
             <div className="main-title">💬 Feedbacks</div>
@@ -756,7 +826,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
               ))}
             </div>
             {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-            {[...filteredFeedbacks()].reverse().map((f, i) => {
+            {[...filteredFeedbacks()].map((f, i) => {
               const nps = f.answers?.q_nps;
               const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)";
               return (
@@ -776,15 +846,10 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                       </div>
                     )}
                   </div>
-
-                  {/* Info rápida */}
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
-                    {[
-                      ["q_atend", "👨‍💼"],["q_first", "🆕"],["q_hora", "⏰"],["q_mesa", "🪑"],["q_como", "📍"],["q_preco", "💰"]
-                    ].map(([key, icon]) => {
+                    {[["q_atend","👨‍💼"],["q_first","🆕"],["q_hora","⏰"],["q_mesa","🪑"],["q_como","📍"],["q_preco","💰"]].map(([key, icon]) => {
                       const v = f.answers?.[key];
                       if (!v) return null;
-                      const q = est.questions.find(q => q.id === key);
                       const shortLabel = { q_atend:"Atendente", q_first:"1ª vez", q_hora:"Horário", q_mesa:"Mesa", q_como:"Veio via", q_preco:"Preço" }[key];
                       return (
                         <div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "4px 10px", fontSize: 12, display: "flex", gap: 4, alignItems: "center" }}>
@@ -795,8 +860,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                       );
                     })}
                   </div>
-
-                  {/* Estrelas por categoria */}
                   <div style={{ background: "var(--dark)", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
                     {starQs.map(q => {
                       const v = f.answers?.[q.id];
@@ -815,7 +878,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                       );
                     })}
                   </div>
-
                   {f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}
                   {f.premio && <div className="fb-prize">🎁 {f.premio}</div>}
                 </div>
@@ -824,21 +886,16 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </>
         )}
 
-        {/* INSIGHTS */}
         {tab === "insights" && (
           <>
             <div className="main-title">💡 Insights</div>
-            <div style={{ marginBottom: 20, color: "var(--muted2)", fontSize: 14 }}>
-              Análise automática dos seus feedbacks com sugestões de melhoria.
-            </div>
+            <div style={{ marginBottom: 20, color: "var(--muted2)", fontSize: 14 }}>Análise automática dos seus feedbacks com sugestões de melhoria.</div>
             {insights().map((ins, i) => (
               <div className="insight" key={i}>
                 <div className="insight-icon">{ins.icon}</div>
                 <div className="insight-text">{ins.text}</div>
               </div>
             ))}
-
-            {/* Distribuição NPS */}
             <div className="chart-wrap" style={{ marginTop: 20 }}>
               <div className="chart-title">📊 Distribuição NPS</div>
               <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
@@ -854,8 +911,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                 ))}
               </div>
             </div>
-
-            {/* Preço */}
             <div className="chart-wrap">
               <div className="chart-title">💰 Percepção de preço</div>
               <MiniBarChart
@@ -869,7 +924,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </>
         )}
 
-        {/* QR CODE */}
         {tab === "qrcode" && (
           <>
             <div className="main-title">📱 Meu QR Code</div>
@@ -877,7 +931,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </>
         )}
 
-        {/* SETUP */}
         {tab === "setup" && (
           <>
             <div className="main-title">⚙️ Configurar</div>
@@ -885,9 +938,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
               <div className="setup-box-title">🏪 Identidade</div>
               <label className="lbl">Nome do estabelecimento</label>
               <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 52, height: 52, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>
-                  {ed.emoji}
-                </div>
+                <div style={{ width: 52, height: 52, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>{ed.emoji}</div>
                 <input className="field" style={{ marginBottom: 0, flex: 1 }} value={ed.name} onChange={e => setEd(s => ({ ...s, name: e.target.value }))} />
               </div>
               <label className="lbl">Escolha um emoji</label>
@@ -946,19 +997,18 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                 <button className="btn-sm btn-sm-red" onClick={addP}>+ Adicionar</button>
               </div>
             </div>
-            <button className="btn btn-red" style={{ maxWidth: 240 }} onClick={save}>{saved ? "✅ Salvo!" : "Salvar alterações"}</button>
+            <button className="btn btn-red" style={{ maxWidth: 240 }} onClick={save} disabled={saving}>
+              {saving ? "Salvando..." : saved ? "✅ Salvo!" : "Salvar alterações"}
+            </button>
           </>
         )}
 
-        {/* TROCAR SENHA */}
         {tab === "senha" && (
           <>
             <div className="main-title">🔑 Trocar Senha</div>
             <div className="setup-box" style={{ maxWidth: 440 }}>
               <div className="setup-box-title">Alterar senha de acesso</div>
-              <div style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 20, lineHeight: 1.6 }}>
-                Sua senha é usada para acessar este painel. Mantenha-a segura e não compartilhe com ninguém.
-              </div>
+              <div style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 20, lineHeight: 1.6 }}>Sua senha é usada para acessar este painel. Mantenha-a segura e não compartilhe com ninguém.</div>
               {passMsg && (
                 <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 16, fontSize: 13, fontWeight: 700,
                   background: passMsg.includes("✅") ? "#0a2a0a" : "#1a0505",
@@ -967,16 +1017,11 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                 }}>{passMsg}</div>
               )}
               <label className="lbl">Senha atual</label>
-              <div style={{ position: "relative", marginBottom: 12 }}>
-                <input className="field" style={{ marginBottom: 0, paddingRight: 48 }} type="password" placeholder="Digite sua senha atual"
-                  value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
-              </div>
+              <input className="field" type="password" placeholder="Digite sua senha atual" value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
               <label className="lbl">Nova senha</label>
-              <input className="field" type="password" placeholder="Mínimo 6 caracteres"
-                value={newPass.nova} onChange={e => setNewPass(s => ({ ...s, nova: e.target.value }))} />
+              <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e => setNewPass(s => ({ ...s, nova: e.target.value }))} />
               <label className="lbl">Confirmar nova senha</label>
-              <input className="field" type="password" placeholder="Repita a nova senha"
-                value={newPass.confirma} onChange={e => setNewPass(s => ({ ...s, confirma: e.target.value }))} />
+              <input className="field" type="password" placeholder="Repita a nova senha" value={newPass.confirma} onChange={e => setNewPass(s => ({ ...s, confirma: e.target.value }))} />
               <button className="btn btn-red" style={{ maxWidth: 240 }} onClick={trocarSenha}>Alterar senha</button>
             </div>
           </>
@@ -992,23 +1037,48 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [viewEst, setViewEst] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [newEst, setNewEst] = useState({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "" });
+  const [actionLoading, setActionLoading] = useState(false);
   const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a"];
 
   const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
   const mrr = establishments.filter(e => e.ativo).length * 99;
   const ativos = establishments.filter(e => e.ativo).length;
 
-  const toggleAtivo = (id) => setEstablishments(prev => prev.map(e => e.id === id ? { ...e, ativo: !e.ativo } : e));
-  const deleteEst = (id) => { if (window.confirm("Tem certeza que deseja excluir este estabelecimento?")) setEstablishments(prev => prev.filter(e => e.id !== id)); };
-  const addEst = () => {
+  const toggleAtivo = async (id) => {
+    const est = establishments.find(e => e.id === id);
+    const updated = { ...est, ativo: !est.ativo };
+    await saveEstabelecimento(updated);
+    setEstablishments(prev => prev.map(e => e.id === id ? { ...e, ativo: !e.ativo } : e));
+  };
+
+  const deleteEst = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir este estabelecimento?")) return;
+    await deleteEstabelecimentoFromDB(id);
+    setEstablishments(prev => prev.filter(e => e.id !== id));
+  };
+
+  const addEst = async () => {
     if (!newEst.name || !newEst.owner || !newEst.pass) return;
-    setEstablishments(prev => [...prev, { ...newEst, id: uid(), ativo: true, questions: makeDefaultQuestions(), prizes: [
-      { id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color },
-      { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" },
-      { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" },
-    ], feedbacks: [], plano: "R$ 99/mês", desde: new Date().toLocaleDateString("pt-BR") }]);
+    setActionLoading(true);
+    const novo = {
+      ...newEst,
+      id: "est_" + uid(),
+      ativo: true,
+      questions: makeDefaultQuestions(),
+      prizes: [
+        { id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color },
+        { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" },
+        { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" },
+      ],
+      feedbacks: [],
+      plano: "R$ 99/mês",
+      desde: new Date().toLocaleDateString("pt-BR"),
+    };
+    await createEstabelecimento(novo);
+    setEstablishments(prev => [...prev, novo]);
     setNewEst({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "" });
     setShowAdd(false);
+    setActionLoading(false);
   };
 
   const navs = [
@@ -1046,35 +1116,26 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
               <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Total feedbacks</div></div>
             </div>
-
             <div className="tbl-wrap">
               <div className="tbl-head" style={{ gridTemplateColumns: "2fr 1.5fr 80px 80px 80px 120px" }}>
                 <span>Estabelecimento</span><span>Dono</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
               </div>
               {establishments.map(e => {
-                const starQs = e.questions.filter(q => q.type === "stars");
-                const avg = e.feedbacks.length && starQs.length
-                  ? (e.feedbacks.flatMap(f => starQs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)).reduce((a,b)=>a+b,0) /
-                     (e.feedbacks.flatMap(f => starQs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)).length)).toFixed(1)
+                const sqs = e.questions.filter(q => q.type === "stars");
+                const avg = e.feedbacks.length && sqs.length
+                  ? (e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)).reduce((a,b)=>a+b,0) /
+                     (e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)).length)).toFixed(1)
                   : "-";
                 return (
                   <div className="tbl-row" key={e.id} style={{ gridTemplateColumns: "2fr 1.5fr 80px 80px 80px 120px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}>
-                      <span style={{ fontSize: 18 }}>{e.emoji}</span>{e.name}
-                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><span style={{ fontSize: 18 }}>{e.emoji}</span>{e.name}</div>
                     <div style={{ color: "var(--muted)", fontSize: 12 }}>{e.owner}</div>
                     <div style={{ fontWeight: 700 }}>{e.feedbacks.length}</div>
                     <div style={{ fontWeight: 700, color: "var(--ac)" }}>⭐ {avg}</div>
-                    <div>
-                      {e.ativo
-                        ? <span className="badge badge-green"><span className="live-dot" style={{ marginRight: 4 }} />Ativo</span>
-                        : <span className="badge badge-red">Bloqueado</span>}
-                    </div>
+                    <div>{e.ativo ? <span className="badge badge-green"><span className="live-dot" style={{ marginRight: 4 }} />Ativo</span> : <span className="badge badge-red">Bloqueado</span>}</div>
                     <div style={{ display: "flex", gap: 6 }}>
                       <button className="btn-sm btn-sm-ghost" onClick={() => setViewEst(e)}>👁️</button>
-                      <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} onClick={() => toggleAtivo(e.id)}>
-                        {e.ativo ? "🔒" : "✅"}
-                      </button>
+                      <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒" : "✅"}</button>
                       <button className="btn-sm btn-sm-danger" onClick={() => deleteEst(e.id)}>🗑️</button>
                     </div>
                   </div>
@@ -1095,13 +1156,6 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Brindes entregues</div></div>
               <div className="metric"><div className="metric-val">R$ {(mrr - 150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
             </div>
-            <div className="chart-wrap">
-              <div className="chart-title">📈 Crescimento de clientes</div>
-              <MiniBarChart data={[
-                {lbl:"Jan",val:0},{lbl:"Fev",val:0},{lbl:"Mar",val:0},{lbl:"Abr",val:0},
-                {lbl:"Mai",val:establishments.length},{lbl:"Jun",val:0},{lbl:"Jul",val:0}
-              ]} color="var(--green)" />
-            </div>
             <div className="tbl-wrap">
               <div className="tbl-head" style={{ gridTemplateColumns: "2fr 1fr 1fr 1fr" }}>
                 <span>Estabelecimento</span><span>Feedbacks</span><span>Plano</span><span>Desde</span>
@@ -1119,13 +1173,12 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         )}
       </div>
 
-      {/* MODAL VER FEEDBACKS */}
       {viewEst && (
         <div className="modal-bg" onClick={() => setViewEst(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-title">{viewEst.emoji} {viewEst.name} — Feedbacks</div>
             {viewEst.feedbacks.length === 0 && <div style={{ color: "var(--muted)" }}>Nenhum feedback ainda.</div>}
-            {[...viewEst.feedbacks].reverse().map((f, i) => (
+            {[...viewEst.feedbacks].map((f, i) => (
               <div className="fb" key={i} style={{ marginBottom: 10 }}>
                 <div className="fb-top">
                   <div className="fb-name">👤 {f.nome}</div>
@@ -1141,16 +1194,13 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         </div>
       )}
 
-      {/* MODAL NOVO ESTABELECIMENTO */}
       {showAdd && (
         <div className="modal-bg" onClick={() => setShowAdd(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-title">➕ Novo Estabelecimento</div>
             <label className="lbl">Nome do estabelecimento</label>
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-              <div style={{ width: 52, height: 52, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>
-                {newEst.emoji}
-              </div>
+              <div style={{ width: 52, height: 52, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>{newEst.emoji}</div>
               <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e => setNewEst(s => ({ ...s, name: e.target.value }))} />
             </div>
             <label className="lbl">Escolha um emoji</label>
@@ -1171,7 +1221,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <label className="lbl">Link Google Reviews (opcional)</label>
             <input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e => setNewEst(s => ({ ...s, googleUrl: e.target.value }))} />
             <div style={{ display: "flex", gap: 10 }}>
-              <button className="btn btn-red" onClick={addEst}>Criar estabelecimento</button>
+              <button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading ? "Criando..." : "Criar estabelecimento"}</button>
               <button className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancelar</button>
             </div>
           </div>
@@ -1217,21 +1267,61 @@ function LoginScreen({ title, hint, onLogin }) {
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState("client");
-  const [ests, setEsts] = useState(SEED);
-  const [activeEst, setActiveEst] = useState(SEED[0]);
+  const [ests, setEsts] = useState([]);
+  const [activeEst, setActiveEst] = useState(null);
   const [loggedEst, setLoggedEst] = useState(null);
+
+  // ── Carrega estabelecimentos do Supabase na inicialização ──
+  useEffect(() => {
+    async function init() {
+      const data = await loadEstabelecimentos();
+      if (data && data.length > 0) {
+        // Carrega feedbacks de cada estabelecimento
+        const withFeedbacks = await Promise.all(
+          data.map(async (e) => {
+            const feedbacks = await loadFeedbacks(e.id);
+            return { ...e, feedbacks };
+          })
+        );
+        setEsts(withFeedbacks);
+        setActiveEst(withFeedbacks[0]);
+      } else {
+        // Fallback para seed local se Supabase vazio
+        setEsts(SEED);
+        setActiveEst(SEED[0]);
+      }
+      setLoading(false);
+    }
+    init();
+  }, []);
+
   const css = CSS(activeEst?.color || "#e63946");
 
-  const addFeedback = (fb) => {
-    const newFb = { ...fb, id: Date.now(), data: new Date().toLocaleString("pt-BR") };
+  const addFeedback = async (fb) => {
+    const ok = await saveFeedbackToSupabase(activeEst.id, fb);
+    const newFb = {
+      ...fb,
+      id: Date.now(),
+      data: new Date().toLocaleString("pt-BR"),
+    };
     setEsts(prev => prev.map(e => e.id === activeEst.id ? { ...e, feedbacks: [...e.feedbacks, newFb] } : e));
     setActiveEst(e => ({ ...e, feedbacks: [...e.feedbacks, newFb] }));
   };
+
   const updateEst = (updated) => {
     setEsts(prev => prev.map(e => e.id === updated.id ? updated : e));
     setLoggedEst(updated);
+    if (activeEst?.id === updated.id) setActiveEst(updated);
   };
+
+  if (loading) return (
+    <>
+      <style>{CSS()}</style>
+      <LoadingScreen />
+    </>
+  );
 
   return (
     <>
@@ -1242,7 +1332,7 @@ export default function App() {
           {mode === "client" && (
             <>
               <select style={{ background:"var(--d2)", color:"var(--text)", border:"1px solid var(--border)", borderRadius:8, padding:"7px 10px", fontFamily:"var(--ff-body)", fontSize:12, cursor:"pointer" }}
-                value={activeEst.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
+                value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
                 {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
               </select>
               <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerLogin")}>🏪 Dono</button>
@@ -1250,7 +1340,7 @@ export default function App() {
             </>
           )}
         </div>
-        {mode === "client" && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
+        {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
         {mode === "ownerLogin" && (
           <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="Demo: joao@burguer.com / 123456"
             onLogin={(email, pass) => {
