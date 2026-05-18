@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// ─── SUPABASE ────────────────────────────────────────────────────────────────
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://lhdbevkcpycikyudzqng.supabase.co";
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY || "sb_publishable_x98wrvkKncTzTV0QnZZjzA_MjD21sCw";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -61,7 +60,9 @@ const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperC
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
 
 // ─── BLOQUEIO DE FEEDBACK ─────────────────────────────────────────────────────
-function canLeaveFeedback(estId, intervalDays) {
+// masterMode = true pula o bloqueio para demos
+function canLeaveFeedback(estId, intervalDays, masterMode = false) {
+  if (masterMode) return true;
   try {
     const last = localStorage.getItem(`fb_${estId}`);
     if (!last) return true;
@@ -69,7 +70,8 @@ function canLeaveFeedback(estId, intervalDays) {
     return diff >= intervalDays;
   } catch { return true; }
 }
-function markFeedbackDone(estId) {
+function markFeedbackDone(estId, masterMode = false) {
+  if (masterMode) return;
   try { localStorage.setItem(`fb_${estId}`, Date.now().toString()); } catch {}
 }
 function daysUntilNext(estId, intervalDays) {
@@ -81,7 +83,6 @@ function daysUntilNext(estId, intervalDays) {
   } catch { return 0; }
 }
 
-// ─── CSS ─────────────────────────────────────────────────────────────────────
 const CSS = (ac = "#e63946") => `
   ${FONTS}
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -123,7 +124,6 @@ const CSS = (ac = "#e63946") => `
   .stars-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .star { font-size: 30px; cursor: pointer; filter: grayscale(1) opacity(0.25); transition: all 0.15s; }
   .star.on { filter: none; transform: scale(1.1); }
-  .star-label { font-size: 12px; color: var(--muted); margin-left: 4px; }
   .nps-row { display: flex; gap: 4px; flex-wrap: wrap; }
   .nps-btn { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--d3); color: var(--muted2); font-family: var(--ff-head); font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .nps-btn.sel { border-color: var(--ac); background: var(--ac); color: white; }
@@ -149,12 +149,12 @@ const CSS = (ac = "#e63946") => `
   .btn-sm-ghost:hover { border-color: var(--ac); color: var(--ac); }
   .btn-sm-danger { background: #1a0505; color: var(--red); border: 1px solid var(--red)33; }
   .err { background: #1a0505; border: 1px solid #f8717133; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--red); margin-bottom: 12px; }
-  .welcome-hero { font-size: 52px; margin-bottom: 10px; text-align: center; }
   .welcome-name { font-family: var(--ff-head); font-size: 26px; text-align: center; color: var(--ac); letter-spacing: 1px; }
   .welcome-tag { font-size: 13px; color: var(--muted2); text-align: center; margin-top: 6px; margin-bottom: 20px; line-height: 1.6; }
   .welcome-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--ac)22; border: 1px solid var(--ac)44; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; color: var(--ac); margin-bottom: 16px; }
   .teaser-wrap { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .teaser-prize { background: var(--d2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--muted2); white-space: nowrap; animation: fadeUp 0.4s ease forwards; }
+  .master-demo-bar { background: linear-gradient(90deg, #f0c96e22, #f0c96e11); border: 1px solid #f0c96e44; border-radius: 10px; padding: 8px 14px; margin-bottom: 14px; font-size: 12px; color: var(--yellow); font-weight: 700; text-align: center; }
   .confirm-wrap { text-align: center; padding: 8px 0; }
   .confirm-icon { font-size: 52px; margin-bottom: 12px; animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
   .confirm-title { font-family: var(--ff-head); font-size: 24px; letter-spacing: 1px; }
@@ -179,8 +179,6 @@ const CSS = (ac = "#e63946") => `
   .google-box { background: linear-gradient(135deg, #0a1f0a, #051205); border: 1.5px solid #4ade8044; border-radius: 14px; padding: 16px; text-align: center; margin-bottom: 10px; }
   .google-box-low { background: var(--d2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; margin-bottom: 10px; }
   .btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: white; color: #111; border: none; border-radius: 10px; font-family: var(--ff-body); font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
-
-  /* ── SHELL RESPONSIVO ── */
   .shell { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; background: var(--d1); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 12px; gap: 3px; flex-shrink: 0; }
   .main { flex: 1; overflow-y: auto; padding: 28px; background: var(--dark); }
@@ -208,17 +206,13 @@ const CSS = (ac = "#e63946") => `
     .prize-emoji { font-size: 52px; }
     .setup-box { padding: 14px; }
     .coupon-id { font-size: 20px; letter-spacing: 3px; }
-    .filter-row { gap: 6px; }
-    .filter-btn { padding: 6px 12px; font-size: 11px; }
   }
-
   .main-title { font-family: var(--ff-head); font-size: 26px; letter-spacing: 1px; margin-bottom: 20px; }
   .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
   .metric { background: var(--d1); border: 1px solid var(--border); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; }
   .metric::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--ac); }
   .metric-val { font-family: var(--ff-head); font-size: 28px; letter-spacing: 1px; }
   .metric-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-  .metric-trend { font-size: 11px; margin-top: 4px; font-weight: 700; }
   .tbl-wrap { background: var(--d1); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
   .tbl-head { padding: 10px 16px; background: var(--d2); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 1px solid var(--border); display: grid; }
   .tbl-row { padding: 12px 16px; border-bottom: 1px solid var(--border); display: grid; align-items: center; font-size: 13px; transition: background 0.1s; }
@@ -274,7 +268,7 @@ const CSS = (ac = "#e63946") => `
   .qr-logo { font-family: var(--ff-head); font-size: 17px; color: #1d6fa4; margin-bottom: 4px; }
   .qr-logo span { color: #2d9e6b; }
   .qr-est { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 10px; }
-  .qr-code { width: 140px; height: 140px; background: #111; border-radius: 10px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 3px solid #eee; }
+  .qr-img { width: 160px; height: 160px; margin: 0 auto 10px; display: block; border-radius: 8px; }
   .qr-inst { font-size: 11px; color: #888; margin-top: 6px; }
   .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; }
   .modal { background: var(--d1); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 460px; max-height: 85vh; overflow-y: auto; }
@@ -301,7 +295,6 @@ const CSS = (ac = "#e63946") => `
   .div { height: 1px; background: var(--border); margin: 14px 0; }
 `;
 
-// ─── LOGO ────────────────────────────────────────────────────────────────────
 function LogoSVG({ size = 140, style = {} }) {
   const [err, setErr] = useState(false);
   if (err) return (
@@ -314,9 +307,7 @@ function LogoSVG({ size = 140, style = {} }) {
 
 function EstLogo({ est, size = 64 }) {
   const [err, setErr] = useState(false);
-  if (est.logoUrl && !err) {
-    return <img src={est.logoUrl} alt={est.name} style={{ width: size, height: size, objectFit: "contain", borderRadius: 10 }} onError={() => setErr(true)} />;
-  }
+  if (est.logoUrl && !err) return <img src={est.logoUrl} alt={est.name} style={{ width: size, height: size, objectFit: "contain", borderRadius: 10 }} onError={() => setErr(true)} />;
   return <span style={{ fontSize: size * 0.7 }}>{est.emoji}</span>;
 }
 
@@ -330,7 +321,6 @@ function LoadingScreen() {
   );
 }
 
-// ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
@@ -360,7 +350,6 @@ async function createEstabelecimento(est) {
   return !error;
 }
 
-// ─── WHEEL ───────────────────────────────────────────────────────────────────
 function Wheel({ prizes, onResult }) {
   const ref = useRef(null);
   const angRef = useRef(0);
@@ -413,12 +402,9 @@ function Wheel({ prizes, onResult }) {
   );
 }
 
-// ─── TEASER DA ROLETA ─────────────────────────────────────────────────────────
 function WheelTeaser({ prizes }) {
   const [visible, setVisible] = useState([]);
-  useEffect(() => {
-    prizes.slice(0, 4).forEach((p, i) => setTimeout(() => setVisible(v => [...v, p]), i * 150));
-  }, []);
+  useEffect(() => { prizes.slice(0, 4).forEach((p, i) => setTimeout(() => setVisible(v => [...v, p]), i * 150)); }, []);
   return (
     <div className="teaser-wrap">
       <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 700 }}>Ganhe:</span>
@@ -436,7 +422,7 @@ function Stars({ val, onChange }) {
         <span key={s} className={`star ${s <= (hov || val) ? "on" : ""}`}
           onMouseEnter={() => setHov(s)} onMouseLeave={() => setHov(0)} onClick={() => onChange(s)}>⭐</span>
       ))}
-      {(hov || val) > 0 && <span className="star-label">{["","Ruim","Regular","Bom","Ótimo","Excelente"][hov || val]}</span>}
+      {(hov || val) > 0 && <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 4 }}>{["","Ruim","Regular","Bom","Ótimo","Excelente"][hov || val]}</span>}
     </div>
   );
 }
@@ -447,32 +433,17 @@ function QuestionItem({ q, idx, answer, onChange }) {
     <div className={`q-wrap ${answered ? "answered" : ""}`}>
       <div className="q-num">Pergunta {idx + 1}</div>
       <div className="q-label">{q.label}</div>
-      {q.type === "staff" && (
-        <div className="staff-grid">
-          {q.options.map(o => <button key={o} className={`staff-btn ${answer === o ? "sel" : ""}`} onClick={() => onChange(o)}>{o}</button>)}
-        </div>
-      )}
+      {q.type === "staff" && (<div className="staff-grid">{q.options.map(o => <button key={o} className={`staff-btn ${answer === o ? "sel" : ""}`} onClick={() => onChange(o)}>{o}</button>)}</div>)}
       {q.type === "choice" && (
         <div className="choice-list">
-          {q.options.map(o => (
-            <div key={o} className={`choice-item ${answer === o || (o === "Outro" && answer?.startsWith("Outro:")) ? "sel" : ""}`}
-              onClick={() => onChange(o === "Outro" ? "Outro:" : o)}>
-              <div className="choice-radio" /><span className="choice-label">{o}</span>
-            </div>
-          ))}
-          {q.allowOther && answer?.startsWith("Outro:") && (
-            <input className="other-input" placeholder="Qual?" autoFocus value={answer.replace("Outro:", "")} onChange={e => onChange("Outro:" + e.target.value)} />
-          )}
+          {q.options.map(o => (<div key={o} className={`choice-item ${answer === o || (o === "Outro" && answer?.startsWith("Outro:")) ? "sel" : ""}`} onClick={() => onChange(o === "Outro" ? "Outro:" : o)}><div className="choice-radio" /><span className="choice-label">{o}</span></div>))}
+          {q.allowOther && answer?.startsWith("Outro:") && <input className="other-input" placeholder="Qual?" autoFocus value={answer.replace("Outro:", "")} onChange={e => onChange("Outro:" + e.target.value)} />}
         </div>
       )}
       {q.type === "stars" && <Stars val={answer || 0} onChange={onChange} />}
       {q.type === "nps" && (
         <div>
-          <div className="nps-row">
-            {[0,1,2,3,4,5,6,7,8,9,10].map(n => (
-              <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>
-            ))}
-          </div>
+          <div className="nps-row">{[0,1,2,3,4,5,6,7,8,9,10].map(n => <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>)}</div>
           <div className="nps-labels"><span className="nps-lbl">😞 Jamais indicaria</span><span className="nps-lbl">Indicaria com certeza 😍</span></div>
         </div>
       )}
@@ -481,183 +452,36 @@ function QuestionItem({ q, idx, answer, onChange }) {
   );
 }
 
-// ─── CLIENT FLOW ─────────────────────────────────────────────────────────────
-function ClientApp({ est, onSubmit }) {
-  const interval = est.feedbackInterval || 30;
-  const blocked = !canLeaveFeedback(est.id, interval);
-  const daysLeft = daysUntilNext(est.id, interval);
-  const [step, setStep] = useState("welcome");
-  const [nome, setNome] = useState("");
-  const [answers, setAnswers] = useState({});
-  const [prize, setPrize] = useState(null);
-  const [coupon] = useState(genCoupon());
-  const [avgStars, setAvgStars] = useState(0);
-  const [saving, setSaving] = useState(false);
-  const [savedAnswers, setSavedAnswers] = useState({});
-  const [savedNome, setSavedNome] = useState("");
-  const required = est.questions.filter(q => q.required);
-  const answered = required.filter(q => {
-    const a = answers[q.id];
-    if (a === undefined || a === null || a === "") return false;
-    if (q.type === "choice" && a === "Outro:") return false;
-    return true;
-  });
-  const prog = (answered.length / required.length) * 100;
-  const allDone = answered.length === required.length;
-
-  if (blocked && step === "welcome") return (
-    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
-      <div className="card" style={{ textAlign: "center" }}>
-        <div style={{ marginBottom: 12 }}><EstLogo est={est} size={72} /></div>
-        <div className="welcome-name">{est.name}</div>
-        <div style={{ fontSize: 44, margin: "16px 0" }}>⏳</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 8 }}>Já participou recentemente!</div>
-        <div style={{ fontSize: 13, color: "var(--muted2)", lineHeight: 1.6 }}>
-          Você poderá responder novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>.
-        </div>
-        <div style={{ marginTop: 20, fontSize: 11, color: "#444" }}>{est.name} · Powered by NotaCheia ⭐</div>
-      </div>
-    </div>
-  );
-
-  if (step === "welcome") return (
-    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
-      <div className="card" style={{ textAlign: "center" }}>
-        <LogoSVG size={130} style={{ margin: "0 auto 14px" }} />
-        <div className="welcome-hero"><EstLogo est={est} size={60} /></div>
-        <div className="welcome-name">{est.name}</div>
-        <div className="welcome-tag">Sua opinião é muito importante para nós!<br/>Responda e ganhe um brinde surpresa 🎁</div>
-        <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
-        <WheelTeaser prizes={est.prizes} />
-        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <button className="btn btn-red" onClick={() => setStep("survey")}>Começar pesquisa →</button>
-      </div>
-    </div>
-  );
-
-  if (step === "survey") return (
-    <div className="page fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}15, transparent 50%), var(--dark)` }}>
-      <div className="card card-wide">
-        <div className="survey-header">
-          <div style={{ fontSize: 20, marginBottom: 4 }}>{est.emoji} {est.name}</div>
-          <div className="survey-title">Como foi sua experiência?</div>
-          <div className="survey-sub">Responda sinceramente 💬</div>
-        </div>
-        <div className="prog-wrap">
-          <div className="prog-label"><span>Progresso</span><span>{answered.length}/{required.length}</span></div>
-          <div className="prog-bar"><div className="prog-fill" style={{ width: `${prog}%` }} /></div>
-        </div>
-        {est.questions.map((q, i) => (
-          <QuestionItem key={q.id} q={q} idx={i} answer={answers[q.id]} onChange={v => setAnswers(a => ({ ...a, [q.id]: v }))} />
-        ))}
-        <div style={{ marginTop: 16 }}>
-          <button className="btn btn-red" onClick={() => { const starQs = est.questions.filter(q => q.type === "stars"); const avg = starQs.length ? starQs.reduce((s, q) => s + (answers[q.id] || 0), 0) / starQs.length : 5; setAvgStars(avg); setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm"); }} disabled={!allDone}>
-            {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (step === "confirm") return (
-    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
-      <div className="card">
-        <div className="confirm-wrap">
-          <div className="confirm-icon">✅</div>
-          <div className="confirm-title" style={{ color: "var(--ac)" }}>Obrigado!</div>
-          <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
-          <div className="confirm-sub">Sua resposta foi registrada!<br/>Agora gire a roleta e descubra seu prêmio 🎁</div>
-          <div className="div" />
-          <Wheel prizes={est.prizes} onResult={async (p) => {
-            setPrize(p);
-            setSaving(true);
-            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
-            markFeedbackDone(est.id);
-            setSaving(false);
-            setStep("prize");
-          }} />
-          {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
-        </div>
-      </div>
-    </div>
-  );
-
-  if (step === "prize") {
-    const isHappy = avgStars >= 4;
-    return (
-      <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
-        <div className="card prize-wrap">
-          <div className="prize-emoji">{prize.emoji}</div>
-          <div className="prize-title">PARABÉNS!</div>
-          <div className="prize-name">{prize.label}</div>
-          <div className="prize-congrats">{nome && nome !== "Anônimo" ? `${nome}, você` : "Você"} ganhou este prêmio!</div>
-          <div className="coupon-box">
-            <div className="coupon-id">{coupon}</div>
-            <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
-          </div>
-          <button className="btn-download" onClick={() => {
-            const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`;
-            const blob = new Blob([txt], { type: "text/plain" });
-            const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click();
-          }}>⬇️ Baixar comprovante</button>
-          {est.googleUrl && isHappy && (
-            <div className="google-box">
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#4ade80", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>🎉 Que ótimo que gostou!</div>
-              <div style={{ fontSize: 13, color: "#aaa", lineHeight: 1.5 }}>Conta pra mais pessoas no Google?</div>
-              <button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")}>🌐 Avaliar no Google Maps</button>
-            </div>
-          )}
-          {est.googleUrl && !isHappy && (
-            <div className="google-box-low">
-              <div style={{ fontSize: 13, color: "#888", lineHeight: 1.5 }}>😔 Sentimos muito. Seu feedback já foi enviado ao responsável!</div>
-            </div>
-          )}
-          <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>{est.name} · Powered by NotaCheia ⭐</div>
-        </div>
-      </div>
-    );
-  }
-}
-
-function MiniBarChart({ data, color = "var(--ac)" }) {
-  const max = Math.max(...data.map(d => d.val), 1);
-  return (
-    <div className="bar-chart">
-      {data.map((d, i) => (
-        <div className="bar-col" key={i}>
-          <div className="bar-val">{d.val}</div>
-          <div className="bar" style={{ height: `${(d.val / max) * 70}px`, background: color, opacity: 0.7 + (i / data.length) * 0.3 }} />
-          <div className="bar-lbl">{d.lbl}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
+// ─── QR CODE REAL ─────────────────────────────────────────────────────────────
 function QRCodeView({ est }) {
-  const url = `nota-cheia.vercel.app/r/${est.id}`;
+  const url = `https://notacheia.com.br`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=111111&margin=10`;
   return (
     <div>
       <div style={{ marginBottom: 16, color: "var(--muted2)", fontSize: 13, lineHeight: 1.6 }}>Cole este QR code nas mesas ou balcão do seu estabelecimento.</div>
       <div className="qr-wrap">
         <div className="qr-logo">Nota<span>Cheia</span> ⭐</div>
         <div className="qr-est">{est.emoji} {est.name}</div>
-        <div className="qr-code"><div style={{ textAlign: "center" }}><div style={{ fontSize: 44, marginBottom: 4 }}>▦</div><div style={{ fontSize: 9 }}>QR CODE</div></div></div>
+        <img src={qrUrl} alt="QR Code" className="qr-img" />
         <div style={{ fontSize: 11, color: "#333", fontWeight: 700, marginBottom: 4 }}>Aponte a câmera e ganhe um brinde!</div>
-        <div className="qr-inst">{url}</div>
+        <div className="qr-inst">notacheia.com.br</div>
       </div>
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
         <button className="btn btn-red" onClick={() => {
-          const txt = `NotaCheia QR Code\n${est.name}\nLink: https://${url}`;
-          const blob = new Blob([txt], { type: "text/plain" });
-          const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `qrcode-${est.name}.txt`; a.click();
-        }}>⬇️ Baixar QR Code</button>
+          const link = document.createElement("a");
+          link.href = qrUrl;
+          link.download = `qrcode-${est.name}.png`;
+          link.target = "_blank";
+          link.click();
+        }}>⬇️ Baixar QR Code PNG</button>
+      </div>
+      <div style={{ marginTop: 10, padding: 12, background: "var(--d2)", borderRadius: 10, fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
+        💡 <strong style={{ color: "var(--text)" }}>Dica:</strong> Leve este QR code para uma gráfica e peça uma plaquinha acrílica personalizada.
       </div>
     </div>
   );
 }
 
-// ─── SIDEBAR RESPONSIVO ───────────────────────────────────────────────────────
 function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
   const navs = isMaster
@@ -686,11 +510,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
           <div className="sidebar-est-email">{isMaster ? "notacheia.com.br" : est?.owner}</div>
         </div>
         <div className="div" style={{ margin: "0 0 6px" }} />
-        {navs.map(n => (
-          <button key={n.id} className={`nav ${tab === n.id ? "on" : ""}`} onClick={() => { setTab(n.id); setOpen(false); }}>
-            <span>{n.icon}</span><span>{n.lbl}</span>
-          </button>
-        ))}
+        {navs.map(n => <button key={n.id} className={`nav ${tab === n.id ? "on" : ""}`} onClick={() => { setTab(n.id); setOpen(false); }}><span>{n.icon}</span><span>{n.lbl}</span></button>)}
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
       </div>
@@ -698,7 +518,125 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   );
 }
 
-// ─── OWNER DASHBOARD ─────────────────────────────────────────────────────────
+// ─── CLIENT FLOW ─────────────────────────────────────────────────────────────
+function ClientApp({ est, onSubmit, masterMode = false }) {
+  const interval = est.feedbackInterval || 30;
+  const blocked = !canLeaveFeedback(est.id, interval, masterMode);
+  const daysLeft = daysUntilNext(est.id, interval);
+  const [step, setStep] = useState("welcome");
+  const [nome, setNome] = useState("");
+  const [answers, setAnswers] = useState({});
+  const [prize, setPrize] = useState(null);
+  const [coupon] = useState(genCoupon());
+  const [avgStars, setAvgStars] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [savedAnswers, setSavedAnswers] = useState({});
+  const [savedNome, setSavedNome] = useState("");
+  const required = est.questions.filter(q => q.required);
+  const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
+  const prog = (answered.length / required.length) * 100;
+  const allDone = answered.length === required.length;
+
+  if (blocked && step === "welcome") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ marginBottom: 12 }}><EstLogo est={est} size={72} /></div>
+        <div className="welcome-name">{est.name}</div>
+        <div style={{ fontSize: 44, margin: "16px 0" }}>⏳</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 8 }}>Já participou recentemente!</div>
+        <div style={{ fontSize: 13, color: "var(--muted2)", lineHeight: 1.6 }}>Você poderá responder novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>.</div>
+        <div style={{ marginTop: 20, fontSize: 11, color: "#444" }}>{est.name} · Powered by NotaCheia ⭐</div>
+      </div>
+    </div>
+  );
+
+  if (step === "welcome") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <LogoSVG size={130} style={{ margin: "0 auto 14px" }} />
+        {masterMode && <div className="master-demo-bar">👑 Modo demonstração — bloqueio desativado</div>}
+        <div style={{ fontSize: 52, marginBottom: 10 }}><EstLogo est={est} size={60} /></div>
+        <div className="welcome-name">{est.name}</div>
+        <div className="welcome-tag">Sua opinião é muito importante para nós!<br/>Responda e ganhe um brinde surpresa 🎁</div>
+        <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
+        <WheelTeaser prizes={est.prizes} />
+        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
+        <button className="btn btn-red" onClick={() => setStep("survey")}>Começar pesquisa →</button>
+      </div>
+    </div>
+  );
+
+  if (step === "survey") return (
+    <div className="page fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}15, transparent 50%), var(--dark)` }}>
+      <div className="card card-wide">
+        <div className="survey-header">
+          <div style={{ fontSize: 20, marginBottom: 4 }}>{est.emoji} {est.name}</div>
+          <div className="survey-title">Como foi sua experiência?</div>
+          <div className="survey-sub">Responda sinceramente 💬</div>
+        </div>
+        <div className="prog-wrap">
+          <div className="prog-label"><span>Progresso</span><span>{answered.length}/{required.length}</span></div>
+          <div className="prog-bar"><div className="prog-fill" style={{ width: `${prog}%` }} /></div>
+        </div>
+        {est.questions.map((q, i) => <QuestionItem key={q.id} q={q} idx={i} answer={answers[q.id]} onChange={v => setAnswers(a => ({ ...a, [q.id]: v }))} />)}
+        <div style={{ marginTop: 16 }}>
+          <button className="btn btn-red" onClick={() => { const sqs = est.questions.filter(q => q.type === "stars"); setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5); setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm"); }} disabled={!allDone}>
+            {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (step === "confirm") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card">
+        <div className="confirm-wrap">
+          <div className="confirm-icon">✅</div>
+          <div className="confirm-title" style={{ color: "var(--ac)" }}>Obrigado!</div>
+          <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
+          <div className="confirm-sub">Sua resposta foi registrada!<br/>Agora gire a roleta e descubra seu prêmio 🎁</div>
+          <div className="div" />
+          <Wheel prizes={est.prizes} onResult={async (p) => {
+            setPrize(p); setSaving(true);
+            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            markFeedbackDone(est.id, masterMode);
+            setSaving(false); setStep("prize");
+          }} />
+          {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (step === "prize") {
+    const isHappy = avgStars >= 4;
+    return (
+      <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
+        <div className="card prize-wrap">
+          <div className="prize-emoji">{prize.emoji}</div>
+          <div className="prize-title">PARABÉNS!</div>
+          <div className="prize-name">{prize.label}</div>
+          <div className="prize-congrats">{nome && nome !== "Anônimo" ? `${nome}, você` : "Você"} ganhou este prêmio!</div>
+          <div className="coupon-box">
+            <div className="coupon-id">{coupon}</div>
+            <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
+          </div>
+          <button className="btn-download" onClick={() => { const txt=`NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`;const blob=new Blob([txt],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`premio-${coupon}.txt`;a.click(); }}>⬇️ Baixar comprovante</button>
+          {est.googleUrl && isHappy && (<div className="google-box"><div style={{ fontSize: 11, fontWeight: 800, color: "#4ade80", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>🎉 Que ótimo que gostou!</div><div style={{ fontSize: 13, color: "#aaa", lineHeight: 1.5 }}>Conta pra mais pessoas no Google?</div><button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")}>🌐 Avaliar no Google Maps</button></div>)}
+          {est.googleUrl && !isHappy && (<div className="google-box-low"><div style={{ fontSize: 13, color: "#888", lineHeight: 1.5 }}>😔 Sentimos muito. Seu feedback já foi enviado ao responsável!</div></div>)}
+          <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>{est.name} · Powered by NotaCheia ⭐</div>
+        </div>
+      </div>
+    );
+  }
+}
+
+function MiniBarChart({ data, color = "var(--ac)" }) {
+  const max = Math.max(...data.map(d => d.val), 1);
+  return (<div className="bar-chart">{data.map((d, i) => (<div className="bar-col" key={i}><div className="bar-val">{d.val}</div><div className="bar" style={{ height: `${(d.val / max) * 70}px`, background: color, opacity: 0.7 + (i / data.length) * 0.3 }} /><div className="bar-lbl">{d.lbl}</div></div>))}</div>);
+}
+
 function OwnerDash({ est, onUpdate, onLogout }) {
   const [tab, setTab] = useState("overview");
   const [ed, setEd] = useState({ ...est, questions: est.questions.map(q=>({...q})), prizes: est.prizes.map(p=>({...p})) });
@@ -710,160 +648,127 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [newPass, setNewPass] = useState({ atual: "", nova: "", confirma: "" });
   const [passMsg, setPassMsg] = useState("");
   const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a","#f72585","#4cc9f0","#111","#333"];
-
   const starQs = est.questions.filter(q => q.type === "stars");
-  const starAvg = (key) => { const v = est.feedbacks.map(f=>f.answers?.[key]).filter(v=>typeof v==="number"&&v>0); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
+  const starAvg = (key) => { const v=est.feedbacks.map(f=>f.answers?.[key]).filter(v=>typeof v==="number"&&v>0); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
   const overall = () => { if(!starQs.length||!est.feedbacks.length)return"-"; const v=est.feedbacks.flatMap(f=>starQs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0)); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
   const npsAvg = () => { const v=est.feedbacks.map(f=>f.answers?.q_nps).filter(v=>v!==undefined); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
   const staffRanking = () => { const map={}; est.feedbacks.forEach(f=>{const atd=f.answers?.q_atend;if(!atd)return;if(!map[atd])map[atd]={total:0,count:0};const s=starQs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0);if(s.length){map[atd].total+=s.reduce((a,b)=>a+b,0)/s.length;map[atd].count++;}}); return Object.entries(map).map(([name,d])=>({name,avg:d.count?(d.total/d.count).toFixed(1):0})).sort((a,b)=>b.avg-a.avg); };
   const howKnew = () => { const map={}; est.feedbacks.forEach(f=>{const v=f.answers?.q_como;if(v)map[v]=(map[v]||0)+1;}); return Object.entries(map).sort((a,b)=>b[1]-a[1]); };
   const chartData = (() => { const days=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"],result=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const lbl=days[d.getDay()],dateStr=d.toLocaleDateString("pt-BR");result.push({lbl,val:est.feedbacks.filter(f=>f.data?.includes(dateStr)).length});} return result; })();
-  const insights = () => { const list=[],ov=parseFloat(overall()),nps=parseFloat(npsAvg()); if(ov>=4.5)list.push({icon:"🏆",text:<><strong>Excelente!</strong> Nota acima de 4.5.</>}); if(nps>=8)list.push({icon:"📈",text:<><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</>}); const esp=parseFloat(starAvg("q_esp"));if(esp&&esp<3.5)list.push({icon:"⚠️",text:<><strong>Tempo de espera!</strong> Nota {esp} — clientes sentem demora.</>}); const pv=est.feedbacks.map(f=>f.answers?.q_preco).filter(Boolean);const caro=pv.filter(v=>v==="Caro pelo que oferece").length;if(caro>pv.length*0.3)list.push({icon:"💰",text:<><strong>{Math.round(caro/pv.length*100)}% acham caro.</strong> Avalie a precificação.</>}); const prim=est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length;if(prim>0)list.push({icon:"🆕",text:<><strong>{prim} cliente{prim>1?"s":""} novo{prim>1?"s":""}</strong> visitou recentemente!</>}); if(list.length===0)list.push({icon:"📊",text:<>Continue coletando feedbacks para receber insights.</>}); return list; };
+  const insights = () => { const list=[],ov=parseFloat(overall()),nps=parseFloat(npsAvg()); if(ov>=4.5)list.push({icon:"🏆",text:<><strong>Excelente!</strong> Nota acima de 4.5.</>}); if(nps>=8)list.push({icon:"📈",text:<><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</>}); const esp=parseFloat(starAvg("q_esp"));if(esp&&esp<3.5)list.push({icon:"⚠️",text:<><strong>Tempo de espera!</strong> Nota {esp}.</>}); const pv=est.feedbacks.map(f=>f.answers?.q_preco).filter(Boolean);const caro=pv.filter(v=>v==="Caro pelo que oferece").length;if(caro>pv.length*0.3)list.push({icon:"💰",text:<><strong>{Math.round(caro/pv.length*100)}% acham caro.</strong></>}); const prim=est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length;if(prim>0)list.push({icon:"🆕",text:<><strong>{prim} cliente{prim>1?"s":""} novo{prim>1?"s":""}</strong> recentemente!</>}); if(list.length===0)list.push({icon:"📊",text:<>Continue coletando feedbacks para receber insights.</>}); return list; };
   const filteredFeedbacks = () => { if(filter==="positivos")return est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9); if(filter==="negativos")return est.feedbacks.filter(f=>(f.answers?.q_nps||0)<=6); if(filter==="neutros")return est.feedbacks.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}); return est.feedbacks; };
-
   const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(()=>setSaved(false),2000); };
   const addQ = () => { if(!newQ.label)return; const opts=newQ.options.split(",").map(s=>s.trim()).filter(Boolean); setEd(e=>({...e,questions:[...e.questions,{id:uid(),...newQ,options:opts,required:true}]})); setNewQ({label:"",type:"stars",options:""}); };
   const removeQ = id => setEd(e=>({...e,questions:e.questions.filter(q=>q.id!==id)}));
   const addP = () => { if(!newP.label)return; setEd(e=>({...e,prizes:[...e.prizes,{id:uid(),...newP}]})); setNewP({label:"",emoji:"🎁",color:"#e63946"}); };
   const removeP = id => setEd(e=>({...e,prizes:e.prizes.filter(p=>p.id!==id)}));
   const trocarSenha = async () => { if(newPass.atual!==est.pass){setPassMsg("❌ Senha incorreta.");setTimeout(()=>setPassMsg(""),3000);return;} if(newPass.nova.length<6){setPassMsg("❌ Mínimo 6 caracteres.");setTimeout(()=>setPassMsg(""),3000);return;} if(newPass.nova!==newPass.confirma){setPassMsg("❌ Senhas não coincidem.");setTimeout(()=>setPassMsg(""),3000);return;} const u={...est,pass:newPass.nova};await saveEstabelecimento(u);onUpdate(u);setPassMsg("✅ Senha alterada!");setNewPass({atual:"",nova:"",confirma:""});setTimeout(()=>setPassMsg(""),3000); };
-  const handleLogoUpload = (e) => { const file=e.target.files[0];if(!file)return; const r=new FileReader();r.onload=(ev)=>setEd(s=>({...s,logoUrl:ev.target.result}));r.readAsDataURL(file); };
+  const handleLogoUpload = (e) => { const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=(ev)=>setEd(s=>({...s,logoUrl:ev.target.result}));r.readAsDataURL(file); };
 
   return (
     <div className="shell">
       <Sidebar est={est} tab={tab} setTab={setTab} onLogout={onLogout} />
       <div className="main">
-        {tab === "overview" && (
-          <>
-            <div className="main-title">{est.emoji} {est.name}</div>
-            <div className="metrics">
-              <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div></div>
-              <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
-              <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
-              <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length}</div><div className="metric-lbl">Promotores</div></div>
-              <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
-              <div className="metric"><div className="metric-val" style={{fontSize:20}}>{est.googleUrl?"✅":"❌"}</div><div className="metric-lbl">Google Reviews</div></div>
+        {tab==="overview"&&(<>
+          <div className="main-title">{est.emoji} {est.name}</div>
+          <div className="metrics">
+            <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div></div>
+            <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
+            <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length}</div><div className="metric-lbl">Promotores</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
+            <div className="metric"><div className="metric-val" style={{fontSize:20}}>{est.googleUrl?"✅":"❌"}</div><div className="metric-lbl">Google Reviews</div></div>
+          </div>
+          <div className="chart-wrap"><div className="chart-title">📅 Feedbacks — últimos 7 dias</div><MiniBarChart data={chartData}/></div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8,marginBottom:14}}>
+            {starQs.map(q=>{const s=starAvg(q.id);return(<div key={q.id} style={{background:"var(--d1)",border:"1px solid var(--border)",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:s>=4?"var(--green)":s>=3?"var(--yellow)":"var(--red)"}}>{s}</div><div style={{fontSize:10,color:"var(--muted)",fontWeight:700,textTransform:"uppercase",marginTop:4}}>{q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","")}</div><div style={{height:3,background:"var(--d3)",borderRadius:2,marginTop:6}}><div style={{height:"100%",width:`${(parseFloat(s)/5)*100}%`,background:"var(--ac)",borderRadius:2}}/></div></div>);})}
+          </div>
+          {staffRanking().length>0&&(<div className="chart-wrap"><div className="chart-title">🏆 Ranking colaboradores</div>{staffRanking().map((s,i)=>(<div className="rank-row" key={s.name}><div className="rank-num">{i+1}</div><div className="rank-name">{s.name}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(s.avg/5)*100}%`}}/></div><div className="rank-score">{s.avg}</div></div>))}</div>)}
+          {howKnew().length>0&&(<div className="chart-wrap"><div className="chart-title">📍 Como chegaram</div><MiniBarChart data={howKnew().map(([lbl,val])=>({lbl:lbl.slice(0,10),val}))} color="var(--green)"/></div>)}
+        </>)}
+        {tab==="feedbacks"&&(<>
+          <div className="main-title">💬 Feedbacks</div>
+          <div className="filter-row">{[["todos","Todos"],["positivos","😍 Promotores"],["neutros","😐 Neutros"],["negativos","😞 Detratores"]].map(([k,l])=>(<button key={k} className={`filter-btn ${filter===k?"on":""}`} onClick={()=>setFilter(k)}>{l}</button>))}</div>
+          {filteredFeedbacks().length===0&&<div style={{color:"var(--muted)",textAlign:"center",marginTop:40}}>Nenhum feedback neste filtro.</div>}
+          {filteredFeedbacks().map((f,i)=>{const nps=f.answers?.q_nps;const npsColor=nps>=9?"var(--green)":nps>=7?"var(--yellow)":"var(--red)";return(<div className="fb" key={f.id||i}><div className="fb-top"><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:34,height:34,borderRadius:"50%",background:"var(--d3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div></div>{nps!==undefined&&(<div style={{background:"var(--d3)",border:`1px solid ${npsColor}44`,borderRadius:10,padding:"4px 10px",textAlign:"center"}}><div style={{fontSize:14,fontFamily:"var(--ff-head)",color:npsColor}}>{nps}</div><div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase"}}>NPS</div></div>)}</div><div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>{[["q_atend","👨‍💼"],["q_first","🆕"],["q_hora","⏰"],["q_mesa","🪑"],["q_como","📍"],["q_preco","💰"]].map(([key,icon])=>{const v=f.answers?.[key];if(!v)return null;const sl={q_atend:"Atend",q_first:"1ªvez",q_hora:"Hora",q_mesa:"Mesa",q_como:"Via",q_preco:"Preço"}[key];return(<div key={key} style={{background:"var(--d3)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:"3px 8px",fontSize:11,display:"flex",gap:3,alignItems:"center"}}><span>{icon}</span><span style={{color:"var(--muted2)",fontSize:10}}>{sl}:</span><span style={{color:"var(--text)",fontWeight:600}}>{String(v).replace("Outro:","")}</span></div>);})}</div><div style={{background:"var(--dark)",borderRadius:8,padding:"8px 10px",marginBottom:6}}>{starQs.map(q=>{const v=f.answers?.[q.id];if(!v)return null;const sn=q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","");return(<div key={q.id} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}><span style={{fontSize:11,color:"var(--muted)",minWidth:90,fontWeight:600}}>{sn}</span><div style={{display:"flex",gap:2}}>{[1,2,3,4,5].map(s=><span key={s} style={{fontSize:12,filter:s<=v?"none":"grayscale(1) opacity(0.2)"}}>⭐</span>)}</div><span style={{fontSize:10,fontWeight:800,color:v>=4?"var(--green)":v>=3?"var(--yellow)":"var(--red)"}}>{["","Ruim","Regular","Bom","Ótimo","Excelente"][v]}</span></div>);})}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>);})}
+        </>)}
+        {tab==="insights"&&(<>
+          <div className="main-title">💡 Insights</div>
+          {insights().map((ins,i)=>(<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
+          <div className="chart-wrap" style={{marginTop:16}}><div className="chart-title">📊 Distribuição NPS</div><div style={{display:"flex",gap:10}}>{[["😍 Promotores","9-10","var(--green)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length],["😐 Neutros","7-8","var(--yellow)",est.feedbacks.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length],["😞 Detratores","0-6","var(--red)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)<=6&&f.answers?.q_nps!==undefined).length]].map(([lbl,range,color,count])=>(<div key={lbl} style={{flex:1,background:"var(--d2)",border:`1px solid ${color}33`,borderRadius:10,padding:12,textAlign:"center"}}><div style={{fontSize:20,fontFamily:"var(--ff-head)",color}}>{count}</div><div style={{fontSize:10,color:"var(--muted)",marginTop:3}}>{lbl}</div><div style={{fontSize:9,color,marginTop:2}}>NPS {range}</div></div>))}</div></div>
+          <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"].map(v=>({lbl:v==="Barato pelo que oferece"?"Barato":v==="Ideal pelo que oferece"?"Ideal":"Caro",val:est.feedbacks.filter(f=>f.answers?.q_preco===v).length}))} color="var(--yellow)"/></div>
+        </>)}
+        {tab==="qrcode"&&(<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est}/></>)}
+        {tab==="setup"&&(<>
+          <div className="main-title">⚙️ Configurar</div>
+          <div className="setup-box">
+            <div className="setup-box-title">🏪 Identidade</div>
+            <label className="lbl">Logo do estabelecimento</label>
+            <div className="logo-upload-area" onClick={()=>document.getElementById("logo-input").click()}>
+              {ed.logoUrl?<img src={ed.logoUrl} alt="logo" style={{width:70,height:70,objectFit:"contain",borderRadius:8,display:"block",margin:"0 auto 6px"}}/>:<div style={{fontSize:12,color:"var(--muted)"}}>Clique para fazer upload da sua logo<br/><span style={{fontSize:10}}>PNG, JPG ou SVG</span></div>}
             </div>
-            <div className="chart-wrap"><div className="chart-title">📅 Feedbacks — últimos 7 dias</div><MiniBarChart data={chartData} /></div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8,marginBottom:14}}>
-              {starQs.map(q=>{const s=starAvg(q.id);return(<div key={q.id} style={{background:"var(--d1)",border:"1px solid var(--border)",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:s>=4?"var(--green)":s>=3?"var(--yellow)":"var(--red)"}}>{s}</div><div style={{fontSize:10,color:"var(--muted)",fontWeight:700,textTransform:"uppercase",marginTop:4}}>{q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","")}</div><div style={{height:3,background:"var(--d3)",borderRadius:2,marginTop:6}}><div style={{height:"100%",width:`${(parseFloat(s)/5)*100}%`,background:"var(--ac)",borderRadius:2}}/></div></div>);})}
+            <input id="logo-input" type="file" accept="image/*" style={{display:"none"}} onChange={handleLogoUpload}/>
+            {ed.logoUrl&&<button className="btn-sm btn-sm-danger" style={{marginBottom:12}} onClick={()=>setEd(s=>({...s,logoUrl:""}))}>Remover logo</button>}
+            <label className="lbl">Nome</label>
+            <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{ed.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} value={ed.name} onChange={e=>setEd(s=>({...s,name:e.target.value}))}/></div>
+            <label className="lbl">Emoji</label>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","🧇","🍩","🍫","🥐","🍷","🥤","💇","💅","🏋️","🛍️","💊","🏥","🐾","🎮","🏪","🏬","🍽️","🎪"].map(e=>(<button key={e} onClick={()=>setEd(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:ed.emoji===e?"var(--ac)22":"var(--d3)",border:ed.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
+            <label className="lbl">Cor principal</label>
+            <div className="swatch-row">{COLORS.map(c=><div key={c} className={`swatch ${ed.color===c?"on":""}`} style={{background:c}} onClick={()=>setEd(s=>({...s,color:c}))}/>)}</div>
+            <label className="lbl">🌐 Link Google Reviews</label>
+            <input className="field" placeholder="https://g.page/r/..." value={ed.googleUrl||""} onChange={e=>setEd(s=>({...s,googleUrl:e.target.value}))}/>
+            <label className="lbl">⏱️ Intervalo entre feedbacks</label>
+            <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>{[7,15,30,60].map(d=>(<button key={d} className="interval-btn" onClick={()=>setEd(s=>({...s,feedbackInterval:d}))} style={{border:`1.5px solid ${ed.feedbackInterval===d?"var(--ac)":"var(--border)"}`,background:ed.feedbackInterval===d?"var(--ac)22":"var(--d3)",color:ed.feedbackInterval===d?"var(--text)":"var(--muted2)"}}>{d} dias</button>))}</div>
+            <div style={{fontSize:11,color:"var(--muted)",marginBottom:4}}>O cliente só poderá responder novamente após este período.</div>
+          </div>
+          <div className="setup-box">
+            <div className="setup-box-title">❓ Perguntas</div>
+            {ed.questions.map(q=>(<div className="pill-row" key={q.id}><div style={{flex:1}}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={()=>removeQ(q.id)}>✕</button></div>))}
+            <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
+              <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e=>setNewQ(s=>({...s,label:e.target.value}))}/>
+              <select className="type-sel" value={newQ.type} onChange={e=>setNewQ(s=>({...s,type:e.target.value}))}><option value="stars">⭐ Estrelas</option><option value="choice">☑️ Múltipla escolha</option><option value="nps">📊 NPS 0-10</option><option value="text">📝 Texto livre</option><option value="staff">👤 Colaborador</option></select>
+              {(newQ.type==="choice"||newQ.type==="staff")&&<input className="field-inline" placeholder="Opções por vírgula" value={newQ.options} onChange={e=>setNewQ(s=>({...s,options:e.target.value}))}/>}
+              <button className="btn-sm btn-sm-red" onClick={addQ}>+ Adicionar</button>
             </div>
-            {staffRanking().length>0&&(<div className="chart-wrap"><div className="chart-title">🏆 Ranking colaboradores</div>{staffRanking().map((s,i)=>(<div className="rank-row" key={s.name}><div className="rank-num">{i+1}</div><div className="rank-name">{s.name}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(s.avg/5)*100}%`}}/></div><div className="rank-score">{s.avg}</div></div>))}</div>)}
-            {howKnew().length>0&&(<div className="chart-wrap"><div className="chart-title">📍 Como chegaram</div><MiniBarChart data={howKnew().map(([lbl,val])=>({lbl:lbl.slice(0,10),val}))} color="var(--green)"/></div>)}
-          </>
-        )}
-
-        {tab === "feedbacks" && (
-          <>
-            <div className="main-title">💬 Feedbacks</div>
-            <div className="filter-row">
-              {[["todos","Todos"],["positivos","😍 Promotores"],["neutros","😐 Neutros"],["negativos","😞 Detratores"]].map(([k,l])=>(<button key={k} className={`filter-btn ${filter===k?"on":""}`} onClick={()=>setFilter(k)}>{l}</button>))}
+          </div>
+          <div className="setup-box">
+            <div className="setup-box-title">🎡 Prêmios da Roleta</div>
+            {ed.prizes.map(p=>(<div className="pill-row" key={p.id}><span style={{fontSize:18}}>{p.emoji}</span><div style={{width:12,height:12,borderRadius:4,background:p.color,flexShrink:0}}/><div className="pill-lbl" style={{flex:1}}>{p.label}</div><button className="btn-sm btn-sm-danger" onClick={()=>removeP(p.id)}>✕</button></div>))}
+            <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
+              <input className="field-inline" placeholder="Nome do brinde" value={newP.label} onChange={e=>setNewP(s=>({...s,label:e.target.value}))}/>
+              <input className="field-inline" placeholder="Emoji" value={newP.emoji} onChange={e=>setNewP(s=>({...s,emoji:e.target.value}))} style={{maxWidth:60}}/>
+              <input type="color" value={newP.color} onChange={e=>setNewP(s=>({...s,color:e.target.value}))} style={{width:40,height:40,border:"none",background:"none",cursor:"pointer",borderRadius:8}}/>
+              <button className="btn-sm btn-sm-red" onClick={addP}>+ Adicionar</button>
             </div>
-            {filteredFeedbacks().length===0&&<div style={{color:"var(--muted)",textAlign:"center",marginTop:40}}>Nenhum feedback neste filtro.</div>}
-            {filteredFeedbacks().map((f,i)=>{const nps=f.answers?.q_nps;const npsColor=nps>=9?"var(--green)":nps>=7?"var(--yellow)":"var(--red)";return(<div className="fb" key={f.id||i}><div className="fb-top"><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:34,height:34,borderRadius:"50%",background:"var(--d3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div></div>{nps!==undefined&&(<div style={{background:"var(--d3)",border:`1px solid ${npsColor}44`,borderRadius:10,padding:"4px 10px",textAlign:"center"}}><div style={{fontSize:14,fontFamily:"var(--ff-head)",color:npsColor}}>{nps}</div><div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase"}}>NPS</div></div>)}</div><div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>{[["q_atend","👨‍💼"],["q_first","🆕"],["q_hora","⏰"],["q_mesa","🪑"],["q_como","📍"],["q_preco","💰"]].map(([key,icon])=>{const v=f.answers?.[key];if(!v)return null;const sl={q_atend:"Atend",q_first:"1ªvez",q_hora:"Hora",q_mesa:"Mesa",q_como:"Via",q_preco:"Preço"}[key];return(<div key={key} style={{background:"var(--d3)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:"3px 8px",fontSize:11,display:"flex",gap:3,alignItems:"center"}}><span>{icon}</span><span style={{color:"var(--muted2)",fontSize:10}}>{sl}:</span><span style={{color:"var(--text)",fontWeight:600}}>{String(v).replace("Outro:","")}</span></div>);})}</div><div style={{background:"var(--dark)",borderRadius:8,padding:"8px 10px",marginBottom:6}}>{starQs.map(q=>{const v=f.answers?.[q.id];if(!v)return null;const sn=q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","");return(<div key={q.id} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}><span style={{fontSize:11,color:"var(--muted)",minWidth:90,fontWeight:600}}>{sn}</span><div style={{display:"flex",gap:2}}>{[1,2,3,4,5].map(s=><span key={s} style={{fontSize:12,filter:s<=v?"none":"grayscale(1) opacity(0.2)"}}>⭐</span>)}</div><span style={{fontSize:10,fontWeight:800,color:v>=4?"var(--green)":v>=3?"var(--yellow)":"var(--red)"}}>{["","Ruim","Regular","Bom","Ótimo","Excelente"][v]}</span></div>);})}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>);})}
-          </>
-        )}
-
-        {tab === "insights" && (
-          <>
-            <div className="main-title">💡 Insights</div>
-            {insights().map((ins,i)=>(<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
-            <div className="chart-wrap" style={{marginTop:16}}>
-              <div className="chart-title">📊 Distribuição NPS</div>
-              <div style={{display:"flex",gap:10}}>
-                {[["😍 Promotores","9-10","var(--green)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length],["😐 Neutros","7-8","var(--yellow)",est.feedbacks.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length],["😞 Detratores","0-6","var(--red)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)<=6&&f.answers?.q_nps!==undefined).length]].map(([lbl,range,color,count])=>(<div key={lbl} style={{flex:1,background:"var(--d2)",border:`1px solid ${color}33`,borderRadius:10,padding:12,textAlign:"center"}}><div style={{fontSize:20,fontFamily:"var(--ff-head)",color}}>{count}</div><div style={{fontSize:10,color:"var(--muted)",marginTop:3}}>{lbl}</div><div style={{fontSize:9,color,marginTop:2}}>NPS {range}</div></div>))}
-              </div>
-            </div>
-            <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"].map(v=>({lbl:v==="Barato pelo que oferece"?"Barato":v==="Ideal pelo que oferece"?"Ideal":"Caro",val:est.feedbacks.filter(f=>f.answers?.q_preco===v).length}))} color="var(--yellow)"/></div>
-          </>
-        )}
-
-        {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
-
-        {tab === "setup" && (
-          <>
-            <div className="main-title">⚙️ Configurar</div>
-            <div className="setup-box">
-              <div className="setup-box-title">🏪 Identidade</div>
-              <label className="lbl">Logo do estabelecimento</label>
-              <div className="logo-upload-area" onClick={()=>document.getElementById("logo-input").click()}>
-                {ed.logoUrl?<img src={ed.logoUrl} alt="logo" style={{width:70,height:70,objectFit:"contain",borderRadius:8,display:"block",margin:"0 auto 6px"}}/>:<div style={{fontSize:12,color:"var(--muted)"}}>Clique para fazer upload da sua logo<br/><span style={{fontSize:10}}>PNG, JPG ou SVG</span></div>}
-              </div>
-              <input id="logo-input" type="file" accept="image/*" style={{display:"none"}} onChange={handleLogoUpload}/>
-              {ed.logoUrl&&<button className="btn-sm btn-sm-danger" style={{marginBottom:12}} onClick={()=>setEd(s=>({...s,logoUrl:""}))}>Remover logo</button>}
-              <label className="lbl">Nome</label>
-              <div style={{display:"flex",gap:8,marginBottom:12}}>
-                <div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{ed.emoji}</div>
-                <input className="field" style={{marginBottom:0,flex:1}} value={ed.name} onChange={e=>setEd(s=>({...s,name:e.target.value}))}/>
-              </div>
-              <label className="lbl">Emoji</label>
-              <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>
-                {["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","🧇","🍩","🍫","🥐","🍷","🥤","💇","💅","🏋️","🛍️","💊","🏥","🐾","🎮","🏪","🏬","🍽️","🎪"].map(e=>(<button key={e} onClick={()=>setEd(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:ed.emoji===e?"var(--ac)22":"var(--d3)",border:ed.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}
-              </div>
-              <label className="lbl">Cor principal</label>
-              <div className="swatch-row">{COLORS.map(c=><div key={c} className={`swatch ${ed.color===c?"on":""}`} style={{background:c}} onClick={()=>setEd(s=>({...s,color:c}))}/>)}</div>
-              <label className="lbl">🌐 Link Google Reviews</label>
-              <input className="field" placeholder="https://g.page/r/..." value={ed.googleUrl||""} onChange={e=>setEd(s=>({...s,googleUrl:e.target.value}))}/>
-              <label className="lbl">⏱️ Intervalo entre feedbacks</label>
-              <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
-                {[7,15,30,60].map(d=>(<button key={d} className="interval-btn" onClick={()=>setEd(s=>({...s,feedbackInterval:d}))} style={{border:`1.5px solid ${ed.feedbackInterval===d?"var(--ac)":"var(--border)"}`,background:ed.feedbackInterval===d?"var(--ac)22":"var(--d3)",color:ed.feedbackInterval===d?"var(--text)":"var(--muted2)"}}>{d} dias</button>))}
-              </div>
-              <div style={{fontSize:11,color:"var(--muted)",marginBottom:4}}>O cliente só poderá responder novamente após este período.</div>
-            </div>
-            <div className="setup-box">
-              <div className="setup-box-title">❓ Perguntas</div>
-              {ed.questions.map(q=>(<div className="pill-row" key={q.id}><div style={{flex:1}}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={()=>removeQ(q.id)}>✕</button></div>))}
-              <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
-                <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e=>setNewQ(s=>({...s,label:e.target.value}))}/>
-                <select className="type-sel" value={newQ.type} onChange={e=>setNewQ(s=>({...s,type:e.target.value}))}>
-                  <option value="stars">⭐ Estrelas</option><option value="choice">☑️ Múltipla escolha</option><option value="nps">📊 NPS 0-10</option><option value="text">📝 Texto livre</option><option value="staff">👤 Colaborador</option>
-                </select>
-                {(newQ.type==="choice"||newQ.type==="staff")&&<input className="field-inline" placeholder="Opções por vírgula" value={newQ.options} onChange={e=>setNewQ(s=>({...s,options:e.target.value}))}/>}
-                <button className="btn-sm btn-sm-red" onClick={addQ}>+ Adicionar</button>
-              </div>
-            </div>
-            <div className="setup-box">
-              <div className="setup-box-title">🎡 Prêmios da Roleta</div>
-              {ed.prizes.map(p=>(<div className="pill-row" key={p.id}><span style={{fontSize:18}}>{p.emoji}</span><div style={{width:12,height:12,borderRadius:4,background:p.color,flexShrink:0}}/><div className="pill-lbl" style={{flex:1}}>{p.label}</div><button className="btn-sm btn-sm-danger" onClick={()=>removeP(p.id)}>✕</button></div>))}
-              <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
-                <input className="field-inline" placeholder="Nome do brinde" value={newP.label} onChange={e=>setNewP(s=>({...s,label:e.target.value}))}/>
-                <input className="field-inline" placeholder="Emoji" value={newP.emoji} onChange={e=>setNewP(s=>({...s,emoji:e.target.value}))} style={{maxWidth:60}}/>
-                <input type="color" value={newP.color} onChange={e=>setNewP(s=>({...s,color:e.target.value}))} style={{width:40,height:40,border:"none",background:"none",cursor:"pointer",borderRadius:8}}/>
-                <button className="btn-sm btn-sm-red" onClick={addP}>+ Adicionar</button>
-              </div>
-            </div>
-            <button className="btn btn-red" style={{maxWidth:220}} onClick={save} disabled={saving}>{saving?"Salvando...":saved?"✅ Salvo!":"Salvar alterações"}</button>
-          </>
-        )}
-
-        {tab === "senha" && (
-          <>
-            <div className="main-title">🔑 Trocar Senha</div>
-            <div className="setup-box" style={{maxWidth:420}}>
-              <div className="setup-box-title">Alterar senha de acesso</div>
-              {passMsg&&<div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:13,fontWeight:700,background:passMsg.includes("✅")?"#0a2a0a":"#1a0505",color:passMsg.includes("✅")?"var(--green)":"var(--red)",border:`1px solid ${passMsg.includes("✅")?"var(--green)":"var(--red)"}33`}}>{passMsg}</div>}
-              <label className="lbl">Senha atual</label>
-              <input className="field" type="password" placeholder="Digite sua senha atual" value={newPass.atual} onChange={e=>setNewPass(s=>({...s,atual:e.target.value}))}/>
-              <label className="lbl">Nova senha</label>
-              <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e=>setNewPass(s=>({...s,nova:e.target.value}))}/>
-              <label className="lbl">Confirmar nova senha</label>
-              <input className="field" type="password" placeholder="Repita a nova senha" value={newPass.confirma} onChange={e=>setNewPass(s=>({...s,confirma:e.target.value}))}/>
-              <button className="btn btn-red" style={{maxWidth:220}} onClick={trocarSenha}>Alterar senha</button>
-            </div>
-          </>
-        )}
+          </div>
+          <button className="btn btn-red" style={{maxWidth:220}} onClick={save} disabled={saving}>{saving?"Salvando...":saved?"✅ Salvo!":"Salvar alterações"}</button>
+        </>)}
+        {tab==="senha"&&(<>
+          <div className="main-title">🔑 Trocar Senha</div>
+          <div className="setup-box" style={{maxWidth:420}}>
+            <div className="setup-box-title">Alterar senha de acesso</div>
+            {passMsg&&<div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:13,fontWeight:700,background:passMsg.includes("✅")?"#0a2a0a":"#1a0505",color:passMsg.includes("✅")?"var(--green)":"var(--red)",border:`1px solid ${passMsg.includes("✅")?"var(--green)":"var(--red)"}33`}}>{passMsg}</div>}
+            <label className="lbl">Senha atual</label>
+            <input className="field" type="password" value={newPass.atual} onChange={e=>setNewPass(s=>({...s,atual:e.target.value}))}/>
+            <label className="lbl">Nova senha</label>
+            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e=>setNewPass(s=>({...s,nova:e.target.value}))}/>
+            <label className="lbl">Confirmar nova senha</label>
+            <input className="field" type="password" value={newPass.confirma} onChange={e=>setNewPass(s=>({...s,confirma:e.target.value}))}/>
+            <button className="btn btn-red" style={{maxWidth:220}} onClick={trocarSenha}>Alterar senha</button>
+          </div>
+        </>)}
       </div>
     </div>
   );
 }
 
-// ─── MASTER PANEL ─────────────────────────────────────────────────────────────
 function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [tab, setTab] = useState("ests");
   const [viewEst, setViewEst] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [newEst, setNewEst] = useState({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "" });
   const [actionLoading, setActionLoading] = useState(false);
+  const [demoEst, setDemoEst] = useState(null); // para demo sem bloqueio
   const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a"];
   const total = establishments.reduce((a,e)=>a+e.feedbacks.length,0);
   const mrr = establishments.filter(e=>e.ativo).length*99;
@@ -872,42 +777,52 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const deleteEst = async(id)=>{if(!window.confirm("Excluir este estabelecimento?"))return;await deleteEstabelecimentoFromDB(id);setEstablishments(prev=>prev.filter(e=>e.id!==id));};
   const addEst = async()=>{if(!newEst.name||!newEst.owner||!newEst.pass)return;setActionLoading(true);const novo={...newEst,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],plano:"R$ 99/mês",desde:new Date().toLocaleDateString("pt-BR")};await createEstabelecimento(novo);setEstablishments(prev=>[...prev,novo]);setNewEst({name:"",emoji:"🏪",owner:"",pass:"",color:"#e63946",googleUrl:""});setShowAdd(false);setActionLoading(false);};
 
+  // Se estiver em modo demo, mostra o fluxo do cliente com masterMode=true
+  if (demoEst) {
+    return (
+      <>
+        <style>{CSS(demoEst.color)}</style>
+        <div className="top-bar">
+          <button className="top-btn top-btn-ghost" onClick={() => setDemoEst(null)}>← Voltar ao Master</button>
+        </div>
+        <ClientApp est={demoEst} onSubmit={async () => {}} masterMode={true} key={demoEst.id + "_demo"} />
+      </>
+    );
+  }
+
   return (
     <div className="shell">
       <Sidebar tab={tab} setTab={setTab} onLogout={onLogout} isMaster />
       <div className="main">
-        {tab === "ests" && (
-          <>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-              <div className="main-title" style={{marginBottom:0}}>🏢 Estabelecimentos</div>
-              <button className="btn-sm btn-sm-red" onClick={()=>setShowAdd(true)}>+ Novo</button>
+        {tab==="ests"&&(<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+            <div className="main-title" style={{marginBottom:0}}>🏢 Estabelecimentos</div>
+            <button className="btn-sm btn-sm-red" onClick={()=>setShowAdd(true)}>+ Novo</button>
+          </div>
+          <div className="metrics" style={{marginBottom:20}}>
+            <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Cadastrados</div></div>
+            <div className="metric"><div className="metric-val">{ativos}</div><div className="metric-lbl">Ativos</div></div>
+            <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
+            <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
+          </div>
+          <div className="tbl-wrap" style={{overflowX:"auto"}}>
+            <div className="tbl-head" style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 110px",minWidth:500}}>
+              <span>Estabelecimento</span><span>Dono</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
             </div>
-            <div className="metrics" style={{marginBottom:20}}>
-              <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Cadastrados</div></div>
-              <div className="metric"><div className="metric-val">{ativos}</div><div className="metric-lbl">Ativos</div></div>
-              <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
-              <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
-            </div>
-            <div className="tbl-wrap" style={{overflowX:"auto"}}>
-              <div className="tbl-head" style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 90px",minWidth:480}}>
-                <span>Estabelecimento</span><span>Dono</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
-              </div>
-              {establishments.map(e=>{const sqs=e.questions.filter(q=>q.type==="stars");const vals=e.feedbacks.flatMap(f=>sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0));const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";return(<div className="tbl-row" key={e.id} style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 90px",minWidth:480}}><div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700}}><span>{e.emoji}</span>{e.name}</div><div style={{color:"var(--muted)",fontSize:11}}>{e.owner}</div><div style={{fontWeight:700}}>{e.feedbacks.length}</div><div style={{fontWeight:700,color:"var(--ac)"}}>⭐ {avg}</div><div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div><div style={{display:"flex",gap:4}}><button className="btn-sm btn-sm-ghost" onClick={()=>setViewEst(e)}>👁️</button><button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button><button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button></div></div>);})}
-            </div>
-          </>
-        )}
-        {tab === "metricas" && (
-          <>
-            <div className="main-title">📊 Métricas Gerais</div>
-            <div className="metrics">
-              <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Total clientes</div></div>
-              <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
-              <div className="metric"><div className="metric-val">R$ {(mrr*12).toLocaleString("pt-BR")}</div><div className="metric-lbl">ARR projetado</div></div>
-              <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
-              <div className="metric"><div className="metric-val">R$ {(mrr-150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
-            </div>
-          </>
-        )}
+            {establishments.map(e=>{const sqs=e.questions.filter(q=>q.type==="stars");const vals=e.feedbacks.flatMap(f=>sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0));const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";return(<div className="tbl-row" key={e.id} style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 110px",minWidth:500}}><div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700}}><span>{e.emoji}</span>{e.name}</div><div style={{color:"var(--muted)",fontSize:11}}>{e.owner}</div><div style={{fontWeight:700}}>{e.feedbacks.length}</div><div style={{fontWeight:700,color:"var(--ac)"}}>⭐ {avg}</div><div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div><div style={{display:"flex",gap:4}}><button className="btn-sm btn-sm-ghost" title="Ver feedbacks" onClick={()=>setViewEst(e)}>👁️</button><button className="btn-sm btn-sm-ghost" title="Demo sem bloqueio" onClick={()=>setDemoEst(e)}>🎯</button><button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button><button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button></div></div>);})}
+          </div>
+          <div style={{fontSize:12,color:"var(--muted)",marginTop:8}}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
+        </>)}
+        {tab==="metricas"&&(<>
+          <div className="main-title">📊 Métricas Gerais</div>
+          <div className="metrics">
+            <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Total clientes</div></div>
+            <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
+            <div className="metric"><div className="metric-val">R$ {(mrr*12).toLocaleString("pt-BR")}</div><div className="metric-lbl">ARR projetado</div></div>
+            <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
+            <div className="metric"><div className="metric-val">R$ {(mrr-150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
+          </div>
+        </>)}
       </div>
       {viewEst&&(<div className="modal-bg" onClick={()=>setViewEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length===0&&<div style={{color:"var(--muted)"}}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f,i)=>(<div className="fb" key={i} style={{marginBottom:8}}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div><div style={{fontSize:12,color:"var(--muted2)"}}>NPS: {f.answers?.q_nps??"-"} · Atendente: {f.answers?.q_atend??"-"}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{marginTop:14}} onClick={()=>setViewEst(null)}>Fechar</button></div></div>)}
       {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">➕ Novo Estabelecimento</div><label className="lbl">Nome</label><div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value}))}/></div><div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div><label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div><label className="lbl">E-mail do dono</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/><label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/><label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/><div style={{display:"flex",gap:10}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div></div></div>)}
@@ -915,7 +830,6 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   );
 }
 
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
 function LoginScreen({ title, hint, onLogin }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
@@ -943,7 +857,6 @@ function LoginScreen({ title, hint, onLogin }) {
   );
 }
 
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState("client");
@@ -975,16 +888,14 @@ export default function App() {
       <div>
         <div className="top-bar">
           {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={()=>setMode("client")}>📱 Cliente</button>}
-          {mode === "client" && (
-            <>
-              <select style={{background:"var(--d2)",color:"var(--text)",border:"1px solid var(--border)",borderRadius:8,padding:"6px 10px",fontFamily:"var(--ff-body)",fontSize:12,cursor:"pointer"}}
-                value={activeEst?.id} onChange={e=>setActiveEst(ests.find(x=>x.id===e.target.value))}>
-                {ests.map(e=><option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
-              </select>
-              <button className="top-btn top-btn-ghost" onClick={()=>setMode("ownerLogin")}>🏪 Dono</button>
-              <button className="top-btn top-btn-red" onClick={()=>setMode("masterLogin")}>👑 Master</button>
-            </>
-          )}
+          {mode === "client" && (<>
+            <select style={{background:"var(--d2)",color:"var(--text)",border:"1px solid var(--border)",borderRadius:8,padding:"6px 10px",fontFamily:"var(--ff-body)",fontSize:12,cursor:"pointer"}}
+              value={activeEst?.id} onChange={e=>setActiveEst(ests.find(x=>x.id===e.target.value))}>
+              {ests.map(e=><option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
+            </select>
+            <button className="top-btn top-btn-ghost" onClick={()=>setMode("ownerLogin")}>🏪 Dono</button>
+            <button className="top-btn top-btn-red" onClick={()=>setMode("masterLogin")}>👑 Master</button>
+          </>)}
         </div>
         {mode==="client"&&activeEst&&<ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id}/>}
         {mode==="ownerLogin"&&<LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="Demo: joao@burguer.com / 123456" onLogin={(email,pass)=>{const found=ests.find(e=>e.owner===email&&e.pass===pass);if(found){setLoggedEst(found);setMode("ownerDash");return true;}return false;}}/>}
