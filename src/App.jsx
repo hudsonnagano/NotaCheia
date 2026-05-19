@@ -898,9 +898,9 @@ export default function App() {
           </>)}
         </div>
         {mode==="client"&&activeEst&&<ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id}/>}
-        {mode==="ownerLogin"&&<LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="Demo: joao@burguer.com / 123456" onLogin={(email,pass)=>{const found=ests.find(e=>e.owner===email&&e.pass===pass);if(found){setLoggedEst(found);setMode("ownerDash");return true;}return false;}}/>}
+        {mode==="ownerLogin"&&<LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email,pass)=>{const found=ests.find(e=>e.owner===email&&e.pass===pass);if(found){setLoggedEst(found);setMode("ownerDash");return true;}return false;}}/>}
         {mode==="ownerDash"&&loggedEst&&<OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={()=>{setLoggedEst(null);setMode("client");}}/>}
-        {mode==="masterLogin"&&<LoginScreen title="PAINEL MASTER" hint="master@notacheia.com.br / master2026" onLogin={(email,pass)=>{if(email===MASTER.user&&pass===MASTER.pass){setMode("masterDash");return true;}return false;}}/>}
+        {mode==="masterLogin"&&<LoginScreen title="PAINEL MASTER" hint="" onLogin={(email,pass)=>{if(email===MASTER.user&&pass===MASTER.pass){setMode("masterDash");return true;}return false;}}/>}
         {mode==="masterDash"&&<MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={()=>setMode("client")}/>}
       </div>
     </>
