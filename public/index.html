@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NotaCheia — Feedback + Roleta de Brindes para seu negócio</title>
+<meta name="description" content="Colete feedback real dos seus clientes, entregue brindes na hora e aumente sua visibilidade no Google de forma orgânica. R$99/mês."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#060606;--bg2:#0e0e0e;--bg3:#161616;
+  --border:rgba(255,255,255,0.06);--text:#f0ede8;--muted:#666;--muted2:#999;
+  --ac:#e63946;--green:#4ade80;--yellow:#f0c96e;
+  --ff-head:'Syne',sans-serif;--ff-body:'Plus Jakarta Sans',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--ff-body);overflow-x:hidden;line-height:1.6;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,6,6,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--ff-head);font-size:20px;letter-spacing:1px;}
+.nav-logo span{color:var(--ac);}
+.nav-cta{background:var(--ac);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-family:var(--ff-body);font-size:13px;font-weight:800;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.nav-cta:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(230,57,70,0.15) 0%,transparent 70%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.3);border-radius:30px;padding:8px 18px;font-size:12px;font-weight:700;color:var(--ac);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp 0.6s ease forwards;}
+.hero h1{font-family:var(--ff-head);font-size:clamp(36px,7vw,78px);line-height:1.05;letter-spacing:-1px;margin-bottom:24px;animation:fadeUp 0.6s 0.1s ease both;}
+.hero h1 em{font-style:normal;color:var(--ac);}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:var(--muted2);max-width:600px;margin:0 auto 40px;line-height:1.7;animation:fadeUp 0.6s 0.2s ease both;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.6s 0.3s ease both;}
+.btn-primary{background:var(--ac);color:#fff;border:none;padding:16px 32px;border-radius:12px;font-family:var(--ff-body);font-size:16px;font-weight:800;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 40px rgba(230,57,70,0.35);}
+.btn-secondary{background:transparent;color:var(--text);border:1.5px solid var(--border);padding:16px 32px;border-radius:12px;font-family:var(--ff-body);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-secondary:hover{border-color:var(--ac);color:var(--ac);}
+.hero-social{margin-top:48px;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--muted);animation:fadeUp 0.6s 0.4s ease both;}
+.avatar-stack{display:flex;}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;margin-left:-8px;}
+.avatar:first-child{margin-left:0;}
+
+.demo-section{padding:60px 24px;display:flex;flex-direction:column;align-items:center;}
+.demo-label{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:20px;}
+.demo-container{max-width:360px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:28px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);}
+.demo-header{background:var(--bg3);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;}
+.demo-dots{display:flex;gap:6px;}
+.demo-dot{width:10px;height:10px;border-radius:50%;}
+.demo-body{padding:24px;}
+.demo-est{text-align:center;margin-bottom:18px;}
+.demo-emoji{font-size:42px;}
+.demo-name{font-family:var(--ff-head);font-size:20px;color:var(--ac);margin-top:4px;}
+.demo-tag{font-size:12px;color:var(--muted2);margin-top:4px;}
+.demo-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.3);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--ac);margin-top:10px;}
+.demo-prizes{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+.demo-prize{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--muted2);}
+.demo-btn{width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-family:var(--ff-body);font-size:14px;font-weight:800;cursor:default;}
+
+.section{padding:80px 24px;max-width:1100px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:16px;display:block;}
+.section-title{font-family:var(--ff-head);font-size:clamp(26px,4vw,46px);line-height:1.15;margin-bottom:16px;}
+.section-sub{font-size:16px;color:var(--muted2);max-width:560px;line-height:1.7;}
+
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:40px;}
+.pain-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:26px;}
+.pain-icon{font-size:30px;margin-bottom:14px;}
+.pain-title{font-family:var(--ff-head);font-size:17px;margin-bottom:8px;}
+.pain-text{font-size:13px;color:var(--muted2);line-height:1.6;}
+
+.how-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;}
+.how-inner{max-width:1100px;margin:0 auto;}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin-top:48px;position:relative;}
+.steps::before{content:'';position:absolute;top:28px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac)44,transparent);}
+.step{padding:22px;text-align:center;position:relative;}
+.step-num{width:56px;height:56px;border-radius:50%;background:var(--ac);color:#fff;font-family:var(--ff-head);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;z-index:1;box-shadow:0 0 0 8px var(--bg2);}
+.step-title{font-family:var(--ff-head);font-size:15px;margin-bottom:8px;}
+.step-text{font-size:13px;color:var(--muted2);line-height:1.6;}
+
+/* GOOGLE SECTION */
+.google-section{padding:80px 24px;max-width:1100px;margin:0 auto;}
+.google-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+.google-stars{display:flex;gap:6px;margin-bottom:12px;}
+.google-star{font-size:28px;}
+.google-star.on{filter:none;}
+.google-star.off{filter:grayscale(1) opacity(0.3);}
+.google-rating{font-family:var(--ff-head);font-size:56px;color:var(--green);line-height:1;}
+.google-label{font-size:13px;color:var(--muted2);margin-top:4px;}
+.google-arrow{font-size:24px;color:var(--green);margin:8px 0;}
+.google-steps{display:flex;flex-direction:column;gap:14px;}
+.google-step{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--bg3);border-radius:14px;border:1px solid var(--border);}
+.google-step-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.google-step-text{font-size:13px;color:var(--muted2);line-height:1.5;}
+.google-step-text strong{color:var(--text);display:block;margin-bottom:2px;}
+.google-note{margin-top:16px;padding:12px 16px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:10px;font-size:12px;color:var(--green);line-height:1.5;}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:40px;}
+.feature{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:26px;transition:border-color 0.2s;}
+.feature:hover{border-color:rgba(230,57,70,0.3);}
+.feature-icon{font-size:26px;margin-bottom:12px;}
+.feature-title{font-family:var(--ff-head);font-size:16px;margin-bottom:8px;}
+.feature-text{font-size:13px;color:var(--muted2);line-height:1.6;}
+
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-top:40px;}
+.proof-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:22px;}
+.proof-stars{color:#f0c96e;font-size:14px;margin-bottom:10px;}
+.proof-text{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:14px;font-style:italic;}
+.proof-author{display:flex;align-items:center;gap:10px;}
+.proof-avatar{width:36px;height:36px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.proof-name{font-size:13px;font-weight:700;}
+.proof-role{font-size:11px;color:var(--muted);}
+
+.pricing-section{padding:80px 24px;background:var(--bg2);border-top:1px solid var(--border);}
+.pricing-inner{max-width:720px;margin:0 auto;text-align:center;}
+.pricing-card{background:var(--bg);border:2px solid var(--ac);border-radius:28px;padding:44px;margin-top:40px;position:relative;overflow:hidden;}
+.pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--ac),#ff8c69);}
+.pricing-badge{position:absolute;top:20px;right:20px;background:var(--ac);color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+.pricing-price{font-family:var(--ff-head);font-size:68px;line-height:1;color:var(--ac);margin:16px 0 4px;}
+.pricing-period{font-size:14px;color:var(--muted);margin-bottom:28px;}
+.pricing-features{list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:10px;}
+.pricing-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted2);}
+.pricing-features li::before{content:'✓';color:var(--green);font-weight:800;font-size:14px;flex-shrink:0;}
+.pricing-note{font-size:12px;color:var(--muted);margin-top:14px;}
+
+.faq-section{padding:80px 24px;max-width:680px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--border);padding:18px 0;cursor:pointer;}
+.faq-q{font-family:var(--ff-head);font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.faq-icon{color:var(--ac);font-size:20px;flex-shrink:0;transition:transform 0.2s;}
+.faq-a{font-size:13px;color:var(--muted2);line-height:1.7;margin-top:10px;display:none;}
+.faq-item.open .faq-a{display:block;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+
+.cta-section{padding:100px 24px;text-align:center;position:relative;overflow:hidden;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(230,57,70,0.12) 0%,transparent 70%);pointer-events:none;}
+.cta-section h2{font-family:var(--ff-head);font-size:clamp(30px,5vw,56px);line-height:1.1;margin-bottom:16px;}
+.cta-section p{font-size:16px;color:var(--muted2);margin-bottom:36px;}
+
+footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;}
+.footer-logo{font-family:var(--ff-head);font-size:18px;margin-bottom:6px;}
+.footer-logo span{color:var(--ac);}
+.footer-text{font-size:12px;color:var(--muted);}
+
+.whats-float{position:fixed;bottom:24px;right:24px;z-index:200;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:all 0.2s;text-decoration:none;}
+.whats-float:hover{transform:scale(1.1);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:768px){
+  nav{padding:12px 16px;}
+  .hero{padding:80px 16px 40px;}
+  .steps::before{display:none;}
+  .google-card{grid-template-columns:1fr;gap:28px;padding:28px 20px;}
+  .pricing-card{padding:28px 20px;}
+  .pricing-price{font-size:52px;}
+  .section{padding:56px 16px;}
+  .how-section{padding:56px 16px;}
+  .cta-section{padding:60px 16px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Nota<span>Cheia</span> ⭐</div>
+  <a href="https://wa.me/5541999999999" class="nav-cta" target="_blank">Falar no WhatsApp</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">🎰 Feedback + Roleta de Brindes</div>
+  <h1>Seu cliente avalia,<br/><em>ganha brinde</em><br/>e volta mais!</h1>
+  <p class="hero-sub">Colete feedback real dos seus clientes, entregue brindes na hora pela roleta e aumente sua visibilidade no Google — tudo pelo celular, sem app.</p>
+  <div class="hero-btns">
+    <a href="https://wa.me/5541999999999" class="btn-primary" target="_blank">Quero saber mais →</a>
+    <a href="https://nota-cheia.vercel.app" class="btn-secondary" target="_blank">Ver demonstração</a>
+  </div>
+  <div class="hero-social">
+    <div class="avatar-stack">
+      <div class="avatar">🍔</div>
+      <div class="avatar">☕</div>
+      <div class="avatar">🍕</div>
+      <div class="avatar">💇</div>
+    </div>
+    <span>Restaurantes, cafés, salões e muito mais</span>
+  </div>
+</section>
+
+<!-- DEMO VISUAL -->
+<div class="demo-section">
+  <div class="demo-label">Como o cliente vê</div>
+  <div class="demo-container">
+    <div class="demo-header">
+      <div class="demo-dots">
+        <div class="demo-dot" style="background:#ff5f57;"></div>
+        <div class="demo-dot" style="background:#febc2e;"></div>
+        <div class="demo-dot" style="background:#28c840;"></div>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-est">
+        <div class="demo-emoji">🍔</div>
+        <div class="demo-name">Seu Estabelecimento</div>
+        <div class="demo-tag">Sua opinião vale um brinde!</div>
+        <div class="demo-badge">🎰 Gire a roleta e ganhe na hora!</div>
+      </div>
+      <div class="demo-prizes">
+        <div class="demo-prize">🍟 Fritas Grátis</div>
+        <div class="demo-prize">🏷️ 10% Desconto</div>
+        <div class="demo-prize">🥤 Refri Grátis</div>
+        <div class="demo-prize">🎁 Surpresa</div>
+      </div>
+      <button class="demo-btn">Começar pesquisa →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOR -->
+<div style="max-width:1100px;margin:0 auto;">
+  <section class="section" style="padding-top:0;">
+    <span class="section-label">O problema</span>
+    <h2 class="section-title">Você sabe por que<br/>um cliente não voltou?</h2>
+    <p class="section-sub">A maioria dos donos não sabe. E sem esse feedback, fica impossível melhorar o que está afastando clientes.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">😶</div>
+        <div class="pain-title">Cliente insatisfeito não fala</div>
+        <div class="pain-text">Ele simplesmente não volta. Você perde o cliente sem nem saber o motivo.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">⭐</div>
+        <div class="pain-title">Poucos avaliam no Google</div>
+        <div class="pain-text">Clientes satisfeitos raramente lembram de avaliar. Os insatisfeitos sim — e isso prejudica sua nota.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🔁</div>
+        <div class="pain-title">Sem motivo para voltar</div>
+        <div class="pain-text">Depois de consumir e pagar, o cliente vai embora. Não há nada que o faça pensar em voltar.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- COMO FUNCIONA -->
+<div class="how-section">
+  <div class="how-inner">
+    <div style="text-align:center;">
+      <span class="section-label">Como funciona</span>
+      <h2 class="section-title">Simples para você.<br/>Irresistível para o cliente.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Cliente escaneia o QR</div>
+        <div class="step-text">Uma plaquinha no balcão ou mesa. O cliente aponta a câmera e cai direto na pesquisa.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Responde a pesquisa</div>
+        <div class="step-text">Perguntas rápidas e visuais. Avalia atendimento, ambiente, preço e deixa um elogio.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Gira a roleta</div>
+        <div class="step-text">A parte mais divertida! A roleta sorteia um brinde que você mesmo configurou.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Você recebe o feedback</div>
+        <div class="step-text">Tudo aparece no seu painel em tempo real. Notas, comentários, ranking de colaboradores.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOOGLE REVIEWS (LINGUAGEM CORRETA) -->
+<div style="max-width:1100px;margin:0 auto;">
+  <section class="google-section">
+    <span class="section-label">Visibilidade no Google</span>
+    <h2 class="section-title">Mais avaliações reais,<br/>de forma orgânica.</h2>
+    <div class="google-card">
+      <div>
+        <div class="google-stars">
+          <span class="google-star on">⭐</span>
+          <span class="google-star on">⭐</span>
+          <span class="google-star on">⭐</span>
+          <span class="google-star on">⭐</span>
+          <span class="google-star on">⭐</span>
+        </div>
+        <div class="google-rating">4.8</div>
+        <div class="google-label">Nota no Google Meu Negócio</div>
+        <div class="google-arrow">↑ Crescendo organicamente</div>
+        <p style="font-size:13px;color:var(--muted2);line-height:1.6;margin-top:12px;">Clientes que ficaram satisfeitos recebem um lembrete gentil para compartilhar a experiência no Google — de forma espontânea e voluntária.</p>
+        <div class="google-note">✅ Em conformidade com as diretrizes do Google. Avaliações nunca são condicionadas ou recompensadas — apenas facilitamos que clientes satisfeitos compartilhem a experiência deles.</div>
+      </div>
+      <div class="google-steps">
+        <div class="google-step">
+          <div class="google-step-icon">📝</div>
+          <div class="google-step-text">
+            <strong>Cliente responde a pesquisa interna</strong>
+            Avalia sua experiência de forma honesta e recebe o brinde pela participação.
+          </div>
+        </div>
+        <div class="google-step">
+          <div class="google-step-icon">😊</div>
+          <div class="google-step-text">
+            <strong>Clientes satisfeitos recebem um convite</strong>
+            Após a pesquisa, clientes com experiência positiva são convidados a compartilhar no Google — sem obrigação.
+          </div>
+        </div>
+        <div class="google-step">
+          <div class="google-step-icon">🔒</div>
+          <div class="google-step-text">
+            <strong>Feedback negativo fica com você</strong>
+            Críticas e sugestões ficam apenas no seu painel privado. Você melhora sem expor problemas publicamente.
+          </div>
+        </div>
+        <div class="google-step">
+          <div class="google-step-icon">📈</div>
+          <div class="google-step-text">
+            <strong>Sua nota cresce naturalmente</strong>
+            Mais avaliações reais de clientes reais. Sua relevância no Google Meu Negócio aumenta organicamente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FEATURES -->
+<div style="max-width:1100px;margin:0 auto;">
+  <section class="section" style="padding-top:0;">
+    <span class="section-label">O que você tem</span>
+    <h2 class="section-title">Tudo que você precisa<br/>em um só lugar.</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Painel completo</div>
+        <div class="feature-text">Notas, NPS, ranking de colaboradores, como os clientes chegaram — tudo em tempo real no seu celular.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎡</div>
+        <div class="feature-title">Roleta de brindes</div>
+        <div class="feature-text">Configure os prêmios que quiser — desconto, item grátis, brinde surpresa. Você controla tudo.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💡</div>
+        <div class="feature-title">Insights automáticos</div>
+        <div class="feature-text">O sistema analisa os feedbacks e aponta onde melhorar — tempo de espera, preço, atendimento.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">QR code personalizado</div>
+        <div class="feature-text">QR code com a identidade do seu estabelecimento para imprimir em plaquinhas, cardápios e mesas.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">❓</div>
+        <div class="feature-title">Perguntas personalizáveis</div>
+        <div class="feature-text">Adicione ou remova perguntas conforme seu negócio. Estrelas, múltipla escolha, NPS e texto livre.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Ranking de colaboradores</div>
+        <div class="feature-text">Saiba qual funcionário está sendo mais bem avaliado pelos clientes e reconheça quem merece.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- DEPOIMENTOS -->
+<div style="max-width:1100px;margin:0 auto;">
+  <section class="section" style="padding-top:0;">
+    <span class="section-label">Resultados</span>
+    <h2 class="section-title">Quem usa,<br/>não para.</h2>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-stars">⭐⭐⭐⭐⭐</div>
+        <div class="proof-text">"Em 2 semanas identifiquei que o problema era o tempo de espera no caixa. Resolvi e as notas melhoraram na semana seguinte."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">🍔</div>
+          <div><div class="proof-name">João Carlos</div><div class="proof-role">Hamburguer do João, Matinhos</div></div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-stars">⭐⭐⭐⭐⭐</div>
+        <div class="proof-text">"Minha nota no Google subiu de 4.1 para 4.7 em um mês. Os clientes adoram a roleta e ficam com vontade de voltar."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">☕</div>
+          <div><div class="proof-name">Ana Beatriz</div><div class="proof-role">Café Veloz, Guaratuba</div></div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-stars">⭐⭐⭐⭐⭐</div>
+        <div class="proof-text">"Nunca imaginei ter um painel tão completo por R$99. Consigo ver tudo que acontece no meu salão mesmo quando não estou lá."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">💇</div>
+          <div><div class="proof-name">Patricia Souza</div><div class="proof-role">Studio Patricia, Pontal do PR</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PREÇO -->
+<div class="pricing-section">
+  <div class="pricing-inner">
+    <span class="section-label" style="display:block;text-align:center;">Investimento</span>
+    <h2 class="section-title" style="text-align:center;">Um café por dia.<br/>Resultados reais.</h2>
+    <div class="pricing-card">
+      <div class="pricing-badge">Plano completo</div>
+      <div style="color:var(--muted2);font-size:14px;margin-bottom:4px;">Tudo incluso</div>
+      <div class="pricing-price">R$99</div>
+      <div class="pricing-period">por mês · cancele quando quiser</div>
+      <ul class="pricing-features">
+        <li>Pesquisa de satisfação ilimitada</li>
+        <li>Roleta de brindes personalizada</li>
+        <li>Painel completo com métricas e NPS</li>
+        <li>Convite orgânico para Google Reviews</li>
+        <li>QR code personalizado para imprimir</li>
+        <li>Ranking de colaboradores</li>
+        <li>Insights automáticos</li>
+        <li>Perguntas 100% personalizáveis</li>
+        <li>Suporte via WhatsApp</li>
+      </ul>
+      <a href="https://wa.me/5541999999999" class="btn-primary" style="display:block;text-align:center;font-size:16px;" target="_blank">Quero começar →</a>
+      <div class="pricing-note">+ R$200 de setup único (inclui plaquinha acrílica personalizada)</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div style="text-align:center;margin-bottom:40px;">
+    <span class="section-label">Dúvidas</span>
+    <h2 class="section-title">Perguntas frequentes</h2>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Precisa de aplicativo para o cliente baixar? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Não! O cliente aponta a câmera do celular para o QR code e já abre no navegador. Sem download, sem cadastro.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Quanto tempo leva para configurar? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Em até 24 horas seu estabelecimento já está ativo. A gente faz tudo junto com você via WhatsApp.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Posso personalizar os brindes da roleta? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim! Você coloca os brindes que quiser — desconto, item grátis, brinde surpresa. Você tem controle total e pode mudar quando quiser.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Como funciona o Google Reviews? Está dentro das regras? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim, totalmente. O brinde é dado pela participação na pesquisa interna, não pela avaliação no Google. Após receber o brinde, clientes com experiência positiva recebem um convite voluntário para compartilhar no Google — sem obrigação nem recompensa vinculada. Isso está em conformidade com as diretrizes do Google.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Posso cancelar quando quiser? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim, sem multa e sem burocracia. Basta avisar via WhatsApp.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Funciona para qualquer tipo de negócio? <span class="faq-icon">+</span></div>
+    <div class="faq-a">Sim! Restaurantes, cafés, salões de beleza, barbearias, pousadas, clínicas, pet shops e muito mais. Se atende clientes presencialmente, funciona.</div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <h2>Pronto para ouvir<br/>seus clientes de verdade?</h2>
+  <p>Fale com a gente agora e comece ainda essa semana.</p>
+  <a href="https://wa.me/5541999999999" class="btn-primary" style="font-size:18px;padding:18px 40px;" target="_blank">Falar no WhatsApp →</a>
+</section>
+
+<footer>
+  <div class="footer-logo">Nota<span>Cheia</span> ⭐</div>
+  <div class="footer-text">© 2026 NotaCheia · Matinhos, Paraná · contato@notacheia.com.br</div>
+</footer>
+
+<a href="https://wa.me/5541999999999" class="whats-float" target="_blank">💬</a>
+
+<script>
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('open'));
+});
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.pain-card,.feature,.proof-card,.step,.google-step').forEach(el => {
+  el.style.opacity='0'; el.style.transform='translateY(20px)';
+  el.style.transition='opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
