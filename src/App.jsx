@@ -190,7 +190,7 @@ const CSS = (ac = "#e63946") => `
     .mobile-header { display: flex; }
     .main { padding: 14px; }
     .main-title { font-size: 20px; margin-bottom: 14px; }
-    .metrics { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .metrics { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
     .metric { padding: 14px; }
     .metric-val { font-size: 22px; }
     .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -222,7 +222,7 @@ const CSS = (ac = "#e63946") => `
   .tbl-row { padding: 12px 16px; border-bottom: 1px solid var(--border); display: grid; align-items: center; font-size: 13px; transition: background 0.1s; }
   .tbl-row:last-child { border-bottom: none; }
   .tbl-row:hover { background: var(--d2); }
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
   .badge-green { background: #0a1f0a; color: var(--green); border: 1px solid var(--green)33; }
   .badge-red { background: #1f0a0a; color: var(--red); border: 1px solid var(--red)33; }
   .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
@@ -799,14 +799,17 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     return (
       <div className="est-card">
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>{e.emoji}</span>
-            <div>
-              <div style={{fontWeight:800,fontSize:14}}>{e.name}</div>
-              <div style={{fontSize:11,color:"var(--muted)"}}>{e.owner}</div>
+          <div style={{display:"flex",alignItems:"center",gap:8,minWidth:0}}>
+            <span style={{fontSize:22,flexShrink:0}}>{e.emoji}</span>
+            <div style={{minWidth:0}}>
+              <div style={{fontWeight:800,fontSize:14,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.name}</div>
+              <div style={{fontSize:11,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.owner}</div>
             </div>
           </div>
-          {e.ativo ? <span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span> : <span className="badge badge-red">Bloqueado</span>}
+          {e.ativo
+            ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span>
+            : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>
+          }
         </div>
         <div style={{display:"flex",gap:8,marginBottom:12}}>
           <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
@@ -843,8 +846,6 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
-
-          {/* Tabela desktop */}
           <div className="tbl-wrap" id="master-table">
             <div className="tbl-head" style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 110px",minWidth:500}}>
               <span>Estabelecimento</span><span>Dono</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
@@ -870,15 +871,11 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               );
             })}
           </div>
-
-          {/* Cards mobile */}
           <div id="master-cards">
             {establishments.map(e => <EstCard key={e.id} e={e} />)}
           </div>
-
           <div style={{fontSize:12,color:"var(--muted)",marginTop:8}}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
         </>)}
-
         {tab==="metricas"&&(<>
           <div className="main-title">📊 Métricas Gerais</div>
           <div className="metrics">
@@ -890,9 +887,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           </div>
         </>)}
       </div>
-
       {viewEst&&(<div className="modal-bg" onClick={()=>setViewEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length===0&&<div style={{color:"var(--muted)"}}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f,i)=>(<div className="fb" key={i} style={{marginBottom:8}}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div><div style={{fontSize:12,color:"var(--muted2)"}}>NPS: {f.answers?.q_nps??"-"} · Atendente: {f.answers?.q_atend??"-"}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{marginTop:14}} onClick={()=>setViewEst(null)}>Fechar</button></div></div>)}
-
       {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">➕ Novo Estabelecimento</div><label className="lbl">Nome</label><div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value}))}/></div><div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div><label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div><label className="lbl">E-mail do dono</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/><label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/><label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/><div style={{display:"flex",gap:10}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div></div></div>)}
     </div>
   );
