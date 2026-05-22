@@ -184,11 +184,12 @@ const CSS = (ac = "#e63946") => `
   .hamburger { background: none; border: none; cursor: pointer; color: var(--text); font-size: 22px; padding: 4px; }
   .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
   @media (max-width: 768px) {
+    .shell { display: block; }
     .sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 300; transform: translateX(-100%); width: 260px; padding-top: 56px; transition: transform 0.3s ease; }
     .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
     .sidebar-overlay.open { display: block; }
     .mobile-header { display: flex; }
-    .main { padding: 14px; }
+    .main { padding: 14px; width: 100%; }
     .main-title { font-size: 20px; margin-bottom: 14px; }
     .metrics { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
     .metric { padding: 14px; }
@@ -806,10 +807,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               <div style={{fontSize:11,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.owner}</div>
             </div>
           </div>
-          {e.ativo
-            ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span>
-            : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>
-          }
+          {e.ativo ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span> : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>}
         </div>
         <div style={{display:"flex",gap:8,marginBottom:12}}>
           <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
