@@ -7,6 +7,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`;
 
+const makeSlug = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 const makeDefaultQuestions = () => [
   { id: "q_atend", type: "staff",  label: "Quem realizou seu atendimento?",  options: ["Ana", "Carlos", "João", "Maria"], required: true },
   { id: "q_first", type: "choice", label: "É a sua primeira vez aqui?",      options: ["Sim", "Não"], required: true },
@@ -26,7 +28,7 @@ const makeDefaultQuestions = () => [
 const SEED = [
   {
     id: "est_1", owner: "joao@burguer.com", pass: "123456", ativo: true,
-    name: "Black Burguer", emoji: "🍔", color: "#e63946",
+    name: "Black Burguer", emoji: "🍔", color: "#e63946", slug: "black-burguer",
     googleUrl: "https://g.page/r/exemplo/review", logoUrl: "", feedbackInterval: 30,
     questions: makeDefaultQuestions(),
     prizes: [
@@ -41,7 +43,7 @@ const SEED = [
   },
   {
     id: "est_2", owner: "ana@cafezinho.com", pass: "123456", ativo: true,
-    name: "Café Veloz", emoji: "☕", color: "#6f4e37",
+    name: "Café Veloz", emoji: "☕", color: "#6f4e37", slug: "cafe-veloz",
     googleUrl: "", logoUrl: "", feedbackInterval: 30,
     questions: makeDefaultQuestions(),
     prizes: [
@@ -292,6 +294,8 @@ const CSS = (ac = "#e63946") => `
   .logo-upload-area:hover { border-color: var(--ac); }
   .interval-btn { padding: 8px 14px; border-radius: 10px; font-family: var(--ff-body); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
   .est-card { background: var(--d1); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 10px; }
+  .slug-box { display: flex; align-items: center; gap: 8px; background: var(--d2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
+  .slug-text { font-size: 12px; color: var(--ac); font-weight: 700; flex: 1; word-break: break-all; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn { from { transform:scale(0.4); opacity:0; } to { transform:scale(1); opacity:1; } }
@@ -330,7 +334,7 @@ function LoadingScreen() {
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
-  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [] }));
+  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [], slug: e.slug || makeSlug(e.name) }));
 }
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
@@ -459,17 +463,23 @@ function QuestionItem({ q, idx, answer, onChange }) {
 }
 
 function QRCodeView({ est }) {
-  const url = `https://notacheia.com.br`;
+  const slug = est.slug || makeSlug(est.name);
+  const url = `https://notacheia.com.br/r/${slug}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=111111&margin=10`;
   return (
     <div>
       <div style={{ marginBottom: 16, color: "var(--muted2)", fontSize: 13, lineHeight: 1.6 }}>Cole este QR code nas mesas ou balcão do seu estabelecimento.</div>
+      <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 12, color: "var(--muted)" }}>🔗 Link exclusivo:</span>
+        <span style={{ fontSize: 12, color: "var(--ac)", fontWeight: 700, flex: 1, wordBreak: "break-all" }}>{url}</span>
+        <button className="btn-sm btn-sm-ghost" onClick={() => { navigator.clipboard.writeText(url); }}>📋 Copiar</button>
+      </div>
       <div className="qr-wrap">
         <div className="qr-logo">Nota<span>Cheia</span> ⭐</div>
         <div className="qr-est">{est.emoji} {est.name}</div>
         <img src={qrUrl} alt="QR Code" className="qr-img" />
         <div style={{ fontSize: 11, color: "#333", fontWeight: 700, marginBottom: 4 }}>Aponte a câmera e ganhe um brinde!</div>
-        <div className="qr-inst">notacheia.com.br</div>
+        <div className="qr-inst">{url}</div>
       </div>
       <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
         <button className="btn btn-red" onClick={() => {
@@ -715,6 +725,12 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             {ed.logoUrl&&<button className="btn-sm btn-sm-danger" style={{marginBottom:12}} onClick={()=>setEd(s=>({...s,logoUrl:""}))}>Remover logo</button>}
             <label className="lbl">Nome</label>
             <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{ed.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} value={ed.name} onChange={e=>setEd(s=>({...s,name:e.target.value}))}/></div>
+            <label className="lbl">🔗 Link exclusivo (slug)</label>
+            <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
+              <span style={{fontSize:12,color:"var(--muted)",whiteSpace:"nowrap"}}>notacheia.com.br/r/</span>
+              <input className="field" style={{marginBottom:0,flex:1}} placeholder="meu-estabelecimento" value={ed.slug||makeSlug(ed.name)} onChange={e=>setEd(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+            </div>
+            <div style={{fontSize:11,color:"var(--muted)",marginBottom:12}}>Apenas letras minúsculas, números e hífen.</div>
             <label className="lbl">Emoji</label>
             <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","🧇","🍩","🍫","🥐","🍷","🥤","💇","💅","🏋️","🛍️","💊","🏥","🐾","🎮","🏪","🏬","🍽️","🎪"].map(e=>(<button key={e} onClick={()=>setEd(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:ed.emoji===e?"var(--ac)22":"var(--d3)",border:ed.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
             <label className="lbl">Cor principal</label>
@@ -770,16 +786,33 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [tab, setTab] = useState("ests");
   const [viewEst, setViewEst] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [newEst, setNewEst] = useState({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "" });
+  const [newEst, setNewEst] = useState({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "", slug: "" });
   const [actionLoading, setActionLoading] = useState(false);
   const [demoEst, setDemoEst] = useState(null);
+  const [copied, setCopied] = useState(null);
   const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a"];
   const total = establishments.reduce((a,e)=>a+e.feedbacks.length,0);
   const mrr = establishments.filter(e=>e.ativo).length*99;
   const ativos = establishments.filter(e=>e.ativo).length;
   const toggleAtivo = async(id)=>{const est=establishments.find(e=>e.id===id);const u={...est,ativo:!est.ativo};await saveEstabelecimento(u);setEstablishments(prev=>prev.map(e=>e.id===id?{...e,ativo:!e.ativo}:e));};
   const deleteEst = async(id)=>{if(!window.confirm("Excluir este estabelecimento?"))return;await deleteEstabelecimentoFromDB(id);setEstablishments(prev=>prev.filter(e=>e.id!==id));};
-  const addEst = async()=>{if(!newEst.name||!newEst.owner||!newEst.pass)return;setActionLoading(true);const novo={...newEst,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],plano:"R$ 99/mês",desde:new Date().toLocaleDateString("pt-BR")};await createEstabelecimento(novo);setEstablishments(prev=>[...prev,novo]);setNewEst({name:"",emoji:"🏪",owner:"",pass:"",color:"#e63946",googleUrl:""});setShowAdd(false);setActionLoading(false);};
+  const addEst = async()=>{
+    if(!newEst.name||!newEst.owner||!newEst.pass)return;
+    setActionLoading(true);
+    const slug = newEst.slug || makeSlug(newEst.name);
+    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],plano:"R$ 99/mês",desde:new Date().toLocaleDateString("pt-BR")};
+    await createEstabelecimento(novo);
+    setEstablishments(prev=>[...prev,novo]);
+    setNewEst({name:"",emoji:"🏪",owner:"",pass:"",color:"#e63946",googleUrl:"",slug:""});
+    setShowAdd(false);setActionLoading(false);
+  };
+
+  const copyLink = (e) => {
+    const slug = e.slug || makeSlug(e.name);
+    navigator.clipboard.writeText(`https://notacheia.com.br/r/${slug}`);
+    setCopied(e.id);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   if (demoEst) {
     return (
@@ -797,6 +830,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     const sqs = e.questions.filter(q => q.type === "stars");
     const vals = e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v => v > 0));
     const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : "-";
+    const slug = e.slug || makeSlug(e.name);
     return (
       <div className="est-card">
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
@@ -808,6 +842,10 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             </div>
           </div>
           {e.ativo ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span> : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>}
+        </div>
+        <div className="slug-box" style={{marginBottom:10}}>
+          <span className="slug-text">notacheia.com.br/r/{slug}</span>
+          <button className="btn-sm btn-sm-ghost" onClick={()=>copyLink(e)}>{copied===e.id?"✅":"📋"}</button>
         </div>
         <div style={{display:"flex",gap:8,marginBottom:12}}>
           <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
@@ -845,17 +883,22 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
           <div className="tbl-wrap" id="master-table">
-            <div className="tbl-head" style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 110px",minWidth:500}}>
-              <span>Estabelecimento</span><span>Dono</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
+            <div className="tbl-head" style={{gridTemplateColumns:"1.5fr 1.2fr 1.5fr 50px 50px 70px 100px",minWidth:600}}>
+              <span>Estabelecimento</span><span>Dono</span><span>Link</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
             </div>
             {establishments.map(e=>{
               const sqs=e.questions.filter(q=>q.type==="stars");
               const vals=e.feedbacks.flatMap(f=>sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0));
               const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";
+              const slug=e.slug||makeSlug(e.name);
               return(
-                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"2fr 1.5fr 60px 60px 80px 110px",minWidth:500}}>
+                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.5fr 1.2fr 1.5fr 50px 50px 70px 100px",minWidth:600}}>
                   <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700}}><span>{e.emoji}</span>{e.name}</div>
                   <div style={{color:"var(--muted)",fontSize:11}}>{e.owner}</div>
+                  <div style={{display:"flex",alignItems:"center",gap:4}}>
+                    <span style={{fontSize:10,color:"var(--ac)",fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>/r/{slug}</span>
+                    <button className="btn-sm btn-sm-ghost" style={{padding:"3px 7px",fontSize:10}} onClick={()=>copyLink(e)}>{copied===e.id?"✅":"📋"}</button>
+                  </div>
                   <div style={{fontWeight:700}}>{e.feedbacks.length}</div>
                   <div style={{fontWeight:700,color:"var(--ac)"}}>⭐ {avg}</div>
                   <div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div>
@@ -886,7 +929,23 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         </>)}
       </div>
       {viewEst&&(<div className="modal-bg" onClick={()=>setViewEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length===0&&<div style={{color:"var(--muted)"}}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f,i)=>(<div className="fb" key={i} style={{marginBottom:8}}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div><div style={{fontSize:12,color:"var(--muted2)"}}>NPS: {f.answers?.q_nps??"-"} · Atendente: {f.answers?.q_atend??"-"}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{marginTop:14}} onClick={()=>setViewEst(null)}>Fechar</button></div></div>)}
-      {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">➕ Novo Estabelecimento</div><label className="lbl">Nome</label><div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value}))}/></div><div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div><label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div><label className="lbl">E-mail do dono</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/><label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/><label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/><div style={{display:"flex",gap:10}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div></div></div>)}
+      {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-title">➕ Novo Estabelecimento</div>
+        <label className="lbl">Nome</label>
+        <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value,slug:s.slug||makeSlug(e.target.value)}))}/></div>
+        <label className="lbl">🔗 Link exclusivo</label>
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}>
+          <span style={{fontSize:11,color:"var(--muted)",whiteSpace:"nowrap"}}>/r/</span>
+          <input className="field" style={{marginBottom:0,flex:1}} placeholder="meu-estabelecimento" value={newEst.slug||makeSlug(newEst.name)} onChange={e=>setNewEst(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+        </div>
+        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12}}>Gerado automaticamente. Pode editar se quiser.</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
+        <label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div>
+        <label className="lbl">E-mail do dono</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/>
+        <label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/>
+        <label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/>
+        <div style={{display:"flex",gap:10}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div>
+      </div></div>)}
     </div>
   );
 }
@@ -926,12 +985,27 @@ export default function App() {
   const [loggedEst, setLoggedEst] = useState(null);
 
   useEffect(() => {
+    const slug = window.location.pathname.match(/^\/r\/([^/]+)/)?.[1];
     async function init() {
       const data = await loadEstabelecimentos();
       if (data && data.length > 0) {
         const withFeedbacks = await Promise.all(data.map(async(e)=>({...e,feedbacks:await loadFeedbacks(e.id)})));
-        setEsts(withFeedbacks); setActiveEst(withFeedbacks[0]);
-      } else { setEsts(SEED); setActiveEst(SEED[0]); }
+        setEsts(withFeedbacks);
+        if (slug) {
+          const found = withFeedbacks.find(e => (e.slug || makeSlug(e.name)) === slug);
+          setActiveEst(found || withFeedbacks[0]);
+        } else {
+          setActiveEst(withFeedbacks[0]);
+        }
+      } else {
+        setEsts(SEED);
+        if (slug) {
+          const found = SEED.find(e => (e.slug || makeSlug(e.name)) === slug);
+          setActiveEst(found || SEED[0]);
+        } else {
+          setActiveEst(SEED[0]);
+        }
+      }
       setLoading(false);
     }
     init();
