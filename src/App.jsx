@@ -502,7 +502,7 @@ function QRCodeView({ est }) {
 function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
   const navs = isMaster
-    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }]
+    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
@@ -799,6 +799,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [actionLoading, setActionLoading] = useState(false);
   const [demoEst, setDemoEst] = useState(null);
   const [copied, setCopied] = useState(null);
+  const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
+  const [masterPassMsg, setMasterPassMsg] = useState("");
   const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a"];
   const total = establishments.reduce((a,e)=>a+e.feedbacks.length,0);
   const mrr = establishments.filter(e=>e.ativo).length*99;
@@ -822,6 +824,16 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     setEstablishments(prev => prev.map(e => e.id === editEst.id ? { ...e, ...editEst } : e));
     setEditSaving(false); setEditSaved(true);
     setTimeout(() => setEditSaved(false), 2000);
+  };
+
+  const trocarSenhaMaster = async () => {
+    if (masterPass.atual !== MASTER.pass) { setMasterPassMsg("❌ Senha atual incorreta."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
+    if (masterPass.nova.length < 6) { setMasterPassMsg("❌ Mínimo 6 caracteres."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
+    if (masterPass.nova !== masterPass.confirma) { setMasterPassMsg("❌ Senhas não coincidem."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
+    MASTER.pass = masterPass.nova;
+    setMasterPass({ atual: "", nova: "", confirma: "" });
+    setMasterPassMsg("✅ Senha alterada! Anote a nova senha.");
+    setTimeout(()=>setMasterPassMsg(""),5000);
   };
 
   const copyLink = (e) => {
@@ -910,30 +922,27 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
           <div className="tbl-wrap" id="master-table">
-            <div className="tbl-head" style={{gridTemplateColumns:"1.5fr 1.2fr 1fr 1fr 1fr 50px 50px 70px 120px",minWidth:800}}>
-              <span>Estabelecimento</span><span>Responsável</span><span>Cidade</span><span>Ramo</span><span>Plano</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
+            <div className="tbl-head" style={{gridTemplateColumns:"1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px",minWidth:650}}>
+              <span>Estabelecimento</span><span>Responsável</span><span>Cidade</span><span>Plano</span><span>Feedbacks</span><span>Status</span><span>Ações</span>
             </div>
             {establishments.map(e=>{
               const sqs=e.questions.filter(q=>q.type==="stars");
               const vals=e.feedbacks.flatMap(f=>sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0));
               const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";
-              const slug=e.slug||makeSlug(e.name);
               return(
-                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.5fr 1.2fr 1fr 1fr 1fr 50px 50px 70px 120px",minWidth:800}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700}}><span>{e.emoji}</span>{e.name}</div>
-                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.responsavel||"—"}<div style={{fontSize:10,color:"var(--muted)"}}>{e.owner}</div></div>
-                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.cidade||"—"}</div>
-                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.ramo||"—"}</div>
-                  <div style={{color:"var(--ac)",fontSize:12,fontWeight:700}}>{e.plano||"R$ 99/mês"}</div>
-                  <div style={{fontWeight:700}}>{e.feedbacks.length}</div>
-                  <div style={{fontWeight:700,color:"var(--ac)"}}>⭐ {avg}</div>
+                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px",minWidth:650}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,minWidth:0}}><span>{e.emoji}</span><span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.name}</span><span style={{fontSize:10,color:"var(--muted)",fontWeight:400,flexShrink:0}}>⭐{avg}</span></div>
+                  <div style={{minWidth:0}}><div style={{color:"var(--muted2)",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.responsavel||"—"}</div><div style={{fontSize:10,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.owner}</div></div>
+                  <div style={{color:"var(--muted2)",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.cidade||"—"}</div>
+                  <div style={{color:"var(--ac)",fontSize:12,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.plano||"R$ 99/mês"}</div>
+                  <div style={{fontWeight:700,textAlign:"center"}}>{e.feedbacks.length}</div>
                   <div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div>
-                  <div style={{display:"flex",gap:4}}>
-                    <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" onClick={()=>setViewEst(e)}>👁️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Editar ficha" onClick={()=>setEditEst({...e})}>✏️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Demo sem bloqueio" onClick={()=>setDemoEst(e)}>🎯</button>
-                    <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button>
-                    <button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button>
+                  <div style={{display:"flex",gap:3,flexWrap:"nowrap"}}>
+                    <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" style={{padding:"5px 7px"}} onClick={()=>setViewEst(e)}>👁️</button>
+                    <button className="btn-sm btn-sm-ghost" title="Editar" style={{padding:"5px 7px"}} onClick={()=>setEditEst({...e})}>✏️</button>
+                    <button className="btn-sm btn-sm-ghost" title="Demo" style={{padding:"5px 7px"}} onClick={()=>setDemoEst(e)}>🎯</button>
+                    <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} style={{padding:"5px 7px"}} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button>
+                    <button className="btn-sm btn-sm-danger" style={{padding:"5px 7px"}} onClick={()=>deleteEst(e.id)}>🗑️</button>
                   </div>
                 </div>
               );
@@ -952,6 +961,26 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {(mrr*12).toLocaleString("pt-BR")}</div><div className="metric-lbl">ARR projetado</div></div>
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
             <div className="metric"><div className="metric-val">R$ {(mrr-150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
+          </div>
+        </>)}
+        {tab==="senha"&&(<>
+          <div className="main-title">🔑 Trocar Senha Master</div>
+          <div className="setup-box" style={{maxWidth:420}}>
+            <div className="setup-box-title">Alterar senha de acesso Master</div>
+            <div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:12,color:"var(--muted2)",background:"var(--d2)",border:"1px solid var(--border)",lineHeight:1.6}}>
+              ⚠️ <strong style={{color:"var(--yellow)"}}>Atenção:</strong> a nova senha só dura enquanto o app estiver aberto. Se recarregar a página, volta para a senha original do código. Para trocar permanentemente, precisa editar o código.
+            </div>
+            {masterPassMsg&&<div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:13,fontWeight:700,background:masterPassMsg.includes("✅")?"#0a2a0a":"#1a0505",color:masterPassMsg.includes("✅")?"var(--green)":"var(--red)",border:`1px solid ${masterPassMsg.includes("✅")?"var(--green)":"var(--red)"}33`}}>{masterPassMsg}</div>}
+            <label className="lbl">Senha atual</label>
+            <input className="field" type="password" value={masterPass.atual} onChange={e=>setMasterPass(s=>({...s,atual:e.target.value}))}/>
+            <label className="lbl">Nova senha</label>
+            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={masterPass.nova} onChange={e=>setMasterPass(s=>({...s,nova:e.target.value}))}/>
+            <label className="lbl">Confirmar nova senha</label>
+            <input className="field" type="password" value={masterPass.confirma} onChange={e=>setMasterPass(s=>({...s,confirma:e.target.value}))}/>
+            <button className="btn btn-red" style={{maxWidth:220}} onClick={trocarSenhaMaster}>Alterar senha</button>
+            <div style={{marginTop:14,padding:"10px 14px",background:"var(--d2)",borderRadius:10,fontSize:12,color:"var(--muted2)",lineHeight:1.6}}>
+              💡 Para trocar a senha permanentemente, me chame aqui no chat e eu altero no código em 1 minuto.
+            </div>
           </div>
         </>)}
       </div>
