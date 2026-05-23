@@ -548,6 +548,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
   const [savedNome, setSavedNome] = useState("");
+  const [lgpd, setLgpd] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
   const prog = (answered.length / required.length) * 100;
@@ -577,7 +578,17 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
         <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <button className="btn btn-red" onClick={() => setStep("survey")}>Começar pesquisa →</button>
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,background:"var(--d2)",border:"1px solid var(--border)",borderRadius:12,padding:"12px 14px",marginBottom:14,textAlign:"left",cursor:"pointer"}} onClick={()=>setLgpd(l=>!l)}>
+          <div style={{width:20,height:20,borderRadius:6,border:`2px solid ${lgpd?"var(--ac)":"var(--muted)"}`,background:lgpd?"var(--ac)":"transparent",flexShrink:0,marginTop:1,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.15s"}}>
+            {lgpd&&<span style={{fontSize:12,color:"#fff",fontWeight:900}}>✓</span>}
+          </div>
+          <div style={{fontSize:12,color:"var(--muted2)",lineHeight:1.6}}>
+            Concordo que minha avaliação seja usada para melhorar os serviços do <strong style={{color:"var(--text)"}}>{est.name}</strong>. Nenhum dado pessoal será compartilhado com terceiros.
+          </div>
+        </div>
+        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}>
+          {lgpd || masterMode ? "Começar pesquisa →" : "Aceite os termos para continuar"}
+        </button>
       </div>
     </div>
   );
@@ -617,7 +628,48 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
             setPrize(p); setSaving(true);
             await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
             markFeedbackDone(est.id, masterMode);
-            setSaving(false); setStep("prize");
+            setSaving(false);
+            // Dispara email para o dono se nota baixa (1-3 estrelas) e não for modo demo
+            if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
+              const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
+              const comentario = savedAnswers?.q_sug || "";
+              const cliente = savedNome && savedNome !== "Anônimo" ? savedNome : "Anônimo";
+              try {
+                await fetch("https://api.resend.com/emails", {
+                  method: "POST",
+                  headers: {
+                    "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev",
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    from: "NotaCheia <notificacoes@notacheia.com.br>",
+                    to: [est.owner],
+                    subject: `⚠️ Avaliação negativa no ${est.name}`,
+                    html: `
+                      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;">
+                        <h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2>
+                        <p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p>
+                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
+                          <p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p>
+                          <p style="margin:0;font-weight:700;">${cliente}</p>
+                        </div>
+                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
+                          <p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p>
+                          <p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p>
+                        </div>
+                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
+                          <p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p>
+                          <p style="margin:0;font-weight:700;">${nps}</p>
+                        </div>
+                        ${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}
+                        <p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p>
+                      </div>
+                    `,
+                  }),
+                });
+              } catch(e) { console.log("Erro ao enviar email:", e); }
+            }
+            setStep("prize");
           }} />
           {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
         </div>
@@ -626,7 +678,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   );
 
   if (step === "prize") {
-    const isHappy = avgStars >= 4;
     return (
       <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
         <div className="card prize-wrap">
@@ -639,9 +690,48 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
             <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
           </div>
           <button className="btn-download" onClick={() => { const txt=`NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`;const blob=new Blob([txt],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`premio-${coupon}.txt`;a.click(); }}>⬇️ Baixar comprovante</button>
-          {est.googleUrl && isHappy && (<div className="google-box"><div style={{ fontSize: 11, fontWeight: 800, color: "#4ade80", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>🎉 Que ótimo que gostou!</div><div style={{ fontSize: 13, color: "#aaa", lineHeight: 1.5 }}>Conta pra mais pessoas no Google?</div><button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")}>🌐 Avaliar no Google Maps</button></div>)}
-          {est.googleUrl && !isHappy && (<div className="google-box-low"><div style={{ fontSize: 13, color: "#888", lineHeight: 1.5 }}>😔 Sentimos muito. Seu feedback já foi enviado ao responsável!</div></div>)}
+          {est.googleUrl && avgStars >= 4 && (
+            <button className="btn btn-red" style={{marginTop:8}} onClick={() => setStep("google")}>
+              Continuar →
+            </button>
+          )}
           <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>{est.name} · Powered by NotaCheia ⭐</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "google") {
+    return (
+      <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}20, transparent 60%), var(--dark)` }}>
+        <div className="card" style={{textAlign:"center"}}>
+          <div style={{fontSize:52,marginBottom:12}}>🌟</div>
+          <div style={{fontFamily:"var(--ff-head)",fontSize:22,marginBottom:8}}>Você adorou, né?</div>
+          <div style={{fontSize:14,color:"var(--muted2)",lineHeight:1.7,marginBottom:20}}>
+            Que tal contar pra mais pessoas?<br/>
+            Uma avaliação no Google ajuda muito o <strong style={{color:"var(--text)"}}>{est.name}</strong> a crescer! 🙏
+          </div>
+          <button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")} style={{marginBottom:12}}>
+            🌐 Avaliar no Google Maps
+          </button>
+          <button className="btn btn-ghost" style={{fontSize:13}} onClick={() => setStep("fim")}>
+            Agora não
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "fim") {
+    return (
+      <div className="page page-center fade-up" style={{ background: "var(--dark)" }}>
+        <div className="card" style={{textAlign:"center"}}>
+          <div style={{fontSize:52,marginBottom:12}}>🙏</div>
+          <div style={{fontFamily:"var(--ff-head)",fontSize:22,marginBottom:8}}>Obrigado!</div>
+          <div style={{fontSize:14,color:"var(--muted2)",lineHeight:1.7}}>
+            Sua opinião foi registrada.<br/>Até a próxima visita! 😊
+          </div>
+          <div style={{fontSize:11,color:"#444",marginTop:20}}>{est.name} · Powered by NotaCheia ⭐</div>
         </div>
       </div>
     );
