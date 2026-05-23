@@ -40,6 +40,7 @@ const SEED = [
       { id: "p6", label: "Brinde Surpresa", emoji: "🎁", color: "#111" },
     ],
     feedbacks: [], plano: "R$ 99/mês", desde: "01/05/2026",
+    responsavel: "João Silva", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99999-0001", whatsapp: "5541999990001",
   },
   {
     id: "est_2", owner: "ana@cafezinho.com", pass: "123456", ativo: true,
@@ -53,6 +54,7 @@ const SEED = [
       { id: "p4", label: "Brinde Surpresa",emoji: "🎁", color: "#4a2f1a" },
     ],
     feedbacks: [], plano: "R$ 99/mês", desde: "05/05/2026",
+    responsavel: "Ana Costa", cidade: "Paranaguá", ramo: "Cafeteria", telefone: "(41) 99999-0002", whatsapp: "5541999990002",
   },
 ];
 
@@ -782,11 +784,18 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   );
 }
 
+const RAMOS = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria","Clínica Odontológica","Clínica Médica","Barbearia","Salão de Beleza","Academia","Pet Shop","Farmácia","Outro"];
+const PLANOS = ["R$ 99/mês","R$ 169/mês","R$ 229/mês","Personalizado"];
+
 function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [tab, setTab] = useState("ests");
   const [viewEst, setViewEst] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [newEst, setNewEst] = useState({ name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "", slug: "" });
+  const [editEst, setEditEst] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editSaved, setEditSaved] = useState(false);
+  const EMPTY_EST = { name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "", slug: "", responsavel: "", cidade: "", ramo: "Restaurante", telefone: "", whatsapp: "", plano: "R$ 99/mês" };
+  const [newEst, setNewEst] = useState(EMPTY_EST);
   const [actionLoading, setActionLoading] = useState(false);
   const [demoEst, setDemoEst] = useState(null);
   const [copied, setCopied] = useState(null);
@@ -800,11 +809,19 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     if(!newEst.name||!newEst.owner||!newEst.pass)return;
     setActionLoading(true);
     const slug = newEst.slug || makeSlug(newEst.name);
-    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],plano:"R$ 99/mês",desde:new Date().toLocaleDateString("pt-BR")};
+    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],desde:new Date().toLocaleDateString("pt-BR")};
     await createEstabelecimento(novo);
     setEstablishments(prev=>[...prev,novo]);
-    setNewEst({name:"",emoji:"🏪",owner:"",pass:"",color:"#e63946",googleUrl:"",slug:""});
+    setNewEst(EMPTY_EST);
     setShowAdd(false);setActionLoading(false);
+  };
+
+  const saveEditEst = async () => {
+    setEditSaving(true);
+    await saveEstabelecimento(editEst);
+    setEstablishments(prev => prev.map(e => e.id === editEst.id ? { ...e, ...editEst } : e));
+    setEditSaving(false); setEditSaved(true);
+    setTimeout(() => setEditSaved(false), 2000);
   };
 
   const copyLink = (e) => {
@@ -838,10 +855,15 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <span style={{fontSize:22,flexShrink:0}}>{e.emoji}</span>
             <div style={{minWidth:0}}>
               <div style={{fontWeight:800,fontSize:14,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.name}</div>
-              <div style={{fontSize:11,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.owner}</div>
+              <div style={{fontSize:11,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.responsavel||e.owner}</div>
             </div>
           </div>
           {e.ativo ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span> : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>}
+        </div>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
+          {e.cidade&&<span style={{background:"var(--d3)",border:"1px solid var(--border)",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--muted2)"}}>📍 {e.cidade}</span>}
+          {e.ramo&&<span style={{background:"var(--d3)",border:"1px solid var(--border)",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--muted2)"}}>🏷️ {e.ramo}</span>}
+          <span style={{background:"var(--ac)22",border:"1px solid var(--ac)44",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--ac)",fontWeight:700}}>💳 {e.plano||"R$ 99/mês"}</span>
         </div>
         <div className="slug-box" style={{marginBottom:10}}>
           <span className="slug-text">notacheia.com.br/r/{slug}</span>
@@ -856,9 +878,14 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div style={{fontFamily:"var(--ff-head)",fontSize:18,color:"var(--ac)"}}>⭐ {avg}</div>
             <div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase",fontWeight:700}}>Nota</div>
           </div>
+          <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
+            <div style={{fontSize:12,fontWeight:800,color:"var(--muted2)"}}>{e.desde||"—"}</div>
+            <div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase",fontWeight:700}}>Desde</div>
+          </div>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
           <button className="btn-sm btn-sm-ghost" onClick={()=>setViewEst(e)}>👁️ Ver</button>
+          <button className="btn-sm btn-sm-ghost" onClick={()=>setEditEst({...e})}>✏️ Editar</button>
           <button className="btn-sm btn-sm-ghost" onClick={()=>setDemoEst(e)}>🎯 Demo</button>
           <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒 Bloquear":"✅ Ativar"}</button>
           <button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button>
@@ -883,8 +910,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
           <div className="tbl-wrap" id="master-table">
-            <div className="tbl-head" style={{gridTemplateColumns:"1.5fr 1.2fr 1.5fr 50px 50px 70px 100px",minWidth:600}}>
-              <span>Estabelecimento</span><span>Dono</span><span>Link</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
+            <div className="tbl-head" style={{gridTemplateColumns:"1.5fr 1.2fr 1fr 1fr 1fr 50px 50px 70px 120px",minWidth:800}}>
+              <span>Estabelecimento</span><span>Responsável</span><span>Cidade</span><span>Ramo</span><span>Plano</span><span>Feedbacks</span><span>Nota</span><span>Status</span><span>Ações</span>
             </div>
             {establishments.map(e=>{
               const sqs=e.questions.filter(q=>q.type==="stars");
@@ -892,18 +919,18 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";
               const slug=e.slug||makeSlug(e.name);
               return(
-                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.5fr 1.2fr 1.5fr 50px 50px 70px 100px",minWidth:600}}>
+                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.5fr 1.2fr 1fr 1fr 1fr 50px 50px 70px 120px",minWidth:800}}>
                   <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700}}><span>{e.emoji}</span>{e.name}</div>
-                  <div style={{color:"var(--muted)",fontSize:11}}>{e.owner}</div>
-                  <div style={{display:"flex",alignItems:"center",gap:4}}>
-                    <span style={{fontSize:10,color:"var(--ac)",fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>/r/{slug}</span>
-                    <button className="btn-sm btn-sm-ghost" style={{padding:"3px 7px",fontSize:10}} onClick={()=>copyLink(e)}>{copied===e.id?"✅":"📋"}</button>
-                  </div>
+                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.responsavel||"—"}<div style={{fontSize:10,color:"var(--muted)"}}>{e.owner}</div></div>
+                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.cidade||"—"}</div>
+                  <div style={{color:"var(--muted2)",fontSize:12}}>{e.ramo||"—"}</div>
+                  <div style={{color:"var(--ac)",fontSize:12,fontWeight:700}}>{e.plano||"R$ 99/mês"}</div>
                   <div style={{fontWeight:700}}>{e.feedbacks.length}</div>
                   <div style={{fontWeight:700,color:"var(--ac)"}}>⭐ {avg}</div>
                   <div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div>
                   <div style={{display:"flex",gap:4}}>
                     <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" onClick={()=>setViewEst(e)}>👁️</button>
+                    <button className="btn-sm btn-sm-ghost" title="Editar ficha" onClick={()=>setEditEst({...e})}>✏️</button>
                     <button className="btn-sm btn-sm-ghost" title="Demo sem bloqueio" onClick={()=>setDemoEst(e)}>🎯</button>
                     <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button>
                     <button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button>
@@ -931,7 +958,9 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
       {viewEst&&(<div className="modal-bg" onClick={()=>setViewEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length===0&&<div style={{color:"var(--muted)"}}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f,i)=>(<div className="fb" key={i} style={{marginBottom:8}}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div><div style={{fontSize:12,color:"var(--muted2)"}}>NPS: {f.answers?.q_nps??"-"} · Atendente: {f.answers?.q_atend??"-"}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{marginTop:14}} onClick={()=>setViewEst(null)}>Fechar</button></div></div>)}
       {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
         <div className="modal-title">➕ Novo Estabelecimento</div>
-        <label className="lbl">Nome</label>
+
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>📋 Dados do Estabelecimento</div>
+        <label className="lbl">Nome do estabelecimento</label>
         <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value,slug:s.slug||makeSlug(e.target.value)}))}/></div>
         <label className="lbl">🔗 Link exclusivo</label>
         <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}>
@@ -939,12 +968,76 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <input className="field" style={{marginBottom:0,flex:1}} placeholder="meu-estabelecimento" value={newEst.slug||makeSlug(newEst.name)} onChange={e=>setNewEst(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
         </div>
         <div style={{fontSize:11,color:"var(--muted)",marginBottom:12}}>Gerado automaticamente. Pode editar se quiser.</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+          <div><label className="lbl">Ramo</label><select className="field" style={{marginBottom:0}} value={newEst.ramo} onChange={e=>setNewEst(s=>({...s,ramo:e.target.value}))}>{RAMOS.map(r=><option key={r}>{r}</option>)}</select></div>
+          <div><label className="lbl">Cidade</label><input className="field" style={{marginBottom:0}} placeholder="Ex: Matinhos" value={newEst.cidade} onChange={e=>setNewEst(s=>({...s,cidade:e.target.value}))}/></div>
+        </div>
+        <label className="lbl">Emoji</label>
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
         <label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div>
-        <label className="lbl">E-mail do dono</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/>
+
+        <div className="div"/>
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>👤 Dados do Responsável</div>
+        <label className="lbl">Nome do responsável</label>
+        <input className="field" placeholder="Nome completo" value={newEst.responsavel} onChange={e=>setNewEst(s=>({...s,responsavel:e.target.value}))}/>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:0}}>
+          <div><label className="lbl">Telefone</label><input className="field" style={{marginBottom:0}} placeholder="(41) 99999-0000" value={newEst.telefone} onChange={e=>setNewEst(s=>({...s,telefone:e.target.value}))}/></div>
+          <div><label className="lbl">WhatsApp</label><input className="field" style={{marginBottom:0}} placeholder="5541999990000" value={newEst.whatsapp} onChange={e=>setNewEst(s=>({...s,whatsapp:e.target.value}))}/></div>
+        </div>
+        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12,marginTop:4}}>WhatsApp: código do país + DDD + número, sem espaços.</div>
+        <label className="lbl">E-mail de acesso</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/>
         <label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/>
+
+        <div className="div"/>
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>💳 Plano & Configuração</div>
+        <label className="lbl">Plano</label>
+        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{PLANOS.map(p=>(<button key={p} onClick={()=>setNewEst(s=>({...s,plano:p}))} style={{padding:"8px 14px",borderRadius:10,fontFamily:"var(--ff-body)",fontSize:13,fontWeight:700,cursor:"pointer",border:`1.5px solid ${newEst.plano===p?"var(--ac)":"var(--border)"}`,background:newEst.plano===p?"var(--ac)22":"var(--d3)",color:newEst.plano===p?"var(--text)":"var(--muted2)"}}>{p}</button>))}</div>
         <label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/>
-        <div style={{display:"flex",gap:10}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div>
+
+        <div style={{display:"flex",gap:10,marginTop:4}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar estabelecimento"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div>
+      </div></div>)}
+
+      {editEst&&(<div className="modal-bg" onClick={()=>setEditEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-title">✏️ Editar — {editEst.name}</div>
+
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>📋 Dados do Estabelecimento</div>
+        <label className="lbl">Nome</label>
+        <input className="field" value={editEst.name} onChange={e=>setEditEst(s=>({...s,name:e.target.value}))}/>
+        <label className="lbl">🔗 Link exclusivo</label>
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:11,color:"var(--muted)",whiteSpace:"nowrap"}}>/r/</span>
+          <input className="field" style={{marginBottom:0,flex:1}} value={editEst.slug||makeSlug(editEst.name)} onChange={e=>setEditEst(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+          <div><label className="lbl">Ramo</label><select className="field" style={{marginBottom:0}} value={editEst.ramo||""} onChange={e=>setEditEst(s=>({...s,ramo:e.target.value}))}>{RAMOS.map(r=><option key={r}>{r}</option>)}</select></div>
+          <div><label className="lbl">Cidade</label><input className="field" style={{marginBottom:0}} value={editEst.cidade||""} onChange={e=>setEditEst(s=>({...s,cidade:e.target.value}))}/></div>
+        </div>
+        <label className="lbl">Google Reviews</label>
+        <input className="field" placeholder="https://g.page/r/..." value={editEst.googleUrl||""} onChange={e=>setEditEst(s=>({...s,googleUrl:e.target.value}))}/>
+
+        <div className="div"/>
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>👤 Dados do Responsável</div>
+        <label className="lbl">Nome do responsável</label>
+        <input className="field" value={editEst.responsavel||""} onChange={e=>setEditEst(s=>({...s,responsavel:e.target.value}))}/>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:0}}>
+          <div><label className="lbl">Telefone</label><input className="field" style={{marginBottom:0}} value={editEst.telefone||""} onChange={e=>setEditEst(s=>({...s,telefone:e.target.value}))}/></div>
+          <div><label className="lbl">WhatsApp</label><input className="field" style={{marginBottom:0}} value={editEst.whatsapp||""} onChange={e=>setEditEst(s=>({...s,whatsapp:e.target.value}))}/></div>
+        </div>
+        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12,marginTop:4}}>WhatsApp: código país + DDD + número sem espaços.</div>
+        <label className="lbl">E-mail de acesso</label>
+        <input className="field" value={editEst.owner} onChange={e=>setEditEst(s=>({...s,owner:e.target.value}))}/>
+        <label className="lbl">Senha</label>
+        <input className="field" type="password" placeholder="Nova senha (deixe em branco para manter)" value={editEst.pass} onChange={e=>setEditEst(s=>({...s,pass:e.target.value}))}/>
+
+        <div className="div"/>
+        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>💳 Plano</div>
+        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{PLANOS.map(p=>(<button key={p} onClick={()=>setEditEst(s=>({...s,plano:p}))} style={{padding:"8px 14px",borderRadius:10,fontFamily:"var(--ff-body)",fontSize:13,fontWeight:700,cursor:"pointer",border:`1.5px solid ${editEst.plano===p?"var(--ac)":"var(--border)"}`,background:editEst.plano===p?"var(--ac)22":"var(--d3)",color:editEst.plano===p?"var(--text)":"var(--muted2)"}}>{p}</button>))}</div>
+        <div style={{fontSize:11,color:"var(--muted)",marginBottom:4}}>Cliente desde: <strong style={{color:"var(--text)"}}>{editEst.desde||"—"}</strong></div>
+
+        <div style={{display:"flex",gap:10,marginTop:14}}>
+          <button className="btn btn-red" onClick={saveEditEst} disabled={editSaving}>{editSaving?"Salvando...":editSaved?"✅ Salvo!":"Salvar alterações"}</button>
+          <button className="btn btn-ghost" onClick={()=>setEditEst(null)}>Fechar</button>
+        </div>
       </div></div>)}
     </div>
   );
