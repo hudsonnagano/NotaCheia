@@ -58,7 +58,7 @@ const SEED = [
   },
 ];
 
-const MASTER = { user: "master@notacheia.com.br", pass: "master2026" };
+const MASTER = { user: "master@notacheia.com.br", pass: "hu2001" };
 const uid = () => Math.random().toString(36).slice(2, 8);
 const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase();
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
@@ -1072,9 +1072,9 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   );
 }
 
-function LoginScreen({ title, hint, onLogin }) {
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+function LoginScreen({ title, hint, onLogin, prefillEmail = "", prefillPass = "" }) {
+  const [email, setEmail] = useState(prefillEmail);
+  const [pass, setPass] = useState(prefillPass);
   const [show, setShow] = useState(false);
   const [err, setErr] = useState("");
   const handle = () => { const ok=onLogin(email,pass); if(!ok){setErr("E-mail ou senha incorretos.");setTimeout(()=>setErr(""),3000);} };
@@ -1157,7 +1157,7 @@ export default function App() {
         {mode==="client"&&activeEst&&<ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id}/>}
         {mode==="ownerLogin"&&<LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email,pass)=>{const found=ests.find(e=>e.owner===email&&e.pass===pass);if(found){setLoggedEst(found);setMode("ownerDash");return true;}return false;}}/>}
         {mode==="ownerDash"&&loggedEst&&<OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={()=>{setLoggedEst(null);setMode("client");}}/>}
-        {mode==="masterLogin"&&<LoginScreen title="PAINEL MASTER" hint="" onLogin={(email,pass)=>{if(email===MASTER.user&&pass===MASTER.pass){setMode("masterDash");return true;}return false;}}/>}
+        {mode==="masterLogin"&&<LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email,pass)=>{if(email===MASTER.user&&pass===MASTER.pass){setMode("masterDash");return true;}return false;}}/>}
         {mode==="masterDash"&&<MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={()=>setMode("client")}/>}
       </div>
     </>
