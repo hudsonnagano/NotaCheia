@@ -39,8 +39,20 @@ const SEED = [
       { id: "p5", label: "20% Desconto",  emoji: "🎉", color: "#e63946" },
       { id: "p6", label: "Brinde Surpresa", emoji: "🎁", color: "#111" },
     ],
-    feedbacks: [], plano: "R$ 99/mês", desde: "01/05/2026",
+    feedbacks: [], plano: "R$ 169/mês", desde: "01/05/2026",
     responsavel: "João Silva", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99999-0001", whatsapp: "5541999990001",
+    cardapio: { layout: "bold-full", paleta: "dark", categorias: [
+      { id: "c1", nome: "Burguers", itens: [
+        { id: "i1", nome: "Black Classic", descricao: "Blend 180g, queijo, alface, tomate, molho especial", preco: "32,90", foto: "" },
+        { id: "i2", nome: "Black Fire", descricao: "Blend 200g, cheddar, jalapeño, bacon crocante", preco: "38,90", foto: "" },
+      ]},
+      { id: "c2", nome: "Combos", itens: [
+        { id: "i3", nome: "Combo Classic", descricao: "Black Classic + fritas + refri 500ml", preco: "49,90", foto: "" },
+      ]},
+      { id: "c3", nome: "Bebidas", itens: [
+        { id: "i4", nome: "Coca-Cola 500ml", descricao: "Lata gelada", preco: "7,90", foto: "" },
+      ]},
+    ]},
   },
   {
     id: "est_2", owner: "ana@cafezinho.com", pass: "123456", ativo: true,
@@ -53,13 +65,66 @@ const SEED = [
       { id: "p3", label: "10% Desconto",   emoji: "🏷️", color: "#8b5e3c" },
       { id: "p4", label: "Brinde Surpresa",emoji: "🎁", color: "#4a2f1a" },
     ],
-    feedbacks: [], plano: "R$ 99/mês", desde: "05/05/2026",
+    feedbacks: [], plano: "R$ 169/mês", desde: "05/05/2026",
     responsavel: "Ana Costa", cidade: "Paranaguá", ramo: "Cafeteria", telefone: "(41) 99999-0002", whatsapp: "5541999990002",
+    cardapio: { layout: "lista", paleta: "light", categorias: [
+      { id: "c1", nome: "Cafés", itens: [
+        { id: "i1", nome: "Espresso", descricao: "Café puro, intenso e encorpado", preco: "6,90", foto: "" },
+        { id: "i2", nome: "Cappuccino", descricao: "Espresso com leite vaporizado e espuma", preco: "9,90", foto: "" },
+      ]},
+      { id: "c2", nome: "Bolos", itens: [
+        { id: "i3", nome: "Bolo de cenoura", descricao: "Com cobertura de brigadeiro", preco: "8,90", foto: "" },
+      ]},
+    ]},
   },
 ];
 
 const MASTER = { user: "master@notacheia.com.br", pass: "hu2001" };
+
+const RAMOS_COMIDA = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria"];
+const isRamoComida = (ramo) => RAMOS_COMIDA.includes(ramo);
+
+const CARDAPIO_LAYOUTS = [
+  { id: "bold-full", label: "Bold Full", desc: "Foto pequena + info ao lado" },
+  { id: "foto-destaque", label: "Foto em destaque", desc: "Imagem grande por item" },
+  { id: "lista", label: "Lista compacta", desc: "Sem foto, máximo de itens" },
+  { id: "grade", label: "Grade 2 colunas", desc: "Estilo delivery" },
+  { id: "magazine", label: "Magazine", desc: "Destaque no topo + lista" },
+];
+
+const CARDAPIO_PALETAS = [
+  { id: "dark", label: "Dark", bg: "#0d0d0d", card: "#1a1a1a", text: "#f0ede8", muted: "#555", border: "#222" },
+  { id: "light", label: "Light", bg: "#fafafa", card: "#fff", text: "#111", muted: "#aaa", border: "#eee" },
+  { id: "brasil", label: "Brasil", bg: "#007a2f", card: "rgba(0,0,0,0.2)", text: "#fff", muted: "rgba(255,255,255,0.5)", border: "rgba(255,255,255,0.1)", accent: "#ffdf00" },
+  { id: "neutro", label: "Neutro", bg: "#1c1c1e", card: "#2a2a2e", text: "#f0ede8", muted: "#555", border: "#333" },
+];
+
 const uid = () => Math.random().toString(36).slice(2, 8);
+const makeDefaultCardapio = () => ({
+  layout: "bold-full",
+  paleta: "dark",
+  categorias: [
+    {
+      id: uid(), nome: "Burguers",
+      itens: [
+        { id: uid(), nome: "Black Classic", descricao: "Blend 180g, queijo, alface, tomate, molho especial", preco: "32,90", foto: "" },
+        { id: uid(), nome: "Black Fire", descricao: "Blend 200g, cheddar, jalapeño, bacon crocante", preco: "38,90", foto: "" },
+      ]
+    },
+    {
+      id: uid(), nome: "Combos",
+      itens: [
+        { id: uid(), nome: "Combo Classic", descricao: "Black Classic + fritas + refri 500ml", preco: "49,90", foto: "" },
+      ]
+    },
+    {
+      id: uid(), nome: "Bebidas",
+      itens: [
+        { id: uid(), nome: "Coca-Cola 500ml", descricao: "Lata gelada", preco: "7,90", foto: "" },
+      ]
+    },
+  ]
+});
 const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase();
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
 
@@ -336,7 +401,7 @@ function LoadingScreen() {
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
-  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [], slug: e.slug || makeSlug(e.name) }));
+  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [], slug: e.slug || makeSlug(e.name), cardapio: e.cardapio || null }));
 }
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
@@ -426,6 +491,164 @@ function WheelTeaser({ prizes }) {
   );
 }
 
+function CardapioView({ est, onAvaliar }) {
+  const c = est.cardapio || { layout: "bold-full", paleta: "dark", categorias: [] };
+  const pal = CARDAPIO_PALETAS.find(p => p.id === c.paleta) || CARDAPIO_PALETAS[0];
+  const [catAtiva, setCatAtiva] = useState("todos");
+  const acc = pal.accent || est.color;
+
+  const itensFiltrados = () => {
+    if (catAtiva === "todos") return c.categorias;
+    return c.categorias.filter(cat => cat.id === catAtiva);
+  };
+
+  const ItemBoldFull = ({ item }) => (
+    <div style={{ background: pal.card, borderRadius: 12, padding: 12, marginBottom: 8, display: "flex", gap: 10, alignItems: "center", border: `1px solid ${pal.border}` }}>
+      {item.foto
+        ? <img src={item.foto} alt={item.nome} style={{ width: 58, height: 58, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} onError={e => e.target.style.display="none"} />
+        : <div style={{ width: 58, height: 58, background: `${est.color}22`, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>{est.emoji}</div>
+      }
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: pal.text }}>{item.nome}</div>
+        {item.descricao && <div style={{ fontSize: 11, color: pal.muted, marginTop: 2, lineHeight: 1.4 }}>{item.descricao}</div>}
+        {item.preco && <div style={{ fontSize: 14, fontWeight: 900, color: acc, marginTop: 5 }}>R$ {item.preco}</div>}
+      </div>
+    </div>
+  );
+
+  const ItemFotoDestaque = ({ item }) => (
+    <div style={{ background: pal.card, borderRadius: 12, marginBottom: 8, overflow: "hidden", border: `1px solid ${pal.border}` }}>
+      {item.foto
+        ? <img src={item.foto} alt={item.nome} style={{ width: "100%", height: 100, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
+        : <div style={{ height: 100, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48 }}>{est.emoji}</div>
+      }
+      <div style={{ padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: pal.text }}>{item.nome}</div>
+          {item.descricao && <div style={{ fontSize: 10, color: pal.muted, marginTop: 2 }}>{item.descricao}</div>}
+        </div>
+        {item.preco && <div style={{ fontSize: 14, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 8 }}>R$ {item.preco}</div>}
+      </div>
+    </div>
+  );
+
+  const ItemLista = ({ item }) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${pal.border}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {item.foto
+          ? <img src={item.foto} alt={item.nome} style={{ width: 34, height: 34, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} onError={e => e.target.style.display="none"} />
+          : <div style={{ width: 34, height: 34, background: `${est.color}22`, borderRadius: 6, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>{est.emoji}</div>
+        }
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: pal.text }}>{item.nome}</div>
+          {item.descricao && <div style={{ fontSize: 10, color: pal.muted, marginTop: 1 }}>{item.descricao}</div>}
+        </div>
+      </div>
+      {item.preco && <div style={{ fontSize: 13, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 8 }}>R$ {item.preco}</div>}
+    </div>
+  );
+
+  const ItemGrade = ({ item }) => (
+    <div style={{ background: pal.card, borderRadius: 10, overflow: "hidden", border: `1px solid ${pal.border}` }}>
+      {item.foto
+        ? <img src={item.foto} alt={item.nome} style={{ width: "100%", height: 70, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
+        : <div style={{ height: 70, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30 }}>{est.emoji}</div>
+      }
+      <div style={{ padding: "8px 9px" }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: pal.text }}>{item.nome}</div>
+        {item.descricao && <div style={{ fontSize: 9, color: pal.muted, marginTop: 1 }}>{item.descricao.slice(0, 30)}{item.descricao.length > 30 ? "…" : ""}</div>}
+        {item.preco && <div style={{ fontSize: 12, fontWeight: 900, color: acc, marginTop: 4 }}>R$ {item.preco}</div>}
+      </div>
+    </div>
+  );
+
+  const renderItens = (itens) => {
+    if (c.layout === "grade") return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+        {itens.map(item => <ItemGrade key={item.id} item={item} />)}
+      </div>
+    );
+    return itens.map(item => {
+      if (c.layout === "foto-destaque") return <ItemFotoDestaque key={item.id} item={item} />;
+      if (c.layout === "lista") return <ItemLista key={item.id} item={item} />;
+      return <ItemBoldFull key={item.id} item={item} />;
+    });
+  };
+
+  const renderMagazine = () => {
+    const todos = c.categorias.filter(cat => catAtiva === "todos" || cat.id === catAtiva).flatMap(cat => cat.itens);
+    const destaque = todos[0];
+    const resto = todos.slice(1);
+    return (
+      <>
+        {destaque && (
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", marginBottom: 6 }}>Destaque</div>
+            <div style={{ background: pal.card, borderRadius: 12, overflow: "hidden", marginBottom: 12, border: `1px solid ${pal.border}` }}>
+              {destaque.foto
+                ? <img src={destaque.foto} alt={destaque.nome} style={{ width: "100%", height: 110, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
+                : <div style={{ height: 110, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 56 }}>{est.emoji}</div>
+              }
+              <div style={{ padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: pal.text }}>{destaque.nome}</div>
+                  {destaque.descricao && <div style={{ fontSize: 11, color: pal.muted, marginTop: 2 }}>{destaque.descricao}</div>}
+                </div>
+                {destaque.preco && <div style={{ fontSize: 15, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 10 }}>R$ {destaque.preco}</div>}
+              </div>
+            </div>
+          </div>
+        )}
+        {resto.length > 0 && (
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", marginBottom: 6 }}>Mais itens</div>
+            {resto.map(item => <ItemLista key={item.id} item={item} />)}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: pal.bg, fontFamily: "var(--ff-body)" }}>
+      <div style={{ background: est.color, padding: "20px 16px 16px", textAlign: "center" }}>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", letterSpacing: 3, textTransform: "uppercase", marginBottom: 4 }}>Powered by NotaCheia</div>
+        <div style={{ fontSize: 36, marginBottom: 6 }}>{est.logoUrl ? <img src={est.logoUrl} alt={est.name} style={{ width: 48, height: 48, objectFit: "contain", borderRadius: 8 }} /> : est.emoji}</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>{est.name}</div>
+        {est.cidade && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", marginTop: 3 }}>{est.cidade} · Aberto agora</div>}
+      </div>
+
+      <div style={{ display: "flex", gap: 7, padding: "10px 14px", overflowX: "auto", background: pal.bg }}>
+        <button onClick={() => setCatAtiva("todos")} style={{ background: catAtiva === "todos" ? est.color : "transparent", color: catAtiva === "todos" ? "#fff" : pal.muted, border: `1.5px solid ${catAtiva === "todos" ? est.color : pal.border}`, padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>Todos</button>
+        {c.categorias.map(cat => (
+          <button key={cat.id} onClick={() => setCatAtiva(cat.id)} style={{ background: catAtiva === cat.id ? est.color : "transparent", color: catAtiva === cat.id ? "#fff" : pal.muted, border: `1.5px solid ${catAtiva === cat.id ? est.color : pal.border}`, padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{cat.nome}</button>
+        ))}
+      </div>
+
+      <div style={{ padding: "8px 14px 16px" }}>
+        {c.layout === "magazine"
+          ? renderMagazine()
+          : itensFiltrados().map(cat => (
+            <div key={cat.id}>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", margin: "10px 0 6px" }}>{cat.nome}</div>
+              {renderItens(cat.itens)}
+            </div>
+          ))
+        }
+      </div>
+
+      <div style={{ margin: "0 14px 24px", background: pal.card, border: `1px solid ${est.color}44`, borderRadius: 14, padding: 16, textAlign: "center" }}>
+        <div style={{ fontSize: 20, marginBottom: 6 }}>🎁</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 15, color: pal.text, marginBottom: 4 }}>Gostou? Avalie e ganhe um brinde!</div>
+        <div style={{ fontSize: 12, color: pal.muted, marginBottom: 12 }}>Leva menos de 1 minuto</div>
+        <button onClick={onAvaliar} style={{ width: "100%", padding: 12, background: est.color, color: "#fff", border: "none", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>Avaliar e girar a roleta →</button>
+      </div>
+
+      <div style={{ textAlign: "center", padding: "0 0 20px", fontSize: 11, color: pal.muted }}>Powered by NotaCheia ⭐</div>
+    </div>
+  );
+}
+
 function Stars({ val, onChange }) {
   const [hov, setHov] = useState(0);
   return (
@@ -508,6 +731,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
         { id: "insights", icon: "💡", lbl: "Insights" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
+        ...(isRamoComida(est?.ramo) ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio" }] : []),
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
         { id: "senha", icon: "🔑", lbl: "Trocar senha" },
       ];
@@ -539,7 +763,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const interval = est.feedbackInterval || 30;
   const blocked = !canLeaveFeedback(est.id, interval, masterMode);
   const daysLeft = daysUntilNext(est.id, interval);
-  const [step, setStep] = useState("welcome");
+  const temCardapio = isRamoComida(est.ramo) && est.cardapio?.categorias?.length > 0;
+  const [step, setStep] = useState(temCardapio ? "cardapio" : "welcome");
   const [nome, setNome] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
@@ -553,6 +778,27 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
   const prog = (answered.length / required.length) * 100;
   const allDone = answered.length === required.length;
+
+  if (step === "cardapio") return (
+    <CardapioView est={est} onAvaliar={() => {
+      if (blocked) { setStep("bloqueado"); return; }
+      setStep("welcome");
+    }} />
+  );
+
+  if (step === "bloqueado") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ marginBottom: 12 }}><EstLogo est={est} size={72} /></div>
+        <div className="welcome-name">{est.name}</div>
+        <div style={{ fontSize: 44, margin: "16px 0" }}>⏳</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 8 }}>Já participou recentemente!</div>
+        <div style={{ fontSize: 13, color: "var(--muted2)", lineHeight: 1.6 }}>Você poderá responder novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>.</div>
+        {temCardapio && <button className="btn btn-ghost" style={{marginTop:16,fontSize:13}} onClick={() => setStep("cardapio")}>← Ver cardápio</button>}
+        <div style={{ marginTop: 20, fontSize: 11, color: "#444" }}>{est.name} · Powered by NotaCheia ⭐</div>
+      </div>
+    </div>
+  );
 
   if (blocked && step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
@@ -743,6 +989,116 @@ function MiniBarChart({ data, color = "var(--ac)" }) {
   return (<div className="bar-chart">{data.map((d, i) => (<div className="bar-col" key={i}><div className="bar-val">{d.val}</div><div className="bar" style={{ height: `${(d.val / max) * 70}px`, background: color, opacity: 0.7 + (i / data.length) * 0.3 }} /><div className="bar-lbl">{d.lbl}</div></div>))}</div>);
 }
 
+function CardapioEditor({ est, onSave }) {
+  const defaultC = est.cardapio || { layout: "bold-full", paleta: "dark", categorias: [] };
+  const [c, setC] = useState({ ...defaultC, categorias: defaultC.categorias.map(cat => ({ ...cat, itens: cat.itens.map(i => ({ ...i })) })) });
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [catAberta, setCatAberta] = useState(null);
+  const [novaCategoria, setNovaCategoria] = useState("");
+  const [novoItem, setNovoItem] = useState({ nome: "", descricao: "", preco: "", foto: "" });
+
+  const save = async () => { setSaving(true); await onSave(c); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+
+  const addCategoria = () => {
+    if (!novaCategoria) return;
+    const nova = { id: uid(), nome: novaCategoria, itens: [] };
+    setC(s => ({ ...s, categorias: [...s.categorias, nova] }));
+    setNovaCategoria("");
+    setCatAberta(nova.id);
+  };
+
+  const removeCategoria = (id) => setC(s => ({ ...s, categorias: s.categorias.filter(c => c.id !== id) }));
+
+  const addItem = (catId) => {
+    if (!novoItem.nome) return;
+    setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: [...cat.itens, { id: uid(), ...novoItem }] } : cat) }));
+    setNovoItem({ nome: "", descricao: "", preco: "", foto: "" });
+  };
+
+  const removeItem = (catId, itemId) => setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: cat.itens.filter(i => i.id !== itemId) } : cat) }));
+
+  const updateItem = (catId, itemId, field, val) => setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: cat.itens.map(i => i.id === itemId ? { ...i, [field]: val } : i) } : cat) }));
+
+  return (
+    <div>
+      <div className="setup-box">
+        <div className="setup-box-title">🎨 Aparência</div>
+        <label className="lbl">Layout</label>
+        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
+          {CARDAPIO_LAYOUTS.map(l => (
+            <button key={l.id} onClick={() => setC(s => ({ ...s, layout: l.id }))}
+              style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${c.layout === l.id ? "var(--ac)" : "var(--border)"}`, background: c.layout === l.id ? "var(--ac)22" : "var(--d3)", color: c.layout === l.id ? "var(--text)" : "var(--muted2)" }}>
+              {l.label}<div style={{ fontSize: 10, fontWeight: 400, marginTop: 2, color: "var(--muted)" }}>{l.desc}</div>
+            </button>
+          ))}
+        </div>
+        <label className="lbl">Paleta de cores</label>
+        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 8 }}>
+          {CARDAPIO_PALETAS.map(p => (
+            <button key={p.id} onClick={() => setC(s => ({ ...s, paleta: p.id }))}
+              style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${c.paleta === p.id ? "var(--ac)" : "var(--border)"}`, background: p.bg, color: p.text, outline: c.paleta === p.id ? "2px solid var(--ac)" : "none", outlineOffset: 2 }}>
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="setup-box">
+        <div className="setup-box-title">📋 Categorias e Itens</div>
+        {c.categorias.map(cat => (
+          <div key={cat.id} style={{ background: "var(--d2)", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ fontWeight: 800, fontSize: 14 }}>{cat.nome} <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 400 }}>({cat.itens.length} {cat.itens.length === 1 ? "item" : "itens"})</span></div>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button className="btn-sm btn-sm-ghost" onClick={() => setCatAberta(catAberta === cat.id ? null : cat.id)}>{catAberta === cat.id ? "▲ Fechar" : "▼ Editar"}</button>
+                <button className="btn-sm btn-sm-danger" onClick={() => removeCategoria(cat.id)}>✕</button>
+              </div>
+            </div>
+            {catAberta === cat.id && (
+              <div>
+                {cat.itens.map(item => (
+                  <div key={item.id} style={{ background: "var(--dark)", borderRadius: 8, padding: 10, marginBottom: 8, border: "1px solid var(--border)" }}>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
+                      <input className="field-inline" style={{ flex: 2 }} placeholder="Nome" value={item.nome} onChange={e => updateItem(cat.id, item.id, "nome", e.target.value)} />
+                      <input className="field-inline" style={{ width: 80, flexShrink: 0 }} placeholder="R$ Preço" value={item.preco} onChange={e => updateItem(cat.id, item.id, "preco", e.target.value)} />
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <input className="field-inline" style={{ flex: 2 }} placeholder="Descrição" value={item.descricao} onChange={e => updateItem(cat.id, item.id, "descricao", e.target.value)} />
+                      <input className="field-inline" style={{ flex: 2 }} placeholder="URL da foto (opcional)" value={item.foto} onChange={e => updateItem(cat.id, item.id, "foto", e.target.value)} />
+                      <button className="btn-sm btn-sm-danger" onClick={() => removeItem(cat.id, item.id)}>✕</button>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ background: "var(--dark)", borderRadius: 8, padding: 10, border: "1px dashed var(--border)" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--muted)", marginBottom: 8 }}>+ Novo item</div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
+                    <input className="field-inline" style={{ flex: 2 }} placeholder="Nome do item" value={novoItem.nome} onChange={e => setNovoItem(s => ({ ...s, nome: e.target.value }))} />
+                    <input className="field-inline" style={{ width: 80 }} placeholder="Preço" value={novoItem.preco} onChange={e => setNovoItem(s => ({ ...s, preco: e.target.value }))} />
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    <input className="field-inline" style={{ flex: 2 }} placeholder="Descrição (opcional)" value={novoItem.descricao} onChange={e => setNovoItem(s => ({ ...s, descricao: e.target.value }))} />
+                    <input className="field-inline" style={{ flex: 2 }} placeholder="URL da foto (opcional)" value={novoItem.foto} onChange={e => setNovoItem(s => ({ ...s, foto: e.target.value }))} />
+                    <button className="btn-sm btn-sm-red" onClick={() => addItem(cat.id)}>+ Adicionar</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+          <input className="field-inline" placeholder="Nova categoria (ex: Sobremesas)" value={novaCategoria} onChange={e => setNovaCategoria(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategoria()} />
+          <button className="btn-sm btn-sm-red" onClick={addCategoria}>+ Categoria</button>
+        </div>
+      </div>
+
+      <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={save} disabled={saving}>
+        {saving ? "Salvando..." : saved ? "✅ Salvo!" : "Salvar cardápio"}
+      </button>
+    </div>
+  );
+}
+
 function OwnerDash({ est, onUpdate, onLogout }) {
   const [tab, setTab] = useState("overview");
   const [ed, setEd] = useState({ ...est, questions: est.questions.map(q=>({...q})), prizes: est.prizes.map(p=>({...p})) });
@@ -855,6 +1211,10 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </div>
           <button className="btn btn-red" style={{maxWidth:220}} onClick={save} disabled={saving}>{saving?"Salvando...":saved?"✅ Salvo!":"Salvar alterações"}</button>
         </>)}
+        {tab==="cardapio"&&(<>
+          <div className="main-title">🍽️ Cardápio Digital</div>
+          <CardapioEditor est={est} onSave={async(cardapio) => { const updated = {...est, cardapio}; await saveEstabelecimento(updated); onUpdate(updated); }} />
+        </>)}
         {tab==="senha"&&(<>
           <div className="main-title">🔑 Trocar Senha</div>
           <div className="setup-box" style={{maxWidth:420}}>
@@ -901,7 +1261,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     if(!newEst.name||!newEst.owner||!newEst.pass)return;
     setActionLoading(true);
     const slug = newEst.slug || makeSlug(newEst.name);
-    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],desde:new Date().toLocaleDateString("pt-BR")};
+    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],desde:new Date().toLocaleDateString("pt-BR"),cardapio:isRamoComida(newEst.ramo)?makeDefaultCardapio():null};
     await createEstabelecimento(novo);
     setEstablishments(prev=>[...prev,novo]);
     setNewEst(EMPTY_EST);
