@@ -1500,6 +1500,62 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [actionLoading, setActionLoading] = useState(false);
   const [demoEst, setDemoEst] = useState(null);
   const [copied, setCopied] = useState(null);
+  const [enviando, setEnviando] = useState(null);
+  const [enviado, setEnviado] = useState(null);
+
+  const enviarCredenciais = async (e) => {
+    if (!e.owner) { alert("Este estabelecimento não tem e-mail cadastrado."); return; }
+    setEnviando(e.id);
+    const slug = e.slug || makeSlug(e.name);
+    const linkPainel = "https://nota-cheia.vercel.app";
+    const linkQR = `https://notacheia.com.br/r/${slug}`;
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "NotaCheia <notificacoes@notacheia.com.br>",
+          to: [e.owner],
+          subject: `🎉 Bem-vindo ao NotaCheia — ${e.name}`,
+          html: `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:28px;background:#0d0d0d;color:#f0ede8;border-radius:18px;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <div style="font-size:36px;margin-bottom:6px;">${e.emoji}</div>
+              <h1 style="font-size:22px;margin:0;color:#e63946;">Bem-vindo ao NotaCheia!</h1>
+              <p style="color:#888;font-size:13px;margin-top:6px;">Seu painel de feedbacks está pronto 🚀</p>
+            </div>
+            <div style="background:#181818;border-radius:12px;padding:20px;margin-bottom:16px;">
+              <p style="margin:0 0 14px;font-size:13px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:1px;">📋 Dados de acesso</p>
+              <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">Estabelecimento</span><strong>${e.name}</strong></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">E-mail</span><strong>${e.owner}</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:#888;">Senha</span><strong style="background:#222;padding:2px 10px;border-radius:6px;letter-spacing:2px;">${e.pass}</strong></div>
+            </div>
+            <div style="margin-bottom:12px;">
+              <a href="${linkPainel}" style="display:block;text-align:center;background:#e63946;color:#fff;padding:14px;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;margin-bottom:10px;">Acessar meu painel →</a>
+              <a href="${linkQR}" style="display:block;text-align:center;background:#181818;color:#e63946;padding:12px;border-radius:12px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid #e6394633;">🔗 Link do meu QR Code</a>
+            </div>
+            <div style="background:#181818;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#888;line-height:1.7;">
+              <strong style="color:#f0ede8;">💡 Primeiros passos:</strong><br/>
+              1. Acesse o painel com seu e-mail e senha<br/>
+              2. Baixe o QR Code em <strong style="color:#f0ede8;">📱 Meu QR Code</strong><br/>
+              3. Imprima e coloque nas mesas ou balcão<br/>
+              4. Seus clientes já podem avaliar e ganhar brindes!
+            </div>
+            <p style="text-align:center;font-size:12px;color:#444;margin:0;">Qualquer dúvida, fale com a gente 💬<br/>WhatsApp: (41) 99675-6776</p>
+            <p style="text-align:center;font-size:11px;color:#333;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p>
+          </div>`,
+        }),
+      });
+      if (res.ok) {
+        setEnviado(e.id);
+        setTimeout(() => setEnviado(null), 4000);
+      } else {
+        alert("Erro ao enviar e-mail. Verifique o e-mail cadastrado.");
+      }
+    } catch (err) {
+      alert("Erro de conexão ao enviar e-mail.");
+    }
+    setEnviando(null);
+  };
   const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
   const [masterPassMsg, setMasterPassMsg] = useState("");
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
@@ -1606,6 +1662,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <button className="btn-sm btn-sm-ghost" onClick={() => setViewEst(e)}>👁️ Ver</button>
           <button className="btn-sm btn-sm-ghost" onClick={() => setEditEst({ ...e })}>✏️ Editar</button>
           <button className="btn-sm btn-sm-ghost" onClick={() => setDemoEst(e)}>🎯 Demo</button>
+          <button className="btn-sm btn-sm-green" onClick={() => enviarCredenciais(e)} disabled={enviando === e.id} title="Enviar e-mail com login e senha para o dono">{enviando === e.id ? "⏳..." : enviado === e.id ? "✅ Enviado!" : "📧 Credenciais"}</button>
           <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒 Bloquear" : "✅ Ativar"}</button>
           <button className="btn-sm btn-sm-danger" onClick={() => deleteEst(e.id)}>🗑️</button>
         </div>
@@ -1653,6 +1710,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
                     <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" style={{ padding: "5px 7px" }} onClick={() => setViewEst(e)}>👁️</button>
                     <button className="btn-sm btn-sm-ghost" title="Editar" style={{ padding: "5px 7px" }} onClick={() => setEditEst({ ...e })}>✏️</button>
                     <button className="btn-sm btn-sm-ghost" title="Demo" style={{ padding: "5px 7px" }} onClick={() => setDemoEst(e)}>🎯</button>
+                    <button className="btn-sm btn-sm-green" title="Enviar credenciais por e-mail" style={{ padding: "5px 7px" }} onClick={() => enviarCredenciais(e)} disabled={enviando === e.id}>{enviando === e.id ? "⏳" : enviado === e.id ? "✅" : "📧"}</button>
                     <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} style={{ padding: "5px 7px" }} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒" : "✅"}</button>
                     <button className="btn-sm btn-sm-danger" style={{ padding: "5px 7px" }} onClick={() => deleteEst(e.id)}>🗑️</button>
                   </div>
