@@ -2176,8 +2176,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           const valorMensal = contrato.plano === "R$ 99/mês" ? "99,90" : contrato.plano === "R$ 169/mês" ? "169,90" : contrato.plano === "R$ 229/mês" ? "229,90" : "—";
           const nomePlano = contrato.plano === "R$ 99/mês" ? "Basic" : contrato.plano === "R$ 169/mês" ? "Pro" : contrato.plano === "R$ 229/mês" ? "Premium" : "Personalizado";
           const itensPlano = contrato.plano === "R$ 99/mês"
-            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com WhatsApp", "Suporte via WhatsApp"]
-            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas", "Suporte prioritário via WhatsApp"];
+            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com histórico de visitas e WhatsApp"]
+            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas"];
 
           const imprimirContrato = () => {
             const win = window.open("", "_blank");
@@ -2229,17 +2229,19 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
                 <div class="destaque-titulo">Plano ${nomePlano} — R$ ${valorMensal}/mês</div>
                 ${itensPlano.map(i => `<div class="item">${i}</div>`).join("")}
               </div>
-              <div class="row"><span>Taxa de implementação (setup)</span><span>R$ ${contrato.setup} — pagamento único</span></div>
-              <div class="row"><span>Mensalidade</span><span>R$ ${valorMensal}/mês</span></div>
+              <div class="row"><span>Taxa de implementação (setup)</span><span>R$ ${contrato.setup} — pagamento único no ato</span></div>
+              <div class="row"><span>Primeiro mês</span><span>R$ ${valorMensal} — pago no ato da contratação</span></div>
+              <div class="row"><span>Vencimento mensal</span><span>Todo dia 5 de cada mês — R$ ${valorMensal}</span></div>
+              <div class="row" style="border-top:2px solid #e63946;margin-top:6px;padding-top:10px;"><span style="font-weight:900;">Total pago no ato</span><span style="color:#e63946;font-size:15px;font-weight:900;">R$ ${contrato.setup} + R$ ${valorMensal}</span></div>
               <div class="row"><span>Data de início</span><span>${hoje}</span></div>
 
               <h2>3. Condições do Serviço</h2>
-              <p class="clausula"><strong>3.1 Pagamento:</strong> A mensalidade é devida todo mês na data de contratação. O pagamento da taxa de implementação (setup) é realizado uma única vez no ato da contratação.</p>
+              <p class="clausula"><strong>3.1 Pagamento:</strong> No ato da contratação, o contratante realiza o pagamento da taxa de implementação (setup) e do primeiro mês do plano. A partir do mês seguinte, a mensalidade vence todo dia 5 de cada mês. O sistema segue o princípio <strong>pagou, usou</strong> — o acesso é liberado somente após a confirmação do pagamento.</p>
               <p class="clausula"><strong>3.2 Cancelamento:</strong> O contratante pode solicitar o cancelamento a qualquer momento, com aviso prévio de ${contrato.aviso} dias. Não há multa ou fidelidade mínima.</p>
               <p class="clausula"><strong>3.3 Suspensão:</strong> Em caso de inadimplência, o acesso ao sistema poderá ser suspenso até a regularização do pagamento.</p>
               <p class="clausula"><strong>3.4 Entregáveis:</strong> O prestador irá configurar o sistema, gerar o QR Code personalizado e entregar as instruções de uso em até 24 horas após o pagamento do setup.</p>
-              <p class="clausula"><strong>3.5 Suporte:</strong> O suporte é prestado via WhatsApp (41) 99675-6776 em horário comercial.</p>
-              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
+              <p class="clausula"><strong>3.5 Dúvidas:</strong> Em caso de dúvidas sobre o sistema, o contratante pode entrar em contato pelo WhatsApp (41) 99675-6776.</p>
+              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são d</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
 
               <h2>4. Assinaturas</h2>
               <p style="font-size:12px;color:#888;margin-bottom:20px;">Matinhos — PR, ${hoje}</p>
