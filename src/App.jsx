@@ -1085,7 +1085,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
   const temCardapio = est && isRamoComida(est.ramo);
   const navs = isMaster
-    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "contrato", icon: "📄", lbl: "Gerar contrato" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
+    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "prospeccao", icon: "🗺️", lbl: "Prospecção" }, { id: "contrato", icon: "📄", lbl: "Gerar contrato" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
@@ -1823,6 +1823,24 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
   const [masterPassMsg, setMasterPassMsg] = useState("");
   const [contrato, setContrato] = useState({ estId: "", plano: "R$ 99/mês", setup: "200,00", aviso: "15", dataContrato: new Date().toLocaleDateString("pt-BR") });
+  const [prospects, setProspects] = useState(() => { try { return JSON.parse(localStorage.getItem("nc_prospects") || "[]"); } catch { return []; } });
+  const [showAddProspect, setShowAddProspect] = useState(false);
+  const [prospectFiltro, setProspectFiltro] = useState("todos");
+  const EMPTY_PROSPECT = { nome: "", ramo: "Hamburgueria", endereco: "", telefone: "", responsavel: "", status: "prospectar", falou: "", interesse: "", obs: "", dataVisita: "" };
+  const [newProspect, setNewProspect] = useState(EMPTY_PROSPECT);
+  const [editProspect, setEditProspect] = useState(null);
+
+  const saveProspects = (list) => { setProspects(list); try { localStorage.setItem("nc_prospects", JSON.stringify(list)); } catch {} };
+  const addProspect = () => {
+    if (!newProspect.nome) return;
+    const novo = { ...newProspect, id: uid(), dataVisita: new Date().toLocaleDateString("pt-BR") };
+    saveProspects([...prospects, novo]);
+    setNewProspect(EMPTY_PROSPECT);
+    setShowAddProspect(false);
+  };
+  const updateProspectStatus = (id, status) => saveProspects(prospects.map(p => p.id === id ? { ...p, status, dataVisita: new Date().toLocaleDateString("pt-BR") } : p));
+  const deleteProspect = (id) => { if (!window.confirm("Remover este prospect?")) return; saveProspects(prospects.filter(p => p.id !== id)); };
+  const saveEditProspect = () => { saveProspects(prospects.map(p => p.id === editProspect.id ? editProspect : p)); setEditProspect(null); };
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
   const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
   const mrr = establishments.filter(e => e.ativo).length * 99;
@@ -1998,6 +2016,160 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {(mrr - 150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
           </div>
         </>)}
+        {tab === "prospeccao" && (() => {
+          const STATUS = {
+            prospectar: { icon: "🎯", label: "A visitar",   color: "#457b9d" },
+            contatado:  { icon: "📞", label: "Contatado",   color: "#f4a261" },
+            demo:       { icon: "🎪", label: "Demo feita",  color: "#6d597a" },
+            fechou:     { icon: "✅", label: "Fechou!",     color: "#2a9d8f" },
+            descartado: { icon: "❌", label: "Descartado",  color: "#555" },
+          };
+          const INTERESSE = { alto: { label: "Alto 🔥", color: "var(--green)" }, medio: { label: "Médio ⚡", color: "var(--yellow)" }, baixo: { label: "Baixo 🧊", color: "var(--muted)" } };
+          const filtrados = prospectFiltro === "todos"
+            ? prospects.filter(p => p.status !== "descartado")
+            : prospectFiltro === "descartados"
+            ? prospects.filter(p => p.status === "descartado")
+            : prospects.filter(p => p.status === prospectFiltro);
+
+          return (<>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+              <div className="main-title" style={{ marginBottom: 0 }}>🗺️ Prospecção</div>
+              <button className="btn-sm btn-sm-red" onClick={() => setShowAddProspect(true)}>+ Novo prospect</button>
+            </div>
+
+            {/* Métricas rápidas */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(90px,1fr))", gap: 8, marginBottom: 16 }}>
+              {Object.entries(STATUS).map(([k,v]) => (
+                <div key={k} style={{ background: "var(--d1)", border: `1px solid ${v.color}44`, borderRadius: 12, padding: "10px 8px", textAlign: "center", cursor: "pointer" }} onClick={() => setProspectFiltro(k)}>
+                  <div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color: v.color }}>{prospects.filter(p => p.status === k).length}</div>
+                  <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", marginTop: 3, fontWeight: 700 }}>{v.icon} {v.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Filtros */}
+            <div className="filter-row">
+              {[["todos","Ativos"],["prospectar","🎯 A visitar"],["contatado","📞 Contatados"],["demo","🎪 Demo feita"],["fechou","✅ Fecharam"],["descartados","❌ Descartados"]].map(([k,l]) => (
+                <button key={k} className={`filter-btn ${prospectFiltro === k ? "on" : ""}`} onClick={() => setProspectFiltro(k)}>{l}</button>
+              ))}
+            </div>
+
+            {/* Lista */}
+            {filtrados.length === 0 && <div style={{ textAlign: "center", color: "var(--muted)", padding: 40, fontSize: 14 }}>Nenhum prospect aqui ainda.</div>}
+            {filtrados.map(p => (
+              <div key={p.id} style={{ background: "var(--d1)", border: `1px solid ${STATUS[p.status]?.color || "var(--border)"}44`, borderRadius: 14, padding: 16, marginBottom: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, fontSize: 15 }}>{p.nome}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 2 }}>🏷️ {p.ramo}{p.endereco ? ` · 📍 ${p.endereco}` : ""}</div>
+                    {p.responsavel && <div style={{ fontSize: 12, color: "var(--muted2)" }}>👤 {p.responsavel}</div>}
+                    {p.telefone && <div style={{ fontSize: 12, color: "var(--muted2)" }}>📱 {p.telefone}</div>}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+                    <span style={{ background: `${STATUS[p.status]?.color}22`, border: `1px solid ${STATUS[p.status]?.color}66`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, color: STATUS[p.status]?.color, whiteSpace: "nowrap" }}>
+                      {STATUS[p.status]?.icon} {STATUS[p.status]?.label}
+                    </span>
+                    {p.interesse && <span style={{ fontSize: 11, color: INTERESSE[p.interesse]?.color, fontWeight: 700 }}>{INTERESSE[p.interesse]?.label}</span>}
+                  </div>
+                </div>
+
+                {/* Tags rápidas */}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
+                  {p.falou === "sim" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--green)" }}>✓ Falou c/ responsável</span>}
+                  {p.falou === "funcionario" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--yellow)" }}>⚠️ Só c/ funcionário</span>}
+                  {p.falou === "nao" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted)" }}>✗ Não encontrou</span>}
+                  {p.dataVisita && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted)" }}>🗓️ {p.dataVisita}</span>}
+                </div>
+
+                {p.obs && <div style={{ background: "var(--dark)", borderLeft: "3px solid var(--ac)44", borderRadius: "0 8px 8px 0", padding: "8px 12px", fontSize: 12, color: "var(--muted2)", fontStyle: "italic", marginBottom: 10 }}>💬 {p.obs}</div>}
+
+                {/* Botões de status rápido */}
+                <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
+                  {Object.entries(STATUS).filter(([k]) => k !== p.status).map(([k,v]) => (
+                    <button key={k} className="btn-sm btn-sm-ghost" style={{ fontSize: 11, padding: "4px 10px" }} onClick={() => updateProspectStatus(p.id, k)}>
+                      {v.icon} {v.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button className="btn-sm btn-sm-ghost" onClick={() => setEditProspect({ ...p })}>✏️ Editar</button>
+                  {p.telefone && <a href={`https://wa.me/55${p.telefone.replace(/\D/g,"")}`} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer", textDecoration: "none" }}>💬 WhatsApp</a>}
+                  <button className="btn-sm btn-sm-danger" onClick={() => deleteProspect(p.id)}>🗑️</button>
+                </div>
+              </div>
+            ))}
+
+            {/* Modal novo prospect */}
+            {showAddProspect && (
+              <div className="modal-bg" onClick={() => setShowAddProspect(false)}>
+                <div className="modal" onClick={e => e.stopPropagation()}>
+                  <div className="modal-title">🎯 Novo Prospect</div>
+                  <label className="lbl">Nome do estabelecimento *</label>
+                  <input className="field" placeholder="Ex: Pizzaria Bella" value={newProspect.nome} onChange={e => setNewProspect(s => ({ ...s, nome: e.target.value }))} />
+                  <label className="lbl">Ramo</label>
+                  <select className="field" value={newProspect.ramo} onChange={e => setNewProspect(s => ({ ...s, ramo: e.target.value }))}>
+                    {RAMOS.map(r => <option key={r}>{r}</option>)}
+                  </select>
+                  <label className="lbl">Endereço / Bairro</label>
+                  <input className="field" placeholder="Ex: Rua das Flores, 123 — Centro" value={newProspect.endereco} onChange={e => setNewProspect(s => ({ ...s, endereco: e.target.value }))} />
+                  <label className="lbl">Nome do responsável</label>
+                  <input className="field" placeholder="Ex: João" value={newProspect.responsavel} onChange={e => setNewProspect(s => ({ ...s, responsavel: e.target.value }))} />
+                  <label className="lbl">Telefone / WhatsApp</label>
+                  <input className="field" placeholder="(41) 99999-0000" value={newProspect.telefone} onChange={e => setNewProspect(s => ({ ...s, telefone: e.target.value }))} />
+                  <label className="lbl">Observação</label>
+                  <textarea className="textarea" placeholder="Ex: Voltar sexta de manhã, falar com a Ana..." value={newProspect.obs} onChange={e => setNewProspect(s => ({ ...s, obs: e.target.value }))} />
+                  <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                    <button className="btn btn-red" onClick={addProspect} disabled={!newProspect.nome}>Adicionar</button>
+                    <button className="btn btn-ghost" onClick={() => setShowAddProspect(false)}>Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal editar prospect */}
+            {editProspect && (
+              <div className="modal-bg" onClick={() => setEditProspect(null)}>
+                <div className="modal" onClick={e => e.stopPropagation()}>
+                  <div className="modal-title">✏️ Editar Prospect</div>
+                  <label className="lbl">Nome</label>
+                  <input className="field" value={editProspect.nome} onChange={e => setEditProspect(s => ({ ...s, nome: e.target.value }))} />
+                  <label className="lbl">Ramo</label>
+                  <select className="field" value={editProspect.ramo} onChange={e => setEditProspect(s => ({ ...s, ramo: e.target.value }))}>
+                    {RAMOS.map(r => <option key={r}>{r}</option>)}
+                  </select>
+                  <label className="lbl">Endereço / Bairro</label>
+                  <input className="field" value={editProspect.endereco || ""} onChange={e => setEditProspect(s => ({ ...s, endereco: e.target.value }))} />
+                  <label className="lbl">Nome do responsável</label>
+                  <input className="field" value={editProspect.responsavel || ""} onChange={e => setEditProspect(s => ({ ...s, responsavel: e.target.value }))} />
+                  <label className="lbl">Telefone / WhatsApp</label>
+                  <input className="field" value={editProspect.telefone || ""} onChange={e => setEditProspect(s => ({ ...s, telefone: e.target.value }))} />
+                  <label className="lbl">Falou com o responsável?</label>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                    {[["sim","✓ Sim"],["funcionario","⚠️ Só funcionário"],["nao","✗ Não encontrou"]].map(([v,l]) => (
+                      <button key={v} onClick={() => setEditProspect(s => ({ ...s, falou: v }))}
+                        style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.falou === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.falou === v ? "var(--ac)22" : "var(--d3)", color: editProspect.falou === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
+                    ))}
+                  </div>
+                  <label className="lbl">Nível de interesse</label>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                    {[["alto","Alto 🔥"],["medio","Médio ⚡"],["baixo","Baixo 🧊"]].map(([v,l]) => (
+                      <button key={v} onClick={() => setEditProspect(s => ({ ...s, interesse: v }))}
+                        style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.interesse === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.interesse === v ? "var(--ac)22" : "var(--d3)", color: editProspect.interesse === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
+                    ))}
+                  </div>
+                  <label className="lbl">Observação</label>
+                  <textarea className="textarea" value={editProspect.obs || ""} onChange={e => setEditProspect(s => ({ ...s, obs: e.target.value }))} />
+                  <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                    <button className="btn btn-red" onClick={saveEditProspect}>Salvar</button>
+                    <button className="btn btn-ghost" onClick={() => setEditProspect(null)}>Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>);
+        })()}
+
         {tab === "contrato" && (() => {
           const estSel = establishments.find(e => e.id === contrato.estId) || null;
           const hoje = contrato.dataContrato;
