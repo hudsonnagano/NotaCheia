@@ -1727,7 +1727,7 @@ export default function App() {
           {mode === "client" && (<>
             <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
               value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
-              {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
+              {ests.filter(e => e.id !== "est_demo").map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
             <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
             <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
