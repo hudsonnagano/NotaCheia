@@ -1077,7 +1077,9 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
+        { id: "clientes", icon: "👥", lbl: "Clientes" },
         { id: "insights", icon: "💡", lbl: "Insights" },
+        { id: "relatorio", icon: "📋", lbl: "Relatório" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
         ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
@@ -1332,6 +1334,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [passMsg, setPassMsg] = useState("");
   const [newEmail, setNewEmail] = useState({ atual: "", novo: "", confirma: "" });
   const [emailMsg, setEmailMsg] = useState("");
+  const [relatorioEnviando, setRelatorioEnviando] = useState(false);
+  const [relatorioEnviado, setRelatorioEnviado] = useState(false);
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a", "#f72585", "#4cc9f0", "#111", "#333"];
   const starQs = est.questions.filter(q => q.type === "stars");
   const starAvg = (key) => { const v = est.feedbacks.map(f => f.answers?.[key]).filter(v => typeof v === "number" && v > 0); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
@@ -1341,6 +1345,18 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const howKnew = () => { const map = {}; est.feedbacks.forEach(f => { const v = f.answers?.q_como; if (v) map[v] = (map[v] || 0) + 1; }); return Object.entries(map).sort((a, b) => b[1] - a[1]); };
   const chartData = (() => { const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], result = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const lbl = days[d.getDay()], dateStr = d.toLocaleDateString("pt-BR"); result.push({ lbl, val: est.feedbacks.filter(f => f.data?.includes(dateStr)).length }); } return result; })();
   const insights = () => { const list = [], ov = parseFloat(overall()), nps = parseFloat(npsAvg()); if (ov >= 4.5) list.push({ icon: "🏆", text: <><strong>Excelente!</strong> Nota acima de 4.5.</> }); if (nps >= 8) list.push({ icon: "📈", text: <><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</> }); const esp = parseFloat(starAvg("q_esp")); if (esp && esp < 3.5) list.push({ icon: "⚠️", text: <><strong>Tempo de espera!</strong> Nota {esp}.</> }); const pv = est.feedbacks.map(f => f.answers?.q_preco).filter(Boolean); const caro = pv.filter(v => v === "Caro pelo que oferece").length; if (caro > pv.length * 0.3) list.push({ icon: "💰", text: <><strong>{Math.round(caro / pv.length * 100)}% acham caro.</strong></> }); const prim = est.feedbacks.filter(f => f.answers?.q_first === "Sim").length; if (prim > 0) list.push({ icon: "🆕", text: <><strong>{prim} cliente{prim > 1 ? "s" : ""} novo{prim > 1 ? "s" : ""}</strong> recentemente!</> }); if (list.length === 0) list.push({ icon: "📊", text: <>Continue coletando feedbacks para receber insights.</> }); return list; };
+  // Auto-envio segunda-feira
+  React.useEffect(() => {
+    const hoje = new Date();
+    if (hoje.getDay() !== 1) return; // só segunda-feira
+    const chave = `relatorio_${est.id}_${hoje.toLocaleDateString("pt-BR")}`;
+    try {
+      if (localStorage.getItem(chave)) return;
+      localStorage.setItem(chave, "1");
+      setTimeout(() => enviarRelatorio(), 3000);
+    } catch {}
+  }, []);
+
   const filteredFeedbacks = () => { if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9); if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6); if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }); return est.feedbacks; };
   const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
   const addQ = () => { if (!newQ.label) return; const opts = newQ.options.split(",").map(s => s.trim()).filter(Boolean); setEd(e => ({ ...e, questions: [...e.questions, { id: uid(), ...newQ, options: opts, required: true }] })); setNewQ({ label: "", type: "stars", options: "" }); };
@@ -1358,6 +1374,153 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     setEmailMsg("✅ E-mail alterado com sucesso!");
     setNewEmail({ atual: "", novo: "", confirma: "" });
     setTimeout(() => setEmailMsg(""), 3000);
+  };
+
+  const getFeedbacksSemana = (semanaAtras = 0) => {
+    const agora = new Date();
+    const inicio = new Date(agora); inicio.setDate(inicio.getDate() - (7 * (semanaAtras + 1)));
+    const fim = new Date(agora); fim.setDate(fim.getDate() - (7 * semanaAtras));
+    return est.feedbacks.filter(f => {
+      if (!f.data) return false;
+      try {
+        const partes = f.data.split(/[/, :]/);
+        const d = new Date(partes[2], partes[1]-1, partes[0]);
+        return d >= inicio && d < fim;
+      } catch { return false; }
+    });
+  };
+
+  const gerarHTMLRelatorio = (fbSemana, fbSemanaAnterior) => {
+    const ac = est.color || "#e63946";
+    const totalAtual = fbSemana.length;
+    const totalAnterior = fbSemanaAnterior.length;
+    const diffTotal = totalAtual - totalAnterior;
+    const sqs = est.questions.filter(q => q.type === "stars");
+    const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+    const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+    const npsAtual = calcNps(fbSemana);
+    const npsAnterior = calcNps(fbSemanaAnterior);
+    const notaAtual = calcNota(fbSemana);
+    const notaAnterior = calcNota(fbSemanaAnterior);
+    const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
+    const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
+    const staffQ = est.questions.find(q => q.type === "staff");
+    const staffMap = {};
+    if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n] = {t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
+    const ranking = Object.entries(staffMap).map(([n,d])=>({n,avg:d.c?(d.t/d.c).toFixed(1):0})).sort((a,b)=>b.avg-a.avg).slice(0,3);
+    const comoMap = {};
+    fbSemana.forEach(f => { const v = f.answers?.q_como; if (v) comoMap[v] = (comoMap[v]||0)+1; });
+    const comoList = Object.entries(comoMap).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    const comentarios = fbSemana.filter(f => f.answers?.q_sug && f.answers.q_sug.trim().length > 5).slice(0,3);
+    const precoMap = {};
+    fbSemana.forEach(f => { const v = f.answers?.q_preco; if (v) precoMap[v] = (precoMap[v]||0)+1; });
+    const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
+    const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
+    const fmt = (d) => d.toLocaleDateString("pt-BR");
+    const seta = (atual, ant) => { if (ant === "-" || atual === "-") return ""; const d = parseFloat(atual) - parseFloat(ant); if (d > 0) return `<span style="color:#4ade80;font-size:12px;">▲ +${d.toFixed(1)}</span>`; if (d < 0) return `<span style="color:#f87171;font-size:12px;">▼ ${d.toFixed(1)}</span>`; return `<span style="color:#888;font-size:12px;">= igual</span>`; };
+
+    return `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:0;background:#0d0d0d;color:#f0ede8;border-radius:18px;overflow:hidden;">
+      <div style="background:${ac};padding:24px 28px;">
+        <div style="font-size:28px;margin-bottom:6px;">${est.emoji}</div>
+        <div style="font-size:22px;font-weight:900;letter-spacing:1px;">${est.name}</div>
+        <div style="font-size:13px;opacity:0.85;margin-top:4px;">📋 Relatório semanal · ${fmt(dataInicio)} a ${fmt(dataFim)}</div>
+      </div>
+
+      <div style="padding:24px 28px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
+          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
+            <div style="font-size:28px;font-weight:900;color:${ac};">${totalAtual}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Feedbacks</div>
+            <div style="margin-top:4px;">${diffTotal > 0 ? `<span style="color:#4ade80;font-size:11px;">▲ +${diffTotal} vs semana ant.</span>` : diffTotal < 0 ? `<span style="color:#f87171;font-size:11px;">▼ ${diffTotal} vs semana ant.</span>` : `<span style="color:#888;font-size:11px;">= igual à semana ant.</span>`}</div>
+          </div>
+          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
+            <div style="font-size:28px;font-weight:900;color:${notaAtual >= 4 ? "#4ade80" : notaAtual >= 3 ? "#f0c96e" : "#f87171"};">⭐ ${notaAtual}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Nota média</div>
+            <div style="margin-top:4px;">${seta(notaAtual, notaAnterior)}</div>
+          </div>
+          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
+            <div style="font-size:28px;font-weight:900;color:${parseFloat(npsAtual) >= 8 ? "#4ade80" : parseFloat(npsAtual) >= 6 ? "#f0c96e" : "#f87171"};">📊 ${npsAtual}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">NPS médio</div>
+            <div style="margin-top:4px;">${seta(npsAtual, npsAnterior)}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
+          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:#4ade80;">${promotores.length}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😍 Promotores</div>
+          </div>
+          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:#f0c96e;">${fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😐 Neutros</div>
+          </div>
+          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:#f87171;">${negativos.length}</div>
+            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😞 Detratores</div>
+          </div>
+        </div>
+
+        ${negativos.length > 0 ? `<div style="background:#1a0505;border:1px solid #f8717133;border-radius:12px;padding:16px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:800;color:#f87171;margin-bottom:8px;">⚠️ ${negativos.length} feedback${negativos.length>1?"s negativos":"negativo"} esta semana</div>
+          ${negativos.slice(0,2).map(f=>`<div style="background:#111;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;"><strong>${f.nome||"Anônimo"}</strong> · NPS ${f.answers?.q_nps??"-"}${f.answers?.q_sug?`<br/><span style="color:#aaa;font-style:italic;">"${f.answers.q_sug}"</span>`:""}</div>`).join("")}
+        </div>` : `<div style="background:#0a1f0a;border:1px solid #4ade8033;border-radius:12px;padding:14px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:13px;font-weight:800;color:#4ade80;">✅ Nenhum feedback negativo esta semana!</div>
+        </div>`}
+
+        ${ranking.length > 0 ? `<div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🏆 Ranking de colaboradores</div>
+          ${ranking.map((r,i)=>`<div style="display:flex;align-items:center;gap:10px;background:#181818;border-radius:10px;padding:10px 14px;margin-bottom:6px;"><span style="font-size:16px;font-weight:900;color:#888;width:20px;">${i+1}</span><span style="flex:1;font-weight:700;font-size:13px;">${r.n}</span><span style="font-size:16px;font-weight:900;color:${ac};">⭐ ${r.avg}</span></div>`).join("")}
+        </div>` : ""}
+
+        ${comoList.length > 0 ? `<div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📍 Como chegaram</div>
+          ${comoList.map(([k,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px;"><span style="color:#ccc;">${k.replace("Outro:","")}</span><span style="font-weight:800;color:${ac};">${v}</span></div>`).join("")}
+        </div>` : ""}
+
+        ${Object.keys(precoMap).length > 0 ? `<div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💰 Percepção de preço</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${Object.entries(precoMap).map(([k,v])=>`<div style="background:#181818;border-radius:20px;padding:6px 12px;font-size:12px;"><span style="color:#888;">${k.replace(" pelo que oferece","")}</span> <strong style="color:${ac};">${v}</strong></div>`).join("")}
+          </div>
+        </div>` : ""}
+
+        ${comentarios.length > 0 ? `<div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💬 Comentários da semana</div>
+          ${comentarios.map(f=>`<div style="background:#181818;border-left:3px solid ${ac};border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;font-style:italic;color:#ccc;">"${f.answers.q_sug}"<div style="font-size:11px;color:#555;margin-top:4px;font-style:normal;">${f.nome||"Anônimo"}</div></div>`).join("")}
+        </div>` : ""}
+
+        <div style="text-align:center;padding-top:16px;border-top:1px solid #222;">
+          <a href="https://nota-cheia.vercel.app" style="display:inline-block;background:${ac};color:#fff;padding:12px 28px;border-radius:12px;font-weight:800;font-size:14px;text-decoration:none;">Ver painel completo →</a>
+          <p style="font-size:11px;color:#444;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p>
+        </div>
+      </div>
+    </div>`;
+  };
+
+  const enviarRelatorio = async () => {
+    if (!est.owner) { alert("E-mail do dono não cadastrado."); return; }
+    setRelatorioEnviando(true);
+    const fbSemana = getFeedbacksSemana(0);
+    const fbAnterior = getFeedbacksSemana(1);
+    const html = gerarHTMLRelatorio(fbSemana, fbAnterior);
+    const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
+    const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
+    const fmt = (d) => d.toLocaleDateString("pt-BR");
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "NotaCheia <notificacoes@notacheia.com.br>",
+          to: [est.owner],
+          subject: `📋 Relatório semanal — ${est.name} · ${fmt(dataInicio)} a ${fmt(dataFim)}`,
+          html,
+        }),
+      });
+      if (res.ok) { setRelatorioEnviado(true); setTimeout(() => setRelatorioEnviado(false), 4000); }
+      else { alert("Erro ao enviar. Verifique o e-mail cadastrado."); }
+    } catch { alert("Erro de conexão."); }
+    setRelatorioEnviando(false);
   };
 
   const handleLogoUpload = (e) => { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = (ev) => setEd(s => ({ ...s, logoUrl: ev.target.result })); r.readAsDataURL(file); };
@@ -1406,6 +1569,65 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
+
+        {tab === "relatorio" && (() => {
+          const fbSemana = getFeedbacksSemana(0);
+          const fbAnterior = getFeedbacksSemana(1);
+          const sqs = est.questions.filter(q => q.type === "stars");
+          const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+          const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+          const notaAtual = calcNota(fbSemana); const notaAnterior = calcNota(fbAnterior);
+          const npsAtual = calcNps(fbSemana); const npsAnterior = calcNps(fbAnterior);
+          const diff = fbSemana.length - fbAnterior.length;
+          const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
+          const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
+          const seta = (a, b) => { if (a==="-"||b==="-") return null; const d = parseFloat(a)-parseFloat(b); return d > 0 ? <span style={{color:"var(--green)",fontSize:11}}>▲ +{d.toFixed(1)}</span> : d < 0 ? <span style={{color:"var(--red)",fontSize:11}}>▼ {d.toFixed(1)}</span> : <span style={{color:"var(--muted)",fontSize:11}}>= igual</span>; };
+          const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
+          const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
+          const fmt = (d) => d.toLocaleDateString("pt-BR");
+          const staffQ = est.questions.find(q => q.type === "staff");
+          const staffMap = {};
+          if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n]={t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
+          const ranking = Object.entries(staffMap).map(([n,d])=>({n,avg:d.c?(d.t/d.c).toFixed(1):0})).sort((a,b)=>b.avg-a.avg).slice(0,3);
+          const comentarios = fbSemana.filter(f => f.answers?.q_sug && f.answers.q_sug.trim().length > 5).slice(0,3);
+          return (<>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
+              <div className="main-title" style={{marginBottom:0}}>📋 Relatório Semanal</div>
+              <button className="btn-sm btn-sm-red" onClick={enviarRelatorio} disabled={relatorioEnviando}>
+                {relatorioEnviando ? "⏳ Enviando..." : relatorioEnviado ? "✅ Enviado!" : "📧 Enviar por e-mail"}
+              </button>
+            </div>
+            <div style={{fontSize:12,color:"var(--muted)",marginBottom:16}}>📅 Semana: {fmt(dataInicio)} a {fmt(dataFim)}</div>
+
+            <div className="metrics" style={{marginBottom:16}}>
+              <div className="metric"><div className="metric-val" style={{color:"var(--ac)"}}>{fbSemana.length}</div><div className="metric-lbl">Feedbacks</div><div style={{marginTop:4}}>{diff > 0 ? <span style={{color:"var(--green)",fontSize:11}}>▲ +{diff} vs ant.</span> : diff < 0 ? <span style={{color:"var(--red)",fontSize:11}}>▼ {diff} vs ant.</span> : <span style={{color:"var(--muted)",fontSize:11}}>= igual</span>}</div></div>
+              <div className="metric"><div className="metric-val">⭐ {notaAtual}</div><div className="metric-lbl">Nota média</div><div style={{marginTop:4}}>{seta(notaAtual, notaAnterior)}</div></div>
+              <div className="metric"><div className="metric-val">📊 {npsAtual}</div><div className="metric-lbl">NPS médio</div><div style={{marginTop:4}}>{seta(npsAtual, npsAnterior)}</div></div>
+            </div>
+
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
+              <div style={{background:"var(--d1)",border:"1px solid var(--green)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--green)"}}>{promotores.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😍 Promotores</div></div>
+              <div style={{background:"var(--d1)",border:"1px solid var(--yellow)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--yellow)"}}>{fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😐 Neutros</div></div>
+              <div style={{background:"var(--d1)",border:"1px solid var(--red)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--red)"}}>{negativos.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😞 Detratores</div></div>
+            </div>
+
+            {negativos.length > 0 && (<div style={{background:"#1a0505",border:"1px solid var(--red)33",borderRadius:12,padding:16,marginBottom:14}}>
+              <div style={{fontSize:13,fontWeight:800,color:"var(--red)",marginBottom:8}}>⚠️ {negativos.length} feedback{negativos.length>1?"s negativos":"negativo"} esta semana</div>
+              {negativos.slice(0,2).map((f,i)=>(<div key={i} style={{background:"var(--dark)",borderRadius:8,padding:10,marginBottom:6,fontSize:12}}><strong>{f.nome||"Anônimo"}</strong> · NPS {f.answers?.q_nps??"-"}{f.answers?.q_sug&&<div style={{color:"var(--muted2)",fontStyle:"italic",marginTop:3}}>"{f.answers.q_sug}"</div>}</div>))}
+            </div>)}
+            {negativos.length === 0 && fbSemana.length > 0 && (<div style={{background:"#0a1f0a",border:"1px solid var(--green)33",borderRadius:12,padding:14,marginBottom:14,textAlign:"center",fontSize:13,fontWeight:800,color:"var(--green)"}}>✅ Nenhum feedback negativo esta semana!</div>)}
+
+            {ranking.length > 0 && (<div className="chart-wrap"><div className="chart-title">🏆 Ranking de colaboradores</div>{ranking.map((r,i)=>(<div className="rank-row" key={r.n}><div className="rank-num">{i+1}</div><div className="rank-name">{r.n}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(r.avg/5)*100}%`}}/></div><div className="rank-score">{r.avg}</div></div>))}</div>)}
+
+            {comentarios.length > 0 && (<div className="chart-wrap"><div className="chart-title">💬 Comentários da semana</div>{comentarios.map((f,i)=>(<div key={i} style={{borderLeft:"3px solid var(--ac)",padding:"8px 12px",background:"var(--dark)",borderRadius:"0 8px 8px 0",marginBottom:8,fontSize:13,fontStyle:"italic",color:"#bbb"}}>"{f.answers.q_sug}"<div style={{fontSize:11,color:"var(--muted)",marginTop:3,fontStyle:"normal"}}>{f.nome||"Anônimo"}</div></div>))}</div>)}
+
+            {fbSemana.length === 0 && (<div style={{textAlign:"center",padding:40,color:"var(--muted)",fontSize:14}}>Nenhum feedback recebido esta semana.<br/><span style={{fontSize:12}}>O relatório mostra os dados dos últimos 7 dias.</span></div>)}
+
+            <div style={{padding:"12px 14px",background:"var(--d2)",borderRadius:10,fontSize:12,color:"var(--muted2)",lineHeight:1.7,marginTop:8}}>
+              💡 <strong style={{color:"var(--text)"}}>Envio automático:</strong> o e-mail é disparado toda segunda-feira quando você abre o painel. Ou clique em "📧 Enviar por e-mail" para enviar agora.
+            </div>
+          </>);
+        })()}
 
         {tab === "cardapio" && (<>
           <div className="main-title">🍽️ Cardápio Digital</div>
