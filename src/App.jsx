@@ -1073,7 +1073,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
   const temCardapio = est && isRamoComida(est.ramo);
   const navs = isMaster
-    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
+    ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "contrato", icon: "📄", lbl: "Gerar contrato" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
@@ -1810,6 +1810,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   };
   const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
   const [masterPassMsg, setMasterPassMsg] = useState("");
+  const [contrato, setContrato] = useState({ estId: "", plano: "R$ 99/mês", setup: "200,00", aviso: "15", dataContrato: new Date().toLocaleDateString("pt-BR") });
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
   const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
   const mrr = establishments.filter(e => e.ativo).length * 99;
@@ -1985,6 +1986,154 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {(mrr - 150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
           </div>
         </>)}
+        {tab === "contrato" && (() => {
+          const estSel = establishments.find(e => e.id === contrato.estId) || null;
+          const hoje = contrato.dataContrato;
+          const valorMensal = contrato.plano === "R$ 99/mês" ? "99,90" : contrato.plano === "R$ 169/mês" ? "169,90" : contrato.plano === "R$ 229/mês" ? "229,90" : "—";
+          const nomePlano = contrato.plano === "R$ 99/mês" ? "Basic" : contrato.plano === "R$ 169/mês" ? "Pro" : contrato.plano === "R$ 229/mês" ? "Premium" : "Personalizado";
+          const itensPlano = contrato.plano === "R$ 99/mês"
+            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com WhatsApp", "Suporte via WhatsApp"]
+            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas", "Suporte prioritário via WhatsApp"];
+
+          const imprimirContrato = () => {
+            const win = window.open("", "_blank");
+            win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contrato NotaCheia</title><style>
+              *{box-sizing:border-box;margin:0;padding:0}
+              body{font-family:'Arial',sans-serif;color:#111;background:#fff;padding:40px;max-width:800px;margin:0 auto;font-size:13px;line-height:1.6}
+              .header{text-align:center;border-bottom:3px solid #e63946;padding-bottom:20px;margin-bottom:28px}
+              .logo-text{font-size:28px;font-weight:900;color:#e63946;letter-spacing:2px}
+              .logo-sub{font-size:12px;color:#888;margin-top:4px}
+              h2{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#e63946;margin:24px 0 10px;border-bottom:1px solid #eee;padding-bottom:6px}
+              .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+              .row span:first-child{color:#555;font-weight:600}
+              .row span:last-child{font-weight:700}
+              .destaque{background:#fff5f5;border:1.5px solid #e63946;border-radius:10px;padding:16px;margin:16px 0}
+              .destaque-titulo{font-weight:900;color:#e63946;font-size:14px;margin-bottom:8px}
+              .item{padding:5px 0;font-size:13px}
+              .item::before{content:"✓ ";color:#e63946;font-weight:900}
+              .clausula{margin-bottom:14px;font-size:13px;line-height:1.7}
+              .clausula strong{color:#111}
+              .assinatura-area{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px}
+              .assinatura-box{text-align:center}
+              .assinatura-linha{border-bottom:1.5px solid #111;margin-bottom:8px;height:50px}
+              .assinatura-nome{font-size:12px;font-weight:700}
+              .assinatura-cargo{font-size:11px;color:#888}
+              .rodape{text-align:center;margin-top:36px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:14px}
+              @media print{body{padding:20px}@page{margin:1.5cm}}
+            </style></head><body>
+              <div class="header">
+                <div class="logo-text">NotaCheia ⭐</div>
+                <div class="logo-sub">Sistema de Feedback e Fidelização · notacheia.com.br</div>
+              </div>
+
+              <h2>Contrato de Prestação de Serviços</h2>
+              <p class="clausula">Por meio deste instrumento, as partes abaixo identificadas celebram o presente Contrato de Prestação de Serviços de plataforma digital de coleta de feedbacks e fidelização de clientes.</p>
+
+              <h2>1. Identificação das Partes</h2>
+              <div class="row"><span>Prestador de serviços</span><span>Hudson Nagano — NotaCheia</span></div>
+              <div class="row"><span>WhatsApp</span><span>(41) 99675-6776</span></div>
+              <div class="row"><span>Site</span><span>notacheia.com.br</span></div>
+              <div class="row"><span>Contratante</span><span>${estSel ? estSel.name : "___________________________"}</span></div>
+              <div class="row"><span>Responsável</span><span>${estSel ? (estSel.responsavel || "___________________________") : "___________________________"}</span></div>
+              <div class="row"><span>Ramo</span><span>${estSel ? (estSel.ramo || "___________________________") : "___________________________"}</span></div>
+              <div class="row"><span>Cidade</span><span>${estSel ? (estSel.cidade || "___________________________") : "___________________________"}</span></div>
+              <div class="row"><span>Telefone</span><span>${estSel ? (estSel.telefone || "___________________________") : "___________________________"}</span></div>
+              <div class="row"><span>E-mail</span><span>${estSel ? (estSel.owner || "___________________________") : "___________________________"}</span></div>
+
+              <h2>2. Plano Contratado</h2>
+              <div class="destaque">
+                <div class="destaque-titulo">Plano ${nomePlano} — R$ ${valorMensal}/mês</div>
+                ${itensPlano.map(i => `<div class="item">${i}</div>`).join("")}
+              </div>
+              <div class="row"><span>Taxa de implementação (setup)</span><span>R$ ${contrato.setup} — pagamento único</span></div>
+              <div class="row"><span>Mensalidade</span><span>R$ ${valorMensal}/mês</span></div>
+              <div class="row"><span>Data de início</span><span>${hoje}</span></div>
+
+              <h2>3. Condições do Serviço</h2>
+              <p class="clausula"><strong>3.1 Pagamento:</strong> A mensalidade é devida todo mês na data de contratação. O pagamento da taxa de implementação (setup) é realizado uma única vez no ato da contratação.</p>
+              <p class="clausula"><strong>3.2 Cancelamento:</strong> O contratante pode solicitar o cancelamento a qualquer momento, com aviso prévio de ${contrato.aviso} dias. Não há multa ou fidelidade mínima.</p>
+              <p class="clausula"><strong>3.3 Suspensão:</strong> Em caso de inadimplência, o acesso ao sistema poderá ser suspenso até a regularização do pagamento.</p>
+              <p class="clausula"><strong>3.4 Entregáveis:</strong> O prestador irá configurar o sistema, gerar o QR Code personalizado e entregar as instruções de uso em até 24 horas após o pagamento do setup.</p>
+              <p class="clausula"><strong>3.5 Suporte:</strong> O suporte é prestado via WhatsApp (41) 99675-6776 em horário comercial.</p>
+              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
+
+              <h2>4. Assinaturas</h2>
+              <p style="font-size:12px;color:#888;margin-bottom:20px;">Matinhos — PR, ${hoje}</p>
+              <div class="assinatura-area">
+                <div class="assinatura-box">
+                  <div class="assinatura-linha"></div>
+                  <div class="assinatura-nome">Hudson Nagano</div>
+                  <div class="assinatura-cargo">Prestador — NotaCheia</div>
+                </div>
+                <div class="assinatura-box">
+                  <div class="assinatura-linha"></div>
+                  <div class="assinatura-nome">${estSel ? (estSel.responsavel || "Contratante") : "Contratante"}</div>
+                  <div class="assinatura-cargo">${estSel ? estSel.name : "Estabelecimento"}</div>
+                </div>
+              </div>
+
+              <div class="rodape">NotaCheia ⭐ · notacheia.com.br · (41) 99675-6776 · notificacoes@notacheia.com.br</div>
+            </body></html>`);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+          };
+
+          return (<>
+            <div className="main-title">📄 Gerar Contrato</div>
+
+            <div className="setup-box" style={{ maxWidth: 500 }}>
+              <div className="setup-box-title">Dados do contrato</div>
+
+              <label className="lbl">Estabelecimento</label>
+              <select className="field" value={contrato.estId} onChange={e => setContrato(s => ({ ...s, estId: e.target.value }))}>
+                <option value="">— Selecione o estabelecimento —</option>
+                {establishments.filter(e => e.id !== "est_demo").map(e => (
+                  <option key={e.id} value={e.id}>{e.emoji} {e.name} — {e.responsavel || e.owner}</option>
+                ))}
+              </select>
+
+              <label className="lbl">Plano</label>
+              <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+                {[["R$ 99/mês","Basic — R$ 99,90/mês"],["R$ 169/mês","Pro — R$ 169,90/mês"]].map(([v,l]) => (
+                  <button key={v} onClick={() => setContrato(s => ({ ...s, plano: v }))}
+                    style={{ padding: "9px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.plano === v ? "var(--ac)" : "var(--border)"}`, background: contrato.plano === v ? "var(--ac)22" : "var(--d3)", color: contrato.plano === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
+                ))}
+              </div>
+
+              <label className="lbl">Taxa de setup (R$)</label>
+              <input className="field" value={contrato.setup} onChange={e => setContrato(s => ({ ...s, setup: e.target.value }))} placeholder="200,00" />
+
+              <label className="lbl">Aviso prévio para cancelamento (dias)</label>
+              <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                {["7","15","30"].map(d => (
+                  <button key={d} onClick={() => setContrato(s => ({ ...s, aviso: d }))}
+                    style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.aviso === d ? "var(--ac)" : "var(--border)"}`, background: contrato.aviso === d ? "var(--ac)22" : "var(--d3)", color: contrato.aviso === d ? "var(--text)" : "var(--muted2)" }}>{d} dias</button>
+                ))}
+              </div>
+
+              <label className="lbl">Data do contrato</label>
+              <input className="field" value={contrato.dataContrato} onChange={e => setContrato(s => ({ ...s, dataContrato: e.target.value }))} />
+            </div>
+
+            {estSel && (
+              <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", marginBottom: 14, fontSize: 13 }}>
+                <div style={{ fontWeight: 800, marginBottom: 6 }}>{estSel.emoji} {estSel.name}</div>
+                <div style={{ color: "var(--muted2)", fontSize: 12, lineHeight: 1.8 }}>
+                  👤 {estSel.responsavel || "—"} · 📍 {estSel.cidade || "—"} · 🏷️ {estSel.ramo || "—"}<br/>
+                  📧 {estSel.owner} · 📞 {estSel.telefone || "—"}
+                </div>
+              </div>
+            )}
+
+            <button className="btn btn-red" style={{ maxWidth: 280 }} onClick={imprimirContrato} disabled={!contrato.estId}>
+              🖨️ Gerar e imprimir contrato
+            </button>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 10, lineHeight: 1.6 }}>
+              Abrirá uma nova aba com o contrato formatado para impressão. Use <strong style={{ color: "var(--text)" }}>Ctrl+P</strong> para imprimir ou salvar como PDF.
+            </div>
+          </>);
+        })()}
+
         {tab === "senha" && (<>
           <div className="main-title">🔑 Trocar Senha Master</div>
           <div className="setup-box" style={{ maxWidth: 420 }}>
