@@ -63,143 +63,6 @@ const makeDefaultQuestions = () => [
   { id: "q_sug",   type: "text",   label: "Sugestão ou elogio para nós!",     required: false },
 ];
 
-const QUESTIONS_BY_RAMO = {
-  "Hamburgueria": [
-    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_pedido", type: "choice", label: "O que você pediu hoje?",                options: ["Hambúrguer clássico", "Smash burguer", "Combo completo", "Só bebida/lanche", "Outro"], required: true, allowOther: true },
-    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "Passou na rua", "TikTok", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
-    { id: "q_prat",   type: "stars",  label: "Como avalia a qualidade do lanche?",    required: true },
-    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
-    { id: "q_amb",    type: "stars",  label: "Como avalia nosso ambiente?",           required: true },
-    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
-    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
-  ],
-  "Pizzaria": [
-    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",            options: ["Sim", "Não"], required: true },
-    { id: "q_tipo",   type: "choice", label: "Como você consumiu hoje?",              options: ["No salão", "Delivery", "Retirada no local"], required: true },
-    { id: "q_sab",    type: "choice", label: "Qual sabor você pediu?",                options: ["Tradicional", "Especial/Premium", "Doce", "Brotinho", "Outro"], required: true, allowOther: true },
-    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "iFood/Delivery", "Passou na rua", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
-    { id: "q_pizza",  type: "stars",  label: "Como avalia a qualidade da pizza?",     required: true },
-    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
-    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
-    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
-  ],
-  "Restaurante": [
-    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",            options: ["Sim", "Não"], required: true },
-    { id: "q_mesa",   type: "choice", label: "Quantas pessoas na mesa?",              options: ["Vim sozinho", "2 pessoas", "3 a 6 pessoas", "Mais de 6"], required: true },
-    { id: "q_motivo", type: "choice", label: "Qual o motivo da visita?",              options: ["Almoço do dia a dia", "Jantar especial", "Reunião de negócios", "Aniversário/Celebração", "Outro"], required: true, allowOther: true },
-    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "Google Maps", "Passou na rua", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
-    { id: "q_prat",   type: "stars",  label: "Como avalia a qualidade dos pratos?",   required: true },
-    { id: "q_amb",    type: "stars",  label: "Como avalia nosso ambiente?",           required: true },
-    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
-    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
-    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
-  ],
-  "Salão de Beleza": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_servico", type: "choice", label: "Qual serviço você fez hoje?",          options: ["Corte", "Coloração/Tintura", "Escova/Hidratação", "Manicure/Pedicure", "Sobrancelha", "Outro"], required: true, allowOther: true },
-    { id: "q_atend",   type: "staff",  label: "Quem realizou seu atendimento?",       options: ["Ana", "Carol", "Fernanda", "Juliana"], required: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
-    { id: "q_result",  type: "stars",  label: "Como avalia o resultado do serviço?",  required: true },
-    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
-    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Barbearia": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_servico", type: "choice", label: "Qual serviço você fez hoje?",          options: ["Corte de cabelo", "Barba", "Corte + Barba", "Sobrancelha", "Pigmentação", "Outro"], required: true, allowOther: true },
-    { id: "q_atend",   type: "staff",  label: "Qual barbeiro te atendeu?",            options: ["Diego", "Felipe", "Marcos", "Rafael"], required: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
-    { id: "q_result",  type: "stars",  label: "Como avalia o resultado do corte?",    required: true },
-    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
-    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Clínica": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_tipo",    type: "choice", label: "Qual tipo de consulta/serviço?",       options: ["Consulta médica", "Exame", "Procedimento estético", "Fisioterapia", "Odontologia", "Outro"], required: true, allowOther: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Indicação médica", "Indicação de amigos", "Google Maps", "Plano de saúde", "Outro"], required: true, allowOther: true },
-    { id: "q_recepcao",type: "stars",  label: "Como avalia a recepção?",              required: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento do profissional?", required: true },
-    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
-    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Petshop": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_pet",     type: "choice", label: "Qual o tipo do seu pet?",              options: ["Cachorro", "Gato", "Pássaro", "Peixe", "Outro"], required: true, allowOther: true },
-    { id: "q_servico", type: "choice", label: "O que você fez hoje?",                 options: ["Banho e tosa", "Consulta veterinária", "Compra de produtos", "Hotel/Day care", "Outro"], required: true, allowOther: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
-    { id: "q_result",  type: "stars",  label: "Como avalia o cuidado com seu pet?",   required: true },
-    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Farmácia": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_compra",  type: "choice", label: "O que você comprou hoje?",             options: ["Medicamento com receita", "Medicamento sem receita", "Perfumaria/Higiene", "Suplemento", "Outro"], required: true, allowOther: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Fica perto de casa", "Indicação", "Convênio/Desconto", "Passou na rua", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
-    { id: "q_estoque", type: "stars",  label: "Como avalia nossa variedade de produtos?", required: true },
-    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Academia": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_treino",  type: "choice", label: "Qual modalidade você pratica?",        options: ["Musculação", "Funcional", "Spinning/Bike", "Luta/Artes marciais", "Yoga/Pilates", "Outro"], required: true, allowOther: true },
-    { id: "q_horario", type: "choice", label: "Qual horário você costuma treinar?",   options: ["Manhã (6h-12h)", "Tarde (12h-18h)", "Noite (18h-22h)"], required: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento dos instrutores?", required: true },
-    { id: "q_equip",   type: "stars",  label: "Como avalia os equipamentos?",         required: true },
-    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Posto de Gasolina": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
-    { id: "q_servico", type: "choice", label: "O que você fez hoje?",                 options: ["Abastecer", "Troca de óleo", "Calibragem", "Lavagem", "Compras na loja", "Outro"], required: true, allowOther: true },
-    { id: "q_comb",    type: "choice", label: "Qual combustível?",                    options: ["Gasolina comum", "Gasolina aditivada", "Etanol", "Diesel", "Não abasteci"], required: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
-    { id: "q_agilidade", type: "stars", label: "Como avalia a agilidade no atendimento?", required: true },
-    { id: "q_limpeza", type: "stars",  label: "Como avalia a limpeza do posto?",      required: true },
-    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-  "Imobiliária": [
-    { id: "q_first",   type: "choice", label: "É a sua primeira vez conosco?",        options: ["Sim", "Não"], required: true },
-    { id: "q_interesse",type: "choice",label: "Qual seu interesse?",                  options: ["Comprar imóvel", "Alugar imóvel", "Vender imóvel", "Avaliar imóvel", "Outro"], required: true, allowOther: true },
-    { id: "q_atend",   type: "staff",  label: "Qual corretor te atendeu?",            options: ["Carlos", "Fernanda", "Marcos", "Patrícia"], required: true },
-    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Google Maps", "OLX/Zap Imóveis", "Placa no imóvel", "Outro"], required: true, allowOther: true },
-    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento do corretor?", required: true },
-    { id: "q_opcoes",  type: "stars",  label: "Como avalia as opções apresentadas?",  required: true },
-    { id: "q_clareza", type: "stars",  label: "Como avalia a clareza nas informações?", required: true },
-    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
-    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
-  ],
-};
-
-const makeQuestionsByRamo = (ramo) => QUESTIONS_BY_RAMO[ramo] || makeDefaultQuestions();
-
 const SEED = [
   {
     id: "est_1", owner: "joao@burguer.com", pass: "123456", ativo: true,
@@ -546,6 +409,175 @@ const CSS = (ac = "#e63946") => `
   .div { height: 1px; background: var(--border); margin: 14px 0; }
 `;
 
+
+// ============================================================
+// EMOJI PICKER — Estilo WhatsApp com ramos de negócio
+// ============================================================
+const RAMOS_EMOJIS = [
+  { ramo: "Hamburgueria",        emoji: "🍔", desc: "Lanches e hambúrgueres" },
+  { ramo: "Pizzaria",            emoji: "🍕", desc: "Pizzas e massas" },
+  { ramo: "Restaurante",         emoji: "🍽️", desc: "Restaurante geral" },
+  { ramo: "Churrascaria",        emoji: "🥩", desc: "Carnes e churrasco" },
+  { ramo: "Comida Japonesa",     emoji: "🍣", desc: "Sushi, temaki, yakisoba" },
+  { ramo: "Comida Chinesa",      emoji: "🥡", desc: "Oriental variado" },
+  { ramo: "Comida Mexicana",     emoji: "🌮", desc: "Tacos, burritos, nachos" },
+  { ramo: "Cafeteria",           emoji: "☕", desc: "Café e salgados" },
+  { ramo: "Padaria",             emoji: "🥐", desc: "Pães, bolos, doces" },
+  { ramo: "Sorveteria / Açaí",   emoji: "🍦", desc: "Sorvetes e açaí" },
+  { ramo: "Bar / Pub",           emoji: "🍺", desc: "Cervejas e petiscos" },
+  { ramo: "Lanchonete",          emoji: "🌭", desc: "Lanches rápidos" },
+  { ramo: "Confeitaria",         emoji: "🎂", desc: "Bolos personalizados" },
+  { ramo: "Clínica Médica",      emoji: "🩺", desc: "Consultas e exames" },
+  { ramo: "Clínica Dentista",    emoji: "🦷", desc: "Odontologia" },
+  { ramo: "Farmácia",            emoji: "💊", desc: "Medicamentos e saúde" },
+  { ramo: "Academia",            emoji: "🏋️", desc: "Musculação e fitness" },
+  { ramo: "Salão de Beleza",     emoji: "💇", desc: "Cabelo, unhas, estética" },
+  { ramo: "Barbearia",           emoji: "💈", desc: "Barba e cabelo masculino" },
+  { ramo: "Spa / Estética",      emoji: "🧖", desc: "Massagem e bem-estar" },
+  { ramo: "Petshop",             emoji: "🐾", desc: "Banho, tosa e veterinário" },
+  { ramo: "Posto de Gasolina",   emoji: "⛽", desc: "Combustível e conveniência" },
+  { ramo: "Imobiliária",         emoji: "🏠", desc: "Venda e locação de imóveis" },
+  { ramo: "Hotel",               emoji: "🏨", desc: "Hospedagem e quartos" },
+  { ramo: "Pousada",             emoji: "🛖", desc: "Hospedagem aconchegante" },
+  { ramo: "Hostel",              emoji: "🛏️", desc: "Hospedagem econômica" },
+  { ramo: "Supermercado",        emoji: "🛒", desc: "Mercado e mercearia" },
+  { ramo: "Loja de Roupas",      emoji: "👗", desc: "Moda e vestuário" },
+  { ramo: "Calçados",            emoji: "👟", desc: "Sapatos e tênis" },
+  { ramo: "Ótica",               emoji: "👓", desc: "Óculos e lentes" },
+  { ramo: "Joalheria",           emoji: "💍", desc: "Joias e acessórios" },
+  { ramo: "Papelaria",           emoji: "📚", desc: "Material escolar" },
+  { ramo: "Floricultura",        emoji: "💐", desc: "Flores e presentes" },
+  { ramo: "Escola / Curso",      emoji: "🎓", desc: "Ensino e capacitação" },
+  { ramo: "Oficina / Auto",      emoji: "🔧", desc: "Mecânica e auto center" },
+  { ramo: "Lavanderia",          emoji: "👕", desc: "Lavagem e passagem" },
+  { ramo: "Delivery",            emoji: "🛵", desc: "Entrega de qualquer tipo" },
+  { ramo: "Clínica Veterinária", emoji: "🐕", desc: "Veterinário e animais" },
+  { ramo: "Fisioterapia",        emoji: "🤸", desc: "Reabilitação" },
+  { ramo: "Psicologia",          emoji: "🧠", desc: "Saúde mental" },
+  { ramo: "Nutrição",            emoji: "🥗", desc: "Alimentação e dietas" },
+  { ramo: "Advocacia",           emoji: "⚖️", desc: "Serviços jurídicos" },
+  { ramo: "Contabilidade",       emoji: "📊", desc: "Contabilidade e finanças" },
+  { ramo: "Tecnologia / TI",     emoji: "💻", desc: "Serviços de TI" },
+  { ramo: "Fotografia",          emoji: "📸", desc: "Fotos e ensaios" },
+  { ramo: "Escola de Música",    emoji: "🎵", desc: "Aulas de música" },
+  { ramo: "Escape Room / Lazer", emoji: "🎯", desc: "Entretenimento" },
+];
+
+const WA_CATS = {
+  "😀 Rostos":   ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","😉","😊","😇","🥰","😍","🤩","😘","😗","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤐","🤨","😐","😑","😶","😏","😒","🙄","😬","🤥","😌","😔","😪","🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶","🥴","😵","🤯","🤠","🥳","🥸","😎","🤓","🧐","😕","😟","🙁","☹️","😮","😲","😳","🥺","😦","😧","😨","😰","😥","😢","😭","😱","😖","😣","😞","😓","😩","😫","🥱","😤","😡","😠","🤬","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👾","🤖"],
+  "👋 Gestos":   ["👋","🤚","🖐","✋","🖖","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","🫶","👐","🤲","🙏","✍️","💅","🤳","💪","🦾","🦵","🦶","👂","🦻","👃","👀","👁","👅","👄"],
+  "❤️ Corações": ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","❤️‍🔥","❤️‍🩹","💋","💌"],
+  "🎉 Festas":   ["🎉","🎊","🎈","🎁","🎀","🎗️","🏆","🥇","🥈","🥉","🏅","🎖","🎯","🎪","🎭","🎨","🎬","🎤","🎧","🎼","🎵","🎶","🎷","🎸","🎹","🎺","🎻","🥁","🎲","🎮","🕹️"],
+  "✈️ Viagem":   ["✈️","🚀","🛸","🚗","🚕","🚙","🚌","🏎️","🚓","🚑","🚒","🛻","🚚","🏍️","🛵","🚲","🛴","⛽","🗺️","🧭","⛺","🏕️","🛖","🏠","🏡","🏢","🏥","🏦","🏨","🏪","🏫","🏬","🏯","🏰","💒","🗼","🗽","🕌","⛩️","🌆","🌇","🌃","🌉","🌅","🌄"],
+  "⭐ Símbolos": ["⭐","🌟","💫","✨","🔥","💥","❄️","🌈","☀️","⛅","☁️","⛈️","🌩️","🌪️","🌊","💧","💦","☔","⚡","🌙","🌞","🪐","🌍","🌎","🌏","💡","🔦","🔑","🗝️","🔐","🔒","🔓","🔨","🔧","🔩","🔗","💰","💸","💳","🪙","💹","📈","📉","📊","💬","💭","📌","📍","🚩","❌","✅","✔️","❎","🔴","🟠","🟡","🟢","🔵","🟣","⚫","⚪","🟤","💯","🆕","🆓","🆒"],
+  "🐶 Animais":  ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🙈","🙉","🙊","🐔","🐧","🐦","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🦋","🐌","🐞","🐜","🕷","🦂","🐢","🐍","🦎","🐙","🦑","🦐","🦞","🦀","🐡","🐠","🐟","🐬","🐳","🦈","🐅","🐆","🦓","🐘","🦒","🦘","🐄","🐎","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐈","🐾"],
+  "🌸 Natureza": ["🌸","🌺","🌻","🌹","🥀","🌷","🌼","💐","🍀","🌿","🍃","🍂","🍁","🌾","🌵","🎄","🌲","🌳","🌴","🌱","🪴","🌋","⛰️","🏔️","🗻","🏖","🏝","🌠","🎇","🎆"],
+  "🍕 Comida":   ["🍕","🍔","🌮","🌯","🥙","🧆","🥚","🍳","🥘","🍲","🍜","🍝","🍛","🍣","🍱","🥟","🍤","🍙","🍚","🍘","🍥","🧁","🍰","🎂","🍮","🍭","🍬","🍫","🍿","🍩","🍪","🌰","🥜","🍞","🥐","🥖","🥨","🥯","🧀","🥗","🥦","🥬","🥒","🥕","🧄","🧅","🌽","🌶️","🍆","🍅","🍄","🥑","🍒","🍑","🥭","🍍","🥥","🍇","🍓","🫐","🍉","🍊","🍋","🍌","🍎","🍏","🍐","☕","🍵","🧃","🥤","🧋","🍺","🍻","🥂","🍷","🍸","🍹","🍾","🧉","🥛","🍶"],
+  "⚽ Esportes": ["⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🏒","🏑","🥍","🏏","⛳","🥊","🥋","🎽","🛹","🛼","🛷","⛸️","🥌","🎿","⛷️","🏂","🪂","🏋️","🤼","🤸","⛹️","🤺","🤾","🏇","🏊","🏄","🚣","🧘","🏆","🥇","🥈","🥉"],
+  "📱 Tech":     ["📱","💻","🖥️","🖨️","⌨️","🖱️","💽","💾","💿","📀","📷","📸","📹","🎥","📽️","🎞️","📞","☎️","📟","📠","📺","📻","🧭","⏱️","⏰","⌚","📡","🔋","🔌","💡","🔦","🕯️","🔭","🔬","🩺","🧬","🔬","💊","🩹","🧪","🧫","🧲","🔩","🔧","🪛","🔨","⚒️","🛠️"],
+  "👔 Roupas":   ["👔","👗","👘","🥻","🩱","🩲","🩳","👙","👚","👛","👜","👝","🎒","🧳","👒","🎩","🧢","⛑️","👑","💍","💎","👠","👡","🥿","👢","👞","👟","🥾","🧤","🧣","🧦","🧥","🥼"],
+};
+
+const WA_SEARCH_NAMES = {
+  "😥":"suando","🚀":"foguete rocket","🎯":"alvo target","❌":"x erro fechar","📍":"local pin mapa","😂":"rindo haha","😘":"beijo kiss","😗":"beijo kiss","😚":"beijo kiss","😄":"sorrindo feliz","😓":"suando cansado","❤️":"coracao amor love","🔥":"fogo fire","⭐":"estrela star","💯":"cem perfeito","✅":"ok certo check","📈":"subindo crescimento","💰":"dinheiro money","🏆":"trofeu campeao","🎉":"festa party","👏":"palmas parabens","🙏":"obrigado please","💪":"forte musculo","🤝":"acordo handshake","😊":"feliz smile","🥰":"apaixonado love","😍":"apaixonado olhos","🤩":"incrivel wow","😎":"legal cool","🤔":"pensando hmm","😴":"dormindo sono","🤣":"gargalhando rindo","😭":"chorando sad","😱":"assustado shock","🎁":"presente gift","🎊":"confete festa","🌟":"brilhante destaque","💫":"estrela girando","✨":"brilho sparkle","🙌":"comemorando","👍":"legal positivo","👎":"ruim negativo","💔":"coracao partido","🔑":"chave key","💡":"ideia light","📊":"grafico chart","📅":"calendario agenda","🔔":"notificacao sino",
+};
+
+function EmojiPicker({ value, onChange, ramoAtual }) {
+  const [tab, setTab] = React.useState("ramos");
+  const [search, setSearch] = React.useState("");
+  const [waCat, setWaCat] = React.useState(Object.keys(WA_CATS)[0]);
+  const [selectedRamo, setSelectedRamo] = React.useState(ramoAtual || null);
+
+  const filteredRamos = search
+    ? RAMOS_EMOJIS.filter(r =>
+        r.ramo.toLowerCase().includes(search.toLowerCase()) ||
+        r.desc.toLowerCase().includes(search.toLowerCase())
+      )
+    : RAMOS_EMOJIS;
+
+  const waEmojis = React.useMemo(() => {
+    if (search && tab === "todos") {
+      const q = search.toLowerCase();
+      const all = Object.values(WA_CATS).flat();
+      const unique = [...new Set(all)];
+      const byName = unique.filter(e => (WA_SEARCH_NAMES[e] || "").includes(q));
+      if (byName.length >= 10) return byName.slice(0, 80);
+      return unique.slice(0, 80);
+    }
+    return WA_CATS[waCat] || [];
+  }, [search, tab, waCat]);
+
+  const selectRamo = (r) => {
+    setSelectedRamo(r.ramo);
+    onChange(r.emoji);
+  };
+
+  return (
+    <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: 12, marginBottom: 14 }}>
+      {/* Preview */}
+      <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10, padding: "8px 10px", background: "var(--dark)", borderRadius: 8 }}>
+        <div style={{ width: 44, height: 44, background: "var(--d3)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{value}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 700, fontSize: 13, color: "var(--text)" }}>{selectedRamo || "Selecione um ramo ou emoji"}</div>
+          <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>Clique em um ramo ou escolha na aba "Todos os emojis"</div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid var(--border)", marginBottom: 10 }}>
+        {[["ramos","🏪 Por ramo"],["todos","😀 Todos os emojis"]].map(([k,l]) => (
+          <button key={k} onClick={() => { setTab(k); setSearch(""); }} style={{ padding: "7px 14px", fontSize: 12, fontWeight: 700, border: "none", background: "none", color: tab === k ? "var(--text)" : "var(--muted)", borderBottom: `2px solid ${tab === k ? "var(--ac)" : "transparent"}`, cursor: "pointer", marginBottom: -1, fontFamily: "var(--ff-body)" }}>{l}</button>
+        ))}
+      </div>
+
+      {/* Busca */}
+      <input className="field" placeholder={tab === "ramos" ? "🔍 Buscar ramo... ex: pizza, academia, hotel" : "🔍 Buscar emoji... ex: coração, foguete, rindo"} value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 8, fontSize: 13 }} />
+
+      {/* Aba: ramos */}
+      {tab === "ramos" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(86px, 1fr))", gap: 5, maxHeight: 260, overflowY: "auto", paddingRight: 2 }}>
+          {filteredRamos.map(r => (
+            <button key={r.ramo} onClick={() => selectRamo(r)} title={r.desc}
+              style={{ padding: "7px 4px", border: `1.5px solid ${selectedRamo === r.ramo ? "var(--ac)" : "var(--border)"}`, borderRadius: 8, cursor: "pointer", background: selectedRamo === r.ramo ? "var(--ac)22" : "var(--d3)", color: selectedRamo === r.ramo ? "var(--text)" : "var(--muted2)", fontSize: 10, textAlign: "center", lineHeight: 1.3, transition: "all .15s", fontFamily: "var(--ff-body)", fontWeight: selectedRamo === r.ramo ? 800 : 600 }}>
+              <div style={{ fontSize: 22, marginBottom: 3 }}>{r.emoji}</div>
+              {r.ramo}
+            </button>
+          ))}
+          {filteredRamos.length === 0 && <div style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--muted)", fontSize: 12, padding: 16 }}>Nenhum ramo encontrado</div>}
+        </div>
+      )}
+
+      {/* Aba: todos os emojis WhatsApp */}
+      {tab === "todos" && (
+        <>
+          {!search && (
+            <div style={{ display: "flex", gap: 4, overflowX: "auto", paddingBottom: 6, marginBottom: 6 }}>
+              {Object.keys(WA_CATS).map(k => (
+                <button key={k} onClick={() => setWaCat(k)}
+                  style={{ padding: "4px 9px", fontSize: 11, fontWeight: 700, border: `1.5px solid ${waCat === k ? "var(--ac)" : "var(--border)"}`, borderRadius: 20, cursor: "pointer", background: waCat === k ? "var(--ac)22" : "none", color: waCat === k ? "var(--text)" : "var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k}</button>
+              ))}
+            </div>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(32px, 1fr))", gap: 2, maxHeight: 200, overflowY: "auto" }}>
+            {waEmojis.map(e => (
+              <button key={e} onClick={() => { onChange(e); setSelectedRamo(null); }}
+                style={{ width: 32, height: 32, fontSize: 18, border: value === e ? "2px solid var(--ac)" : "1px solid transparent", background: value === e ? "var(--ac)22" : "none", borderRadius: 6, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {e}
+              </button>
+            ))}
+          </div>
+          {/* Campo de digitação direta */}
+          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: "var(--dark)", borderRadius: 8 }}>
+            <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>✏️ Digite direto:</span>
+            <input className="field" placeholder="Cole ou digite um emoji..." style={{ marginBottom: 0, flex: 1, fontSize: 18, padding: "4px 10px", height: 36 }}
+              onInput={e => { const chars = [...e.target.value]; if (chars.length > 0) { onChange(chars[chars.length - 1]); setSelectedRamo(null); } }} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function LogoSVG({ size = 140, style = {} }) {
   const [err, setErr] = useState(false);
   if (err) return (
@@ -879,7 +911,7 @@ async function loadFeedbacks(estId) {
   return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio }));
 }
 async function saveFeedbackToSupabase(estId, fb) {
-  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, whatsapp: fb.whatsapp || null, answers: fb.answers, premio: fb.premio });
+  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio });
   return !error;
 }
 async function saveEstabelecimento(est) {
@@ -1045,7 +1077,6 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
-        { id: "clientes", icon: "👥", lbl: "Clientes" },
         { id: "insights", icon: "💡", lbl: "Insights" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
         ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
@@ -1089,7 +1120,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const initialStep = temCardapio ? "cardapio" : "welcome";
   const [step, setStep] = useState(initialStep);
   const [nome, setNome] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
@@ -1097,7 +1127,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
   const [savedNome, setSavedNome] = useState("");
-  const [savedWhatsapp, setSavedWhatsapp] = useState("");
   const [lgpd, setLgpd] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
@@ -1144,7 +1173,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
         <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <input className="field" placeholder="WhatsApp (opcional) — receba ofertas exclusivas" value={whatsapp} onChange={e => setWhatsapp(e.target.value.replace(/\D/g, ""))} inputMode="tel" style={{ marginTop: 0 }} />
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
@@ -1182,7 +1210,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <button className="btn btn-red" onClick={() => {
             const sqs = est.questions.filter(q => q.type === "stars");
             setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
-            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setSavedWhatsapp(whatsapp); setStep("confirm");
+            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm");
           }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
@@ -1202,7 +1230,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="div" />
           <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p); setSaving(true);
-            await onSubmit({ nome: savedNome, whatsapp: savedWhatsapp, answers: savedAnswers, premio: p.label });
+            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
             if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
@@ -1242,7 +1270,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-        {est.googleUrl && savedAnswers?.q_nps >= 9 && (
+        {est.googleUrl && avgStars >= 4 && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
@@ -1357,48 +1385,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
           {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div className="fb-prize">🎁 {f.premio}</div>}</div>); })}
         </>)}
-        {tab === "clientes" && (<>
-          <div className="main-title">👥 Base de Clientes</div>
-          {(() => {
-            const comWhatsapp = est.feedbacks.filter(f => f.whatsapp);
-            const mapaFreq = {};
-            est.feedbacks.forEach(f => {
-              const chave = f.whatsapp || (f.nome && f.nome !== "Anônimo" ? f.nome : null);
-              if (!chave) return;
-              if (!mapaFreq[chave]) mapaFreq[chave] = { nome: f.nome, whatsapp: f.whatsapp || "", visitas: 0, ultimaVisita: "" };
-              mapaFreq[chave].visitas++;
-              if (!mapaFreq[chave].ultimaVisita || f.data > mapaFreq[chave].ultimaVisita) mapaFreq[chave].ultimaVisita = f.data;
-            });
-            const lista = Object.values(mapaFreq).sort((a, b) => b.visitas - a.visitas);
-            return (<>
-              <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{lista.length}</div><div className="metric-lbl">Clientes únicos</div></div>
-                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{comWhatsapp.length}</div><div className="metric-lbl">Com WhatsApp</div></div>
-                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{lista.filter(c => c.visitas > 1).length}</div><div className="metric-lbl">Retornaram</div></div>
-              </div>
-              {lista.length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40, fontSize: 14 }}>Nenhum cliente identificado ainda.<br /><span style={{ fontSize: 12 }}>Clientes que informarem nome ou WhatsApp aparecerão aqui.</span></div>}
-              {lista.map((c, i) => (
-                <div key={i} style={{ background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>👤</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{c.nome || "Anônimo"}</div>
-                    <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 2 }}>
-                      {c.whatsapp ? <span>📱 {c.whatsapp.replace(/^(\d{2})(\d{2})(\d{4,5})(\d{4})$/, "+$1 ($2) $3-$4")}</span> : <span style={{ color: "var(--muted)" }}>Sem WhatsApp</span>}
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>🗓️ Última visita: {c.ultimaVisita || "—"}</div>
-                  </div>
-                  <div style={{ textAlign: "center", flexShrink: 0 }}>
-                    <div style={{ fontFamily: "var(--ff-head)", fontSize: 20, color: c.visitas > 1 ? "var(--green)" : "var(--muted2)" }}>{c.visitas}</div>
-                    <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>{c.visitas === 1 ? "visita" : "visitas"}</div>
-                  </div>
-                  {c.whatsapp && (
-                    <a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "6px 10px", fontSize: 16, fontWeight: 700, cursor: "pointer", textDecoration: "none", flexShrink: 0 }}>💬</a>
-                  )}
-                </div>
-              ))}
-            </>);
-          })()}
-        </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
           {insights().map((ins, i) => (<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
@@ -1448,8 +1434,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
               <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={ed.slug || makeSlug(ed.name)} onChange={e => setEd(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
             </div>
             <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Apenas letras minúsculas, números e hífen.</div>
-            <label className="lbl">Emoji</label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14, background: "var(--d2)", borderRadius: 10, padding: 10 }}>{["🍔", "🍕", "🍣", "🍜", "🍰", "🧁", "☕", "🍺", "🥗", "🍱", "🌮", "🍗", "🥩", "🍦", "🧇", "🍩", "🍫", "🥐", "🍷", "🥤", "💇", "💅", "🏋️", "🛍️", "💊", "🏥", "🐾", "🎮", "🏪", "🏬", "🍽️", "🎪"].map(e => (<button key={e} onClick={() => setEd(s => ({ ...s, emoji: e }))} style={{ width: 34, height: 34, fontSize: 18, background: ed.emoji === e ? "var(--ac)22" : "var(--d3)", border: ed.emoji === e ? "2px solid var(--ac)" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}>{e}</button>))}</div>
+            <label className="lbl">Emoji do estabelecimento</label>
+            <EmojiPicker value={ed.emoji} ramoAtual={ed.ramo} onChange={emoji => setEd(s => ({ ...s, emoji }))} />
             <label className="lbl">Cor principal</label>
             <div className="swatch-row">{COLORS.map(c => <div key={c} className={`swatch ${ed.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setEd(s => ({ ...s, color: c }))} />)}</div>
             <label className="lbl">🌐 Link Google Reviews</label>
@@ -1460,14 +1446,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </div>
           <div className="setup-box">
             <div className="setup-box-title">❓ Perguntas</div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
-              <div style={{ fontSize: 12, color: "var(--muted2)" }}>{ed.questions.length} pergunta{ed.questions.length !== 1 ? "s" : ""} configurada{ed.questions.length !== 1 ? "s" : ""}</div>
-              {QUESTIONS_BY_RAMO[est.ramo] && (
-                <button className="btn-sm btn-sm-red" onClick={() => { if (window.confirm(`Restaurar perguntas padrão para ${est.ramo}? As perguntas atuais serão substituídas.`)) setEd(e => ({ ...e, questions: makeQuestionsByRamo(est.ramo) })); }} style={{ fontSize: 11 }}>
-                  🔄 Restaurar padrão do {est.ramo}
-                </button>
-              )}
-            </div>
             {ed.questions.map(q => (<div className="pill-row" key={q.id}><div style={{ flex: 1 }}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={() => removeQ(q.id)}>✕</button></div>))}
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e => setNewQ(s => ({ ...s, label: e.target.value }))} />
@@ -1537,7 +1515,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     const temCardapio = isRamoComida(newEst.ramo);
     const novo = {
       ...newEst, slug, id: "est_" + uid(), ativo: true, logoUrl: "", feedbackInterval: 30,
-      questions: makeQuestionsByRamo(newEst.ramo),
+      questions: makeDefaultQuestions(),
       prizes: [{ id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color }, { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" }, { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" }],
       cardapio: temCardapio ? makeDefaultCardapio() : null,
       feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
@@ -1744,8 +1722,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             🍽️ Este ramo terá <strong style={{ color: "var(--text)" }}>cardápio digital</strong> disponível (Plano Pro).
           </div>
         )}
-        <label className="lbl">Emoji</label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14, background: "var(--d2)", borderRadius: 10, padding: 10 }}>{["🍔", "🍕", "🍣", "🍜", "🍰", "🧁", "☕", "🍺", "🥗", "🍱", "🌮", "🍗", "🥩", "🍦", "💇", "💅", "🏋️", "🛍️", "💊", "🏥", "🐾", "🏪"].map(e => (<button key={e} onClick={() => setNewEst(s => ({ ...s, emoji: e }))} style={{ width: 34, height: 34, fontSize: 18, background: newEst.emoji === e ? "var(--ac)22" : "var(--d3)", border: newEst.emoji === e ? "2px solid var(--ac)" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}>{e}</button>))}</div>
+        <label className="lbl">Emoji do estabelecimento</label>
+        <EmojiPicker value={newEst.emoji} ramoAtual={newEst.ramo} onChange={emoji => setNewEst(s => ({ ...s, emoji }))} />
         <label className="lbl">Cor</label><div className="swatch-row" style={{ marginBottom: 14 }}>{COLORS.map(c => <div key={c} className={`swatch ${newEst.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setNewEst(s => ({ ...s, color: c }))} />)}</div>
         <div className="div" />
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>👤 Dados do Responsável</div>
