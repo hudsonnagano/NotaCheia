@@ -1330,6 +1330,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [filter, setFilter] = useState("todos");
   const [newPass, setNewPass] = useState({ atual: "", nova: "", confirma: "" });
   const [passMsg, setPassMsg] = useState("");
+  const [newEmail, setNewEmail] = useState({ atual: "", novo: "", confirma: "" });
+  const [emailMsg, setEmailMsg] = useState("");
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a", "#f72585", "#4cc9f0", "#111", "#333"];
   const starQs = est.questions.filter(q => q.type === "stars");
   const starAvg = (key) => { const v = est.feedbacks.map(f => f.answers?.[key]).filter(v => typeof v === "number" && v > 0); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
@@ -1346,6 +1348,18 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const addP = () => { if (!newP.label) return; setEd(e => ({ ...e, prizes: [...e.prizes, { id: uid(), ...newP }] })); setNewP({ label: "", emoji: "🎁", color: "#e63946" }); };
   const removeP = id => setEd(e => ({ ...e, prizes: e.prizes.filter(p => p.id !== id) }));
   const trocarSenha = async () => { if (newPass.atual !== est.pass) { setPassMsg("❌ Senha incorreta."); setTimeout(() => setPassMsg(""), 3000); return; } if (newPass.nova.length < 6) { setPassMsg("❌ Mínimo 6 caracteres."); setTimeout(() => setPassMsg(""), 3000); return; } if (newPass.nova !== newPass.confirma) { setPassMsg("❌ Senhas não coincidem."); setTimeout(() => setPassMsg(""), 3000); return; } const u = { ...est, pass: newPass.nova }; await saveEstabelecimento(u); onUpdate(u); setPassMsg("✅ Senha alterada!"); setNewPass({ atual: "", nova: "", confirma: "" }); setTimeout(() => setPassMsg(""), 3000); };
+  const trocarEmail = async () => {
+    if (newEmail.atual !== est.owner) { setEmailMsg("❌ E-mail atual incorreto."); setTimeout(() => setEmailMsg(""), 3000); return; }
+    if (!newEmail.novo.includes("@")) { setEmailMsg("❌ E-mail inválido."); setTimeout(() => setEmailMsg(""), 3000); return; }
+    if (newEmail.novo !== newEmail.confirma) { setEmailMsg("❌ E-mails não coincidem."); setTimeout(() => setEmailMsg(""), 3000); return; }
+    const u = { ...est, owner: newEmail.novo };
+    await saveEstabelecimento(u);
+    onUpdate(u);
+    setEmailMsg("✅ E-mail alterado com sucesso!");
+    setNewEmail({ atual: "", novo: "", confirma: "" });
+    setTimeout(() => setEmailMsg(""), 3000);
+  };
+
   const handleLogoUpload = (e) => { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = (ev) => setEd(s => ({ ...s, logoUrl: ev.target.result })); r.readAsDataURL(file); };
 
   const saveCardapio = async () => {
@@ -1467,9 +1481,25 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={save} disabled={saving}>{saving ? "Salvando..." : saved ? "✅ Salvo!" : "Salvar alterações"}</button>
         </>)}
         {tab === "senha" && (<>
-          <div className="main-title">🔑 Trocar Senha</div>
+          <div className="main-title">🔑 Acesso</div>
+
           <div className="setup-box" style={{ maxWidth: 420 }}>
-            <div className="setup-box-title">Alterar senha de acesso</div>
+            <div className="setup-box-title">📧 Alterar e-mail de acesso</div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>
+              E-mail atual: <strong style={{ color: "var(--text)" }}>{est.owner}</strong>
+            </div>
+            {emailMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: emailMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: emailMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${emailMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{emailMsg}</div>}
+            <label className="lbl">E-mail atual</label>
+            <input className="field" type="email" placeholder="seu@email.com" value={newEmail.atual} onChange={e => setNewEmail(s => ({ ...s, atual: e.target.value }))} />
+            <label className="lbl">Novo e-mail</label>
+            <input className="field" type="email" placeholder="novo@email.com" value={newEmail.novo} onChange={e => setNewEmail(s => ({ ...s, novo: e.target.value }))} />
+            <label className="lbl">Confirmar novo e-mail</label>
+            <input className="field" type="email" placeholder="novo@email.com" value={newEmail.confirma} onChange={e => setNewEmail(s => ({ ...s, confirma: e.target.value }))} />
+            <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarEmail}>Alterar e-mail</button>
+          </div>
+
+          <div className="setup-box" style={{ maxWidth: 420 }}>
+            <div className="setup-box-title">🔑 Alterar senha de acesso</div>
             {passMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: passMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: passMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${passMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{passMsg}</div>}
             <label className="lbl">Senha atual</label>
             <input className="field" type="password" value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
