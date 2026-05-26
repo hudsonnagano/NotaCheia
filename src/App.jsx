@@ -63,6 +63,143 @@ const makeDefaultQuestions = () => [
   { id: "q_sug",   type: "text",   label: "Sugestão ou elogio para nós!",     required: false },
 ];
 
+const QUESTIONS_BY_RAMO = {
+  "Hamburgueria": [
+    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_pedido", type: "choice", label: "O que você pediu hoje?",                options: ["Hambúrguer clássico", "Smash burguer", "Combo completo", "Só bebida/lanche", "Outro"], required: true, allowOther: true },
+    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "Passou na rua", "TikTok", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
+    { id: "q_prat",   type: "stars",  label: "Como avalia a qualidade do lanche?",    required: true },
+    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
+    { id: "q_amb",    type: "stars",  label: "Como avalia nosso ambiente?",           required: true },
+    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
+    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
+  ],
+  "Pizzaria": [
+    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",            options: ["Sim", "Não"], required: true },
+    { id: "q_tipo",   type: "choice", label: "Como você consumiu hoje?",              options: ["No salão", "Delivery", "Retirada no local"], required: true },
+    { id: "q_sab",    type: "choice", label: "Qual sabor você pediu?",                options: ["Tradicional", "Especial/Premium", "Doce", "Brotinho", "Outro"], required: true, allowOther: true },
+    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "iFood/Delivery", "Passou na rua", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
+    { id: "q_pizza",  type: "stars",  label: "Como avalia a qualidade da pizza?",     required: true },
+    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
+    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
+    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
+  ],
+  "Restaurante": [
+    { id: "q_first",  type: "choice", label: "É a sua primeira vez aqui?",            options: ["Sim", "Não"], required: true },
+    { id: "q_mesa",   type: "choice", label: "Quantas pessoas na mesa?",              options: ["Vim sozinho", "2 pessoas", "3 a 6 pessoas", "Mais de 6"], required: true },
+    { id: "q_motivo", type: "choice", label: "Qual o motivo da visita?",              options: ["Almoço do dia a dia", "Jantar especial", "Reunião de negócios", "Aniversário/Celebração", "Outro"], required: true, allowOther: true },
+    { id: "q_como",   type: "choice", label: "Como nos conheceu?",                    options: ["Instagram", "Indicação", "Google Maps", "Passou na rua", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",    type: "stars",  label: "Como avalia nosso atendimento?",        required: true },
+    { id: "q_prat",   type: "stars",  label: "Como avalia a qualidade dos pratos?",   required: true },
+    { id: "q_amb",    type: "stars",  label: "Como avalia nosso ambiente?",           required: true },
+    { id: "q_esp",    type: "stars",  label: "Como avalia o tempo de espera?",        required: true },
+    { id: "q_preco",  type: "choice", label: "O que achou do nosso preço?",           options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",    type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",    required: true },
+    { id: "q_sug",    type: "text",   label: "Sugestão ou elogio!",                   required: false },
+  ],
+  "Salão de Beleza": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_servico", type: "choice", label: "Qual serviço você fez hoje?",          options: ["Corte", "Coloração/Tintura", "Escova/Hidratação", "Manicure/Pedicure", "Sobrancelha", "Outro"], required: true, allowOther: true },
+    { id: "q_atend",   type: "staff",  label: "Quem realizou seu atendimento?",       options: ["Ana", "Carol", "Fernanda", "Juliana"], required: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
+    { id: "q_result",  type: "stars",  label: "Como avalia o resultado do serviço?",  required: true },
+    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
+    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Barbearia": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_servico", type: "choice", label: "Qual serviço você fez hoje?",          options: ["Corte de cabelo", "Barba", "Corte + Barba", "Sobrancelha", "Pigmentação", "Outro"], required: true, allowOther: true },
+    { id: "q_atend",   type: "staff",  label: "Qual barbeiro te atendeu?",            options: ["Diego", "Felipe", "Marcos", "Rafael"], required: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
+    { id: "q_result",  type: "stars",  label: "Como avalia o resultado do corte?",    required: true },
+    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
+    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Clínica": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_tipo",    type: "choice", label: "Qual tipo de consulta/serviço?",       options: ["Consulta médica", "Exame", "Procedimento estético", "Fisioterapia", "Odontologia", "Outro"], required: true, allowOther: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Indicação médica", "Indicação de amigos", "Google Maps", "Plano de saúde", "Outro"], required: true, allowOther: true },
+    { id: "q_recepcao",type: "stars",  label: "Como avalia a recepção?",              required: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento do profissional?", required: true },
+    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
+    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Petshop": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_pet",     type: "choice", label: "Qual o tipo do seu pet?",              options: ["Cachorro", "Gato", "Pássaro", "Peixe", "Outro"], required: true, allowOther: true },
+    { id: "q_servico", type: "choice", label: "O que você fez hoje?",                 options: ["Banho e tosa", "Consulta veterinária", "Compra de produtos", "Hotel/Day care", "Outro"], required: true, allowOther: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
+    { id: "q_result",  type: "stars",  label: "Como avalia o cuidado com seu pet?",   required: true },
+    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Farmácia": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_compra",  type: "choice", label: "O que você comprou hoje?",             options: ["Medicamento com receita", "Medicamento sem receita", "Perfumaria/Higiene", "Suplemento", "Outro"], required: true, allowOther: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Fica perto de casa", "Indicação", "Convênio/Desconto", "Passou na rua", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
+    { id: "q_estoque", type: "stars",  label: "Como avalia nossa variedade de produtos?", required: true },
+    { id: "q_esp",     type: "stars",  label: "Como avalia o tempo de espera?",       required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Academia": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_treino",  type: "choice", label: "Qual modalidade você pratica?",        options: ["Musculação", "Funcional", "Spinning/Bike", "Luta/Artes marciais", "Yoga/Pilates", "Outro"], required: true, allowOther: true },
+    { id: "q_horario", type: "choice", label: "Qual horário você costuma treinar?",   options: ["Manhã (6h-12h)", "Tarde (12h-18h)", "Noite (18h-22h)"], required: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Passou na rua", "Google Maps", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento dos instrutores?", required: true },
+    { id: "q_equip",   type: "stars",  label: "Como avalia os equipamentos?",         required: true },
+    { id: "q_amb",     type: "stars",  label: "Como avalia o ambiente e limpeza?",    required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Posto de Gasolina": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez aqui?",           options: ["Sim", "Não"], required: true },
+    { id: "q_servico", type: "choice", label: "O que você fez hoje?",                 options: ["Abastecer", "Troca de óleo", "Calibragem", "Lavagem", "Compras na loja", "Outro"], required: true, allowOther: true },
+    { id: "q_comb",    type: "choice", label: "Qual combustível?",                    options: ["Gasolina comum", "Gasolina aditivada", "Etanol", "Diesel", "Não abasteci"], required: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento?",           required: true },
+    { id: "q_agilidade", type: "stars", label: "Como avalia a agilidade no atendimento?", required: true },
+    { id: "q_limpeza", type: "stars",  label: "Como avalia a limpeza do posto?",      required: true },
+    { id: "q_preco",   type: "choice", label: "O que achou do nosso preço?",          options: ["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"], required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+  "Imobiliária": [
+    { id: "q_first",   type: "choice", label: "É a sua primeira vez conosco?",        options: ["Sim", "Não"], required: true },
+    { id: "q_interesse",type: "choice",label: "Qual seu interesse?",                  options: ["Comprar imóvel", "Alugar imóvel", "Vender imóvel", "Avaliar imóvel", "Outro"], required: true, allowOther: true },
+    { id: "q_atend",   type: "staff",  label: "Qual corretor te atendeu?",            options: ["Carlos", "Fernanda", "Marcos", "Patrícia"], required: true },
+    { id: "q_como",    type: "choice", label: "Como nos conheceu?",                   options: ["Instagram", "Indicação", "Google Maps", "OLX/Zap Imóveis", "Placa no imóvel", "Outro"], required: true, allowOther: true },
+    { id: "q_atd",     type: "stars",  label: "Como avalia o atendimento do corretor?", required: true },
+    { id: "q_opcoes",  type: "stars",  label: "Como avalia as opções apresentadas?",  required: true },
+    { id: "q_clareza", type: "stars",  label: "Como avalia a clareza nas informações?", required: true },
+    { id: "q_nps",     type: "nps",    label: "De 0 a 10, o quanto nos indicaria?",   required: true },
+    { id: "q_sug",     type: "text",   label: "Sugestão ou elogio!",                  required: false },
+  ],
+};
+
+const makeQuestionsByRamo = (ramo) => QUESTIONS_BY_RAMO[ramo] || makeDefaultQuestions();
+
 const SEED = [
   {
     id: "est_1", owner: "joao@burguer.com", pass: "123456", ativo: true,
@@ -1323,6 +1460,14 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </div>
           <div className="setup-box">
             <div className="setup-box-title">❓ Perguntas</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ fontSize: 12, color: "var(--muted2)" }}>{ed.questions.length} pergunta{ed.questions.length !== 1 ? "s" : ""} configurada{ed.questions.length !== 1 ? "s" : ""}</div>
+              {QUESTIONS_BY_RAMO[est.ramo] && (
+                <button className="btn-sm btn-sm-red" onClick={() => { if (window.confirm(`Restaurar perguntas padrão para ${est.ramo}? As perguntas atuais serão substituídas.`)) setEd(e => ({ ...e, questions: makeQuestionsByRamo(est.ramo) })); }} style={{ fontSize: 11 }}>
+                  🔄 Restaurar padrão do {est.ramo}
+                </button>
+              )}
+            </div>
             {ed.questions.map(q => (<div className="pill-row" key={q.id}><div style={{ flex: 1 }}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={() => removeQ(q.id)}>✕</button></div>))}
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e => setNewQ(s => ({ ...s, label: e.target.value }))} />
@@ -1392,7 +1537,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     const temCardapio = isRamoComida(newEst.ramo);
     const novo = {
       ...newEst, slug, id: "est_" + uid(), ativo: true, logoUrl: "", feedbackInterval: 30,
-      questions: makeDefaultQuestions(),
+      questions: makeQuestionsByRamo(newEst.ramo),
       prizes: [{ id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color }, { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" }, { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" }],
       cardapio: temCardapio ? makeDefaultCardapio() : null,
       feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
