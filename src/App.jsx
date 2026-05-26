@@ -9,6 +9,44 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@7
 
 const makeSlug = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+// Ramos que têm cardápio digital
+const RAMOS_COMIDA = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria"];
+const isRamoComida = (ramo) => RAMOS_COMIDA.includes(ramo);
+
+const CARDAPIO_LAYOUTS = [
+  { id: "bold-full",   label: "Bold Full",       desc: "Foto pequena + nome e preço" },
+  { id: "foto-grande", label: "Foto em Destaque", desc: "Imagem grande por item" },
+  { id: "lista",       label: "Lista Compacta",   desc: "Sem foto, máximo de itens" },
+  { id: "grade",       label: "Grade 2 Colunas",  desc: "Estilo delivery" },
+  { id: "magazine",    label: "Magazine",          desc: "1 destaque + lista" },
+];
+
+const CARDAPIO_PALETAS = [
+  { id: "dark",   label: "Dark",   bg: "#080808", text: "#f0ede8", card: "#111" },
+  { id: "light",  label: "Light",  bg: "#f5f5f0", text: "#111",    card: "#fff" },
+  { id: "brasil", label: "Brasil", bg: "#005c2a", text: "#fff",    card: "#004a22" },
+  { id: "neutro", label: "Neutro", bg: "#1a1a1a", text: "#e0e0e0", card: "#242424" },
+];
+
+const makeDefaultCardapio = () => ({
+  layout: "bold-full",
+  paleta: "dark",
+  categorias: [
+    {
+      id: "cat_1", nome: "Destaques", itens: [
+        { id: "item_1", nome: "Hambúrguer Clássico", desc: "Blend 180g, queijo, alface, tomate", preco: "R$ 32,00", foto: "" },
+        { id: "item_2", nome: "Smash Burguer",        desc: "Blend 120g duplo, cheddar derretido", preco: "R$ 38,00", foto: "" },
+      ]
+    },
+    {
+      id: "cat_2", nome: "Bebidas", itens: [
+        { id: "item_3", nome: "Refrigerante Lata", desc: "350ml gelado", preco: "R$ 7,00", foto: "" },
+        { id: "item_4", nome: "Suco Natural",       desc: "400ml — laranja, limão ou abacaxi", preco: "R$ 12,00", foto: "" },
+      ]
+    },
+  ]
+});
+
 const makeDefaultQuestions = () => [
   { id: "q_atend", type: "staff",  label: "Quem realizou seu atendimento?",  options: ["Ana", "Carlos", "João", "Maria"], required: true },
   { id: "q_first", type: "choice", label: "É a sua primeira vez aqui?",      options: ["Sim", "Não"], required: true },
@@ -32,27 +70,16 @@ const SEED = [
     googleUrl: "https://g.page/r/exemplo/review", logoUrl: "", feedbackInterval: 30,
     questions: makeDefaultQuestions(),
     prizes: [
-      { id: "p1", label: "Fritas Grátis", emoji: "🍟", color: "#e63946" },
-      { id: "p2", label: "10% Desconto",  emoji: "🏷️", color: "#1a1a1a" },
-      { id: "p3", label: "Refri Grátis",  emoji: "🥤", color: "#c1121f" },
+      { id: "p1", label: "Fritas Grátis",    emoji: "🍟", color: "#e63946" },
+      { id: "p2", label: "10% Desconto",     emoji: "🏷️", color: "#1a1a1a" },
+      { id: "p3", label: "Refri Grátis",     emoji: "🥤", color: "#c1121f" },
       { id: "p4", label: "Sobremesa Grátis", emoji: "🍦", color: "#333" },
-      { id: "p5", label: "20% Desconto",  emoji: "🎉", color: "#e63946" },
-      { id: "p6", label: "Brinde Surpresa", emoji: "🎁", color: "#111" },
+      { id: "p5", label: "20% Desconto",     emoji: "🎉", color: "#e63946" },
+      { id: "p6", label: "Brinde Surpresa",  emoji: "🎁", color: "#111" },
     ],
+    cardapio: makeDefaultCardapio(),
     feedbacks: [], plano: "R$ 169/mês", desde: "01/05/2026",
     responsavel: "João Silva", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99999-0001", whatsapp: "5541999990001",
-    cardapio: { layout: "bold-full", paleta: "dark", categorias: [
-      { id: "c1", nome: "Burguers", itens: [
-        { id: "i1", nome: "Black Classic", descricao: "Blend 180g, queijo, alface, tomate, molho especial", preco: "32,90", foto: "" },
-        { id: "i2", nome: "Black Fire", descricao: "Blend 200g, cheddar, jalapeño, bacon crocante", preco: "38,90", foto: "" },
-      ]},
-      { id: "c2", nome: "Combos", itens: [
-        { id: "i3", nome: "Combo Classic", descricao: "Black Classic + fritas + refri 500ml", preco: "49,90", foto: "" },
-      ]},
-      { id: "c3", nome: "Bebidas", itens: [
-        { id: "i4", nome: "Coca-Cola 500ml", descricao: "Lata gelada", preco: "7,90", foto: "" },
-      ]},
-    ]},
   },
   {
     id: "est_2", owner: "ana@cafezinho.com", pass: "123456", ativo: true,
@@ -60,71 +87,19 @@ const SEED = [
     googleUrl: "", logoUrl: "", feedbackInterval: 30,
     questions: makeDefaultQuestions(),
     prizes: [
-      { id: "p1", label: "Café Grátis",    emoji: "☕", color: "#6f4e37" },
-      { id: "p2", label: "Bolo Grátis",    emoji: "🎂", color: "#5a3e2b" },
-      { id: "p3", label: "10% Desconto",   emoji: "🏷️", color: "#8b5e3c" },
-      { id: "p4", label: "Brinde Surpresa",emoji: "🎁", color: "#4a2f1a" },
+      { id: "p1", label: "Café Grátis",     emoji: "☕", color: "#6f4e37" },
+      { id: "p2", label: "Bolo Grátis",     emoji: "🎂", color: "#5a3e2b" },
+      { id: "p3", label: "10% Desconto",    emoji: "🏷️", color: "#8b5e3c" },
+      { id: "p4", label: "Brinde Surpresa", emoji: "🎁", color: "#4a2f1a" },
     ],
-    feedbacks: [], plano: "R$ 169/mês", desde: "05/05/2026",
+    cardapio: null,
+    feedbacks: [], plano: "R$ 99/mês", desde: "05/05/2026",
     responsavel: "Ana Costa", cidade: "Paranaguá", ramo: "Cafeteria", telefone: "(41) 99999-0002", whatsapp: "5541999990002",
-    cardapio: { layout: "lista", paleta: "light", categorias: [
-      { id: "c1", nome: "Cafés", itens: [
-        { id: "i1", nome: "Espresso", descricao: "Café puro, intenso e encorpado", preco: "6,90", foto: "" },
-        { id: "i2", nome: "Cappuccino", descricao: "Espresso com leite vaporizado e espuma", preco: "9,90", foto: "" },
-      ]},
-      { id: "c2", nome: "Bolos", itens: [
-        { id: "i3", nome: "Bolo de cenoura", descricao: "Com cobertura de brigadeiro", preco: "8,90", foto: "" },
-      ]},
-    ]},
   },
 ];
 
 const MASTER = { user: "master@notacheia.com.br", pass: "hu2001" };
-
-const RAMOS_COMIDA = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria"];
-const isRamoComida = (ramo) => RAMOS_COMIDA.includes(ramo);
-
-const CARDAPIO_LAYOUTS = [
-  { id: "bold-full", label: "Bold Full", desc: "Foto pequena + info ao lado" },
-  { id: "foto-destaque", label: "Foto em destaque", desc: "Imagem grande por item" },
-  { id: "lista", label: "Lista compacta", desc: "Sem foto, máximo de itens" },
-  { id: "grade", label: "Grade 2 colunas", desc: "Estilo delivery" },
-  { id: "magazine", label: "Magazine", desc: "Destaque no topo + lista" },
-];
-
-const CARDAPIO_PALETAS = [
-  { id: "dark", label: "Dark", bg: "#0d0d0d", card: "#1a1a1a", text: "#f0ede8", muted: "#555", border: "#222" },
-  { id: "light", label: "Light", bg: "#fafafa", card: "#fff", text: "#111", muted: "#aaa", border: "#eee" },
-  { id: "brasil", label: "Brasil", bg: "#007a2f", card: "rgba(0,0,0,0.2)", text: "#fff", muted: "rgba(255,255,255,0.5)", border: "rgba(255,255,255,0.1)", accent: "#ffdf00" },
-  { id: "neutro", label: "Neutro", bg: "#1c1c1e", card: "#2a2a2e", text: "#f0ede8", muted: "#555", border: "#333" },
-];
-
 const uid = () => Math.random().toString(36).slice(2, 8);
-const makeDefaultCardapio = () => ({
-  layout: "bold-full",
-  paleta: "dark",
-  categorias: [
-    {
-      id: uid(), nome: "Burguers",
-      itens: [
-        { id: uid(), nome: "Black Classic", descricao: "Blend 180g, queijo, alface, tomate, molho especial", preco: "32,90", foto: "" },
-        { id: uid(), nome: "Black Fire", descricao: "Blend 200g, cheddar, jalapeño, bacon crocante", preco: "38,90", foto: "" },
-      ]
-    },
-    {
-      id: uid(), nome: "Combos",
-      itens: [
-        { id: uid(), nome: "Combo Classic", descricao: "Black Classic + fritas + refri 500ml", preco: "49,90", foto: "" },
-      ]
-    },
-    {
-      id: uid(), nome: "Bebidas",
-      itens: [
-        { id: uid(), nome: "Coca-Cola 500ml", descricao: "Lata gelada", preco: "7,90", foto: "" },
-      ]
-    },
-  ]
-});
 const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase();
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
 
@@ -244,7 +219,6 @@ const CSS = (ac = "#e63946") => `
   .btn-download { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: var(--d2); border: 1.5px solid var(--border); border-radius: 14px; color: var(--muted2); font-family: var(--ff-body); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
   .btn-download:hover { border-color: var(--ac); color: var(--ac); }
   .google-box { background: linear-gradient(135deg, #0a1f0a, #051205); border: 1.5px solid #4ade8044; border-radius: 14px; padding: 16px; text-align: center; margin-bottom: 10px; }
-  .google-box-low { background: var(--d2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; margin-bottom: 10px; }
   .btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: white; color: #111; border: none; border-radius: 10px; font-family: var(--ff-body); font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
   .shell { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; background: var(--d1); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 12px; gap: 3px; flex-shrink: 0; }
@@ -363,6 +337,54 @@ const CSS = (ac = "#e63946") => `
   .est-card { background: var(--d1); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 10px; }
   .slug-box { display: flex; align-items: center; gap: 8px; background: var(--d2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
   .slug-text { font-size: 12px; color: var(--ac); font-weight: 700; flex: 1; word-break: break-all; }
+  /* ---- CARDÁPIO ---- */
+  .cardapio-page { min-height: 100vh; padding-bottom: 90px; }
+  .cardapio-header { padding: 20px 16px 14px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .cardapio-nome { font-family: var(--ff-head); font-size: 22px; letter-spacing: 1px; }
+  .cardapio-cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; scrollbar-width: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .cardapio-cat-tabs::-webkit-scrollbar { display: none; }
+  .cardapio-tab { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; flex-shrink: 0; }
+  .cardapio-items { padding: 14px 16px; }
+  .cardapio-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .cardapio-footer-txt { font-size: 12px; font-weight: 700; flex: 1; }
+  .cardapio-footer-btn { padding: 12px 22px; border: none; border-radius: 12px; font-family: var(--ff-body); font-size: 14px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+  /* item bold-full */
+  .item-bold { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .item-bold-foto { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+  .item-bold-foto-ph { width: 64px; height: 64px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .item-bold-info { flex: 1; min-width: 0; }
+  .item-bold-nome { font-weight: 800; font-size: 14px; margin-bottom: 3px; }
+  .item-bold-desc { font-size: 12px; opacity: 0.6; line-height: 1.4; }
+  .item-bold-preco { font-family: var(--ff-head); font-size: 15px; margin-top: 5px; }
+  /* item foto-grande */
+  .item-foto { border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+  .item-foto-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .item-foto-img-ph { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 52px; }
+  .item-foto-body { padding: 12px 14px; }
+  .item-foto-nome { font-weight: 800; font-size: 15px; margin-bottom: 3px; }
+  .item-foto-desc { font-size: 12px; opacity: 0.6; line-height: 1.4; }
+  .item-foto-preco { font-family: var(--ff-head); font-size: 16px; margin-top: 6px; }
+  /* item lista */
+  .item-lista { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px; }
+  .item-lista-nome { font-weight: 700; font-size: 13px; }
+  .item-lista-desc { font-size: 11px; opacity: 0.55; margin-top: 1px; }
+  .item-lista-preco { font-family: var(--ff-head); font-size: 13px; flex-shrink: 0; }
+  /* item grade */
+  .grade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .item-grade { border-radius: 14px; overflow: hidden; }
+  .item-grade-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+  .item-grade-img-ph { width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .item-grade-body { padding: 10px; }
+  .item-grade-nome { font-weight: 800; font-size: 13px; margin-bottom: 2px; }
+  .item-grade-preco { font-family: var(--ff-head); font-size: 13px; margin-top: 4px; }
+  /* item magazine */
+  .item-mag-destaque { border-radius: 16px; overflow: hidden; margin-bottom: 14px; }
+  .item-mag-destaque-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .item-mag-destaque-img-ph { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 64px; }
+  .item-mag-destaque-body { padding: 14px; }
+  .item-mag-destaque-nome { font-family: var(--ff-head); font-size: 18px; margin-bottom: 4px; }
+  .item-mag-destaque-desc { font-size: 13px; opacity: 0.65; }
+  .item-mag-destaque-preco { font-family: var(--ff-head); font-size: 18px; margin-top: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn { from { transform:scale(0.4); opacity:0; } to { transform:scale(1); opacity:1; } }
@@ -398,10 +420,306 @@ function LoadingScreen() {
   );
 }
 
+// ============================================================
+// CARDÁPIO VIEW — tela pública que o cliente vê
+// ============================================================
+function CardapioView({ est, onAvaliar }) {
+  const cardapio = est.cardapio || makeDefaultCardapio();
+  const paleta = CARDAPIO_PALETAS.find(p => p.id === cardapio.paleta) || CARDAPIO_PALETAS[0];
+  const [catAtiva, setCatAtiva] = useState(cardapio.categorias?.[0]?.id || "");
+  const catAtual = cardapio.categorias?.find(c => c.id === catAtiva) || cardapio.categorias?.[0];
+  const ac = est.color || "#e63946";
+
+  const estilos = {
+    bg: paleta.bg,
+    text: paleta.text,
+    card: paleta.card,
+    ac,
+  };
+
+  const renderItem = (item) => {
+    const layout = cardapio.layout;
+    const fotoEl = item.foto
+      ? <img src={item.foto} alt={item.nome} style={{ objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
+      : null;
+
+    if (layout === "bold-full") return (
+      <div className="item-bold" key={item.id}>
+        {item.foto
+          ? <img src={item.foto} alt={item.nome} className="item-bold-foto" />
+          : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>
+        }
+        <div className="item-bold-info">
+          <div className="item-bold-nome" style={{ color: estilos.text }}>{item.nome}</div>
+          {item.desc && <div className="item-bold-desc" style={{ color: estilos.text }}>{item.desc}</div>}
+          {item.preco && <div className="item-bold-preco" style={{ color: ac }}>{item.preco}</div>}
+        </div>
+      </div>
+    );
+
+    if (layout === "foto-grande") return (
+      <div className="item-foto" key={item.id} style={{ background: estilos.card }}>
+        {item.foto
+          ? <img src={item.foto} alt={item.nome} className="item-foto-img" />
+          : <div className="item-foto-img-ph" style={{ background: estilos.card, opacity: 0.5 }}>🍽️</div>
+        }
+        <div className="item-foto-body">
+          <div className="item-foto-nome" style={{ color: estilos.text }}>{item.nome}</div>
+          {item.desc && <div className="item-foto-desc" style={{ color: estilos.text }}>{item.desc}</div>}
+          {item.preco && <div className="item-foto-preco" style={{ color: ac }}>{item.preco}</div>}
+        </div>
+      </div>
+    );
+
+    if (layout === "lista") return (
+      <div className="item-lista" key={item.id}>
+        <div>
+          <div className="item-lista-nome" style={{ color: estilos.text }}>{item.nome}</div>
+          {item.desc && <div className="item-lista-desc" style={{ color: estilos.text }}>{item.desc}</div>}
+        </div>
+        {item.preco && <div className="item-lista-preco" style={{ color: ac }}>{item.preco}</div>}
+      </div>
+    );
+
+    if (layout === "magazine") {
+      const isFirst = catAtual?.itens?.[0]?.id === item.id;
+      if (isFirst) return (
+        <div className="item-mag-destaque" key={item.id} style={{ background: estilos.card }}>
+          {item.foto
+            ? <img src={item.foto} alt={item.nome} className="item-mag-destaque-img" />
+            : <div className="item-mag-destaque-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>
+          }
+          <div className="item-mag-destaque-body">
+            <div className="item-mag-destaque-nome" style={{ color: estilos.text }}>{item.nome}</div>
+            {item.desc && <div className="item-mag-destaque-desc" style={{ color: estilos.text }}>{item.desc}</div>}
+            {item.preco && <div className="item-mag-destaque-preco" style={{ color: ac }}>{item.preco}</div>}
+          </div>
+        </div>
+      );
+      return (
+        <div className="item-bold" key={item.id}>
+          {item.foto
+            ? <img src={item.foto} alt={item.nome} className="item-bold-foto" />
+            : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>
+          }
+          <div className="item-bold-info">
+            <div className="item-bold-nome" style={{ color: estilos.text }}>{item.nome}</div>
+            {item.desc && <div className="item-bold-desc" style={{ color: estilos.text }}>{item.desc}</div>}
+            {item.preco && <div className="item-bold-preco" style={{ color: ac }}>{item.preco}</div>}
+          </div>
+        </div>
+      );
+    }
+
+    // grade
+    return null;
+  };
+
+  const renderGrade = (itens) => (
+    <div className="grade-grid">
+      {itens.map(item => (
+        <div className="item-grade" key={item.id} style={{ background: estilos.card }}>
+          {item.foto
+            ? <img src={item.foto} alt={item.nome} className="item-grade-img" />
+            : <div className="item-grade-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>
+          }
+          <div className="item-grade-body">
+            <div className="item-grade-nome" style={{ color: estilos.text }}>{item.nome}</div>
+            {item.desc && <div style={{ fontSize: 11, opacity: 0.6, color: estilos.text }}>{item.desc}</div>}
+            {item.preco && <div className="item-grade-preco" style={{ color: ac }}>{item.preco}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="cardapio-page fade-up" style={{ background: estilos.bg, minHeight: "100vh" }}>
+      {/* Header */}
+      <div className="cardapio-header" style={{ background: estilos.card }}>
+        <div style={{ fontSize: 32, marginBottom: 6 }}>{est.emoji}</div>
+        <div className="cardapio-nome" style={{ color: estilos.text }}>{est.name}</div>
+        <div style={{ fontSize: 12, color: estilos.text, opacity: 0.5, marginTop: 3 }}>Cardápio digital</div>
+      </div>
+
+      {/* Tabs de categorias */}
+      <div className="cardapio-cat-tabs" style={{ background: estilos.card }}>
+        {cardapio.categorias?.map(cat => (
+          <div key={cat.id} className="cardapio-tab"
+            onClick={() => setCatAtiva(cat.id)}
+            style={{
+              background: catAtiva === cat.id ? ac : "transparent",
+              color: catAtiva === cat.id ? "#fff" : estilos.text,
+              border: `1.5px solid ${catAtiva === cat.id ? ac : "rgba(255,255,255,0.12)"}`,
+              opacity: catAtiva === cat.id ? 1 : 0.7,
+            }}>
+            {cat.nome}
+          </div>
+        ))}
+      </div>
+
+      {/* Itens */}
+      <div className="cardapio-items">
+        {catAtual && (
+          cardapio.layout === "grade"
+            ? renderGrade(catAtual.itens || [])
+            : (catAtual.itens || []).map(item => renderItem(item))
+        )}
+        {(!catAtual || !catAtual.itens?.length) && (
+          <div style={{ textAlign: "center", color: estilos.text, opacity: 0.4, padding: "40px 0", fontSize: 13 }}>
+            Nenhum item nesta categoria ainda.
+          </div>
+        )}
+      </div>
+
+      {/* Footer fixo */}
+      <div className="cardapio-footer" style={{ background: estilos.card, borderColor: "rgba(255,255,255,0.08)" }}>
+        <div className="cardapio-footer-txt" style={{ color: estilos.text, opacity: 0.7 }}>
+          🎁 Avalie e ganhe um brinde!
+        </div>
+        <button className="cardapio-footer-btn" onClick={onAvaliar}
+          style={{ background: ac, color: "#fff" }}>
+          Avaliar e girar 🎰
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CARDÁPIO EDITOR — painel do dono
+// ============================================================
+function CardapioEditor({ est, onChange }) {
+  const cardapio = est.cardapio || makeDefaultCardapio();
+  const [catEdit, setCatEdit] = useState(null); // id da categoria sendo editada
+  const [newCat, setNewCat] = useState("");
+  const [newItem, setNewItem] = useState({ nome: "", desc: "", preco: "", foto: "" });
+  const [addingItemCat, setAddingItemCat] = useState(null);
+
+  const update = (patch) => onChange({ ...cardapio, ...patch });
+  const updateCats = (cats) => update({ categorias: cats });
+
+  const addCat = () => {
+    if (!newCat.trim()) return;
+    updateCats([...cardapio.categorias, { id: uid(), nome: newCat.trim(), itens: [] }]);
+    setNewCat("");
+  };
+  const removeCat = (id) => updateCats(cardapio.categorias.filter(c => c.id !== id));
+  const addItem = (catId) => {
+    if (!newItem.nome.trim()) return;
+    updateCats(cardapio.categorias.map(c =>
+      c.id === catId ? { ...c, itens: [...(c.itens || []), { id: uid(), ...newItem }] } : c
+    ));
+    setNewItem({ nome: "", desc: "", preco: "", foto: "" });
+    setAddingItemCat(null);
+  };
+  const removeItem = (catId, itemId) => {
+    updateCats(cardapio.categorias.map(c =>
+      c.id === catId ? { ...c, itens: c.itens.filter(i => i.id !== itemId) } : c
+    ));
+  };
+
+  return (
+    <div>
+      {/* Layout */}
+      <div className="setup-box">
+        <div className="setup-box-title">🖼️ Layout do Cardápio</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+          {CARDAPIO_LAYOUTS.map(l => (
+            <button key={l.id} onClick={() => update({ layout: l.id })}
+              style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${cardapio.layout === l.id ? "var(--ac)" : "var(--border)"}`, background: cardapio.layout === l.id ? "var(--ac)22" : "var(--d3)", color: cardapio.layout === l.id ? "var(--text)" : "var(--muted2)" }}>
+              {l.label}
+            </button>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
+          {CARDAPIO_LAYOUTS.find(l => l.id === cardapio.layout)?.desc}
+        </div>
+      </div>
+
+      {/* Paleta */}
+      <div className="setup-box">
+        <div className="setup-box-title">🎨 Paleta de Cores</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {CARDAPIO_PALETAS.map(p => (
+            <button key={p.id} onClick={() => update({ paleta: p.id })}
+              style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", background: p.bg, color: p.text, border: `2.5px solid ${cardapio.paleta === p.id ? "var(--ac)" : "transparent"}`, boxShadow: cardapio.paleta === p.id ? "0 0 0 2px var(--ac)44" : "none" }}>
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Categorias e itens */}
+      <div className="setup-box">
+        <div className="setup-box-title">🍽️ Categorias e Itens</div>
+
+        {cardapio.categorias?.map(cat => (
+          <div key={cat.id} style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, marginBottom: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <span style={{ fontWeight: 800, fontSize: 14 }}>📂 {cat.nome}</span>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button className="btn-sm btn-sm-ghost" onClick={() => setAddingItemCat(addingItemCat === cat.id ? null : cat.id)}>+ Item</button>
+                <button className="btn-sm btn-sm-danger" onClick={() => removeCat(cat.id)}>✕</button>
+              </div>
+            </div>
+
+            {/* Itens da categoria */}
+            {(cat.itens || []).map(item => (
+              <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>{item.nome}</div>
+                  {item.desc && <div style={{ fontSize: 11, color: "var(--muted2)" }}>{item.desc}</div>}
+                  {item.preco && <div style={{ fontSize: 12, color: "var(--ac)", fontWeight: 700 }}>{item.preco}</div>}
+                </div>
+                <button className="btn-sm btn-sm-danger" onClick={() => removeItem(cat.id, item.id)}>✕</button>
+              </div>
+            ))}
+            {!cat.itens?.length && (
+              <div style={{ fontSize: 12, color: "var(--muted)", padding: "6px 0" }}>Nenhum item ainda.</div>
+            )}
+
+            {/* Formulário de novo item */}
+            {addingItemCat === cat.id && (
+              <div style={{ marginTop: 10, padding: 12, background: "var(--dark)", borderRadius: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Novo item</div>
+                <input className="field-inline" placeholder="Nome do item *" value={newItem.nome} onChange={e => setNewItem(s => ({ ...s, nome: e.target.value }))} style={{ width: "100%", marginBottom: 6 }} />
+                <input className="field-inline" placeholder="Descrição (opcional)" value={newItem.desc} onChange={e => setNewItem(s => ({ ...s, desc: e.target.value }))} style={{ width: "100%", marginBottom: 6 }} />
+                <input className="field-inline" placeholder="Preço (ex: R$ 32,00)" value={newItem.preco} onChange={e => setNewItem(s => ({ ...s, preco: e.target.value }))} style={{ width: "100%", marginBottom: 6 }} />
+                <input className="field-inline" placeholder="URL da foto (opcional)" value={newItem.foto} onChange={e => setNewItem(s => ({ ...s, foto: e.target.value }))} style={{ width: "100%", marginBottom: 8 }} />
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button className="btn-sm btn-sm-red" onClick={() => addItem(cat.id)}>Adicionar item</button>
+                  <button className="btn-sm btn-sm-ghost" onClick={() => { setAddingItemCat(null); setNewItem({ nome: "", desc: "", preco: "", foto: "" }); }}>Cancelar</button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {/* Nova categoria */}
+        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+          <input className="field-inline" placeholder="Nome da categoria (ex: Bebidas)" value={newCat} onChange={e => setNewCat(e.target.value)} onKeyDown={e => e.key === "Enter" && addCat()} />
+          <button className="btn-sm btn-sm-red" onClick={addCat}>+ Categoria</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SUPABASE HELPERS
+// ============================================================
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
-  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [], slug: e.slug || makeSlug(e.name), cardapio: e.cardapio || null }));
+  return data.map(e => ({
+    ...e,
+    questions: e.questions || makeDefaultQuestions(),
+    prizes: e.prizes || [],
+    feedbacks: [],
+    slug: e.slug || makeSlug(e.name),
+    cardapio: e.cardapio || null,
+  }));
 }
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
@@ -427,6 +745,9 @@ async function createEstabelecimento(est) {
   return !error;
 }
 
+// ============================================================
+// WHEEL
+// ============================================================
 function Wheel({ prizes, onResult }) {
   const ref = useRef(null);
   const angRef = useRef(0);
@@ -491,173 +812,15 @@ function WheelTeaser({ prizes }) {
   );
 }
 
-function CardapioView({ est, onAvaliar }) {
-  const c = est.cardapio || { layout: "bold-full", paleta: "dark", categorias: [] };
-  const pal = CARDAPIO_PALETAS.find(p => p.id === c.paleta) || CARDAPIO_PALETAS[0];
-  const [catAtiva, setCatAtiva] = useState("todos");
-  const acc = pal.accent || est.color;
-
-  const itensFiltrados = () => {
-    if (catAtiva === "todos") return c.categorias;
-    return c.categorias.filter(cat => cat.id === catAtiva);
-  };
-
-  const ItemBoldFull = ({ item }) => (
-    <div style={{ background: pal.card, borderRadius: 12, padding: 12, marginBottom: 8, display: "flex", gap: 10, alignItems: "center", border: `1px solid ${pal.border}` }}>
-      {item.foto
-        ? <img src={item.foto} alt={item.nome} style={{ width: 58, height: 58, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} onError={e => e.target.style.display="none"} />
-        : <div style={{ width: 58, height: 58, background: `${est.color}22`, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>{est.emoji}</div>
-      }
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: pal.text }}>{item.nome}</div>
-        {item.descricao && <div style={{ fontSize: 11, color: pal.muted, marginTop: 2, lineHeight: 1.4 }}>{item.descricao}</div>}
-        {item.preco && <div style={{ fontSize: 14, fontWeight: 900, color: acc, marginTop: 5 }}>R$ {item.preco}</div>}
-      </div>
-    </div>
-  );
-
-  const ItemFotoDestaque = ({ item }) => (
-    <div style={{ background: pal.card, borderRadius: 12, marginBottom: 8, overflow: "hidden", border: `1px solid ${pal.border}` }}>
-      {item.foto
-        ? <img src={item.foto} alt={item.nome} style={{ width: "100%", height: 100, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
-        : <div style={{ height: 100, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48 }}>{est.emoji}</div>
-      }
-      <div style={{ padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 800, color: pal.text }}>{item.nome}</div>
-          {item.descricao && <div style={{ fontSize: 10, color: pal.muted, marginTop: 2 }}>{item.descricao}</div>}
-        </div>
-        {item.preco && <div style={{ fontSize: 14, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 8 }}>R$ {item.preco}</div>}
-      </div>
-    </div>
-  );
-
-  const ItemLista = ({ item }) => (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${pal.border}` }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {item.foto
-          ? <img src={item.foto} alt={item.nome} style={{ width: 34, height: 34, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} onError={e => e.target.style.display="none"} />
-          : <div style={{ width: 34, height: 34, background: `${est.color}22`, borderRadius: 6, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>{est.emoji}</div>
-        }
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: pal.text }}>{item.nome}</div>
-          {item.descricao && <div style={{ fontSize: 10, color: pal.muted, marginTop: 1 }}>{item.descricao}</div>}
-        </div>
-      </div>
-      {item.preco && <div style={{ fontSize: 13, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 8 }}>R$ {item.preco}</div>}
-    </div>
-  );
-
-  const ItemGrade = ({ item }) => (
-    <div style={{ background: pal.card, borderRadius: 10, overflow: "hidden", border: `1px solid ${pal.border}` }}>
-      {item.foto
-        ? <img src={item.foto} alt={item.nome} style={{ width: "100%", height: 70, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
-        : <div style={{ height: 70, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30 }}>{est.emoji}</div>
-      }
-      <div style={{ padding: "8px 9px" }}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: pal.text }}>{item.nome}</div>
-        {item.descricao && <div style={{ fontSize: 9, color: pal.muted, marginTop: 1 }}>{item.descricao.slice(0, 30)}{item.descricao.length > 30 ? "…" : ""}</div>}
-        {item.preco && <div style={{ fontSize: 12, fontWeight: 900, color: acc, marginTop: 4 }}>R$ {item.preco}</div>}
-      </div>
-    </div>
-  );
-
-  const renderItens = (itens) => {
-    if (c.layout === "grade") return (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-        {itens.map(item => <ItemGrade key={item.id} item={item} />)}
-      </div>
-    );
-    return itens.map(item => {
-      if (c.layout === "foto-destaque") return <ItemFotoDestaque key={item.id} item={item} />;
-      if (c.layout === "lista") return <ItemLista key={item.id} item={item} />;
-      return <ItemBoldFull key={item.id} item={item} />;
-    });
-  };
-
-  const renderMagazine = () => {
-    const todos = c.categorias.filter(cat => catAtiva === "todos" || cat.id === catAtiva).flatMap(cat => cat.itens);
-    const destaque = todos[0];
-    const resto = todos.slice(1);
-    return (
-      <>
-        {destaque && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", marginBottom: 6 }}>Destaque</div>
-            <div style={{ background: pal.card, borderRadius: 12, overflow: "hidden", marginBottom: 12, border: `1px solid ${pal.border}` }}>
-              {destaque.foto
-                ? <img src={destaque.foto} alt={destaque.nome} style={{ width: "100%", height: 110, objectFit: "cover" }} onError={e => e.target.style.display="none"} />
-                : <div style={{ height: 110, background: `${est.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 56 }}>{est.emoji}</div>
-              }
-              <div style={{ padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: pal.text }}>{destaque.nome}</div>
-                  {destaque.descricao && <div style={{ fontSize: 11, color: pal.muted, marginTop: 2 }}>{destaque.descricao}</div>}
-                </div>
-                {destaque.preco && <div style={{ fontSize: 15, fontWeight: 900, color: acc, flexShrink: 0, marginLeft: 10 }}>R$ {destaque.preco}</div>}
-              </div>
-            </div>
-          </div>
-        )}
-        {resto.length > 0 && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", marginBottom: 6 }}>Mais itens</div>
-            {resto.map(item => <ItemLista key={item.id} item={item} />)}
-          </div>
-        )}
-      </>
-    );
-  };
-
-  return (
-    <div style={{ minHeight: "100vh", background: pal.bg, fontFamily: "var(--ff-body)" }}>
-      <div style={{ background: est.color, padding: "20px 16px 16px", textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", letterSpacing: 3, textTransform: "uppercase", marginBottom: 4 }}>Powered by NotaCheia</div>
-        <div style={{ fontSize: 36, marginBottom: 6 }}>{est.logoUrl ? <img src={est.logoUrl} alt={est.name} style={{ width: 48, height: 48, objectFit: "contain", borderRadius: 8 }} /> : est.emoji}</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>{est.name}</div>
-        {est.cidade && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", marginTop: 3 }}>{est.cidade} · Aberto agora</div>}
-      </div>
-
-      <div style={{ display: "flex", gap: 7, padding: "10px 14px", overflowX: "auto", background: pal.bg }}>
-        <button onClick={() => setCatAtiva("todos")} style={{ background: catAtiva === "todos" ? est.color : "transparent", color: catAtiva === "todos" ? "#fff" : pal.muted, border: `1.5px solid ${catAtiva === "todos" ? est.color : pal.border}`, padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>Todos</button>
-        {c.categorias.map(cat => (
-          <button key={cat.id} onClick={() => setCatAtiva(cat.id)} style={{ background: catAtiva === cat.id ? est.color : "transparent", color: catAtiva === cat.id ? "#fff" : pal.muted, border: `1.5px solid ${catAtiva === cat.id ? est.color : pal.border}`, padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{cat.nome}</button>
-        ))}
-      </div>
-
-      <div style={{ padding: "8px 14px 16px" }}>
-        {c.layout === "magazine"
-          ? renderMagazine()
-          : itensFiltrados().map(cat => (
-            <div key={cat.id}>
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: pal.muted, textTransform: "uppercase", margin: "10px 0 6px" }}>{cat.nome}</div>
-              {renderItens(cat.itens)}
-            </div>
-          ))
-        }
-      </div>
-
-      <div style={{ margin: "0 14px 24px", background: pal.card, border: `1px solid ${est.color}44`, borderRadius: 14, padding: 16, textAlign: "center" }}>
-        <div style={{ fontSize: 20, marginBottom: 6 }}>🎁</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 15, color: pal.text, marginBottom: 4 }}>Gostou? Avalie e ganhe um brinde!</div>
-        <div style={{ fontSize: 12, color: pal.muted, marginBottom: 12 }}>Leva menos de 1 minuto</div>
-        <button onClick={onAvaliar} style={{ width: "100%", padding: 12, background: est.color, color: "#fff", border: "none", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>Avaliar e girar a roleta →</button>
-      </div>
-
-      <div style={{ textAlign: "center", padding: "0 0 20px", fontSize: 11, color: pal.muted }}>Powered by NotaCheia ⭐</div>
-    </div>
-  );
-}
-
 function Stars({ val, onChange }) {
   const [hov, setHov] = useState(0);
   return (
     <div className="stars-row">
-      {[1,2,3,4,5].map(s => (
+      {[1, 2, 3, 4, 5].map(s => (
         <span key={s} className={`star ${s <= (hov || val) ? "on" : ""}`}
           onMouseEnter={() => setHov(s)} onMouseLeave={() => setHov(0)} onClick={() => onChange(s)}>⭐</span>
       ))}
-      {(hov || val) > 0 && <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 4 }}>{["","Ruim","Regular","Bom","Ótimo","Excelente"][hov || val]}</span>}
+      {(hov || val) > 0 && <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 4 }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][hov || val]}</span>}
     </div>
   );
 }
@@ -678,7 +841,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
       {q.type === "stars" && <Stars val={answer || 0} onChange={onChange} />}
       {q.type === "nps" && (
         <div>
-          <div className="nps-row">{[0,1,2,3,4,5,6,7,8,9,10].map(n => <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>)}</div>
+          <div className="nps-row">{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>)}</div>
           <div className="nps-labels"><span className="nps-lbl">😞 Jamais indicaria</span><span className="nps-lbl">Indicaria com certeza 😍</span></div>
         </div>
       )}
@@ -724,6 +887,7 @@ function QRCodeView({ est }) {
 
 function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
+  const temCardapio = est && isRamoComida(est.ramo);
   const navs = isMaster
     ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
     : [
@@ -731,7 +895,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
         { id: "insights", icon: "💡", lbl: "Insights" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
-        ...(isRamoComida(est?.ramo) ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio" }] : []),
+        ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
         { id: "senha", icon: "🔑", lbl: "Trocar senha" },
       ];
@@ -759,12 +923,18 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   );
 }
 
+// ============================================================
+// CLIENT APP — fluxo do cliente
+// ============================================================
 function ClientApp({ est, onSubmit, masterMode = false }) {
   const interval = est.feedbackInterval || 30;
+  const temCardapio = isRamoComida(est.ramo) && est.cardapio;
   const blocked = !canLeaveFeedback(est.id, interval, masterMode);
   const daysLeft = daysUntilNext(est.id, interval);
-  const temCardapio = isRamoComida(est.ramo) && est.cardapio?.categorias?.length > 0;
-  const [step, setStep] = useState(temCardapio ? "cardapio" : "welcome");
+
+  // Se tem cardápio, começa no cardápio; senão vai direto para welcome
+  const initialStep = temCardapio ? "cardapio" : "welcome";
+  const [step, setStep] = useState(initialStep);
   const [nome, setNome] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
@@ -779,27 +949,18 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const prog = (answered.length / required.length) * 100;
   const allDone = answered.length === required.length;
 
-  if (step === "cardapio") return (
-    <CardapioView est={est} onAvaliar={() => {
-      if (blocked) { setStep("bloqueado"); return; }
-      setStep("welcome");
-    }} />
-  );
-
-  if (step === "bloqueado") return (
-    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
-      <div className="card" style={{ textAlign: "center" }}>
-        <div style={{ marginBottom: 12 }}><EstLogo est={est} size={72} /></div>
-        <div className="welcome-name">{est.name}</div>
-        <div style={{ fontSize: 44, margin: "16px 0" }}>⏳</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 8 }}>Já participou recentemente!</div>
-        <div style={{ fontSize: 13, color: "var(--muted2)", lineHeight: 1.6 }}>Você poderá responder novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>.</div>
-        {temCardapio && <button className="btn btn-ghost" style={{marginTop:16,fontSize:13}} onClick={() => setStep("cardapio")}>← Ver cardápio</button>}
-        <div style={{ marginTop: 20, fontSize: 11, color: "#444" }}>{est.name} · Powered by NotaCheia ⭐</div>
+  // Tela: bloqueado mas tem cardápio → mostra cardápio + aviso no rodapé
+  if (blocked && step === "cardapio") return (
+    <div>
+      <CardapioView est={est} onAvaliar={() => {}} />
+      {/* Sobrepõe o botão do footer com aviso */}
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 16px", background: "var(--d1)", borderTop: "1px solid var(--border)", textAlign: "center", fontSize: 13 }}>
+        ⏳ Você poderá avaliar novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>
       </div>
     </div>
   );
 
+  // Tela: bloqueado sem cardápio
   if (blocked && step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -813,6 +974,10 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
+  if (step === "cardapio") return (
+    <CardapioView est={est} onAvaliar={() => setStep("welcome")} />
+  );
+
   if (step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -820,18 +985,23 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         {masterMode && <div className="master-demo-bar">👑 Modo demonstração — bloqueio desativado</div>}
         <div style={{ fontSize: 52, marginBottom: 10 }}><EstLogo est={est} size={60} /></div>
         <div className="welcome-name">{est.name}</div>
-        <div className="welcome-tag">Sua opinião é muito importante para nós!<br/>Responda e ganhe um brinde surpresa 🎁</div>
+        <div className="welcome-tag">Sua opinião é muito importante para nós!<br />Responda e ganhe um brinde surpresa 🎁</div>
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
         <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <div style={{display:"flex",alignItems:"flex-start",gap:10,background:"var(--d2)",border:"1px solid var(--border)",borderRadius:12,padding:"12px 14px",marginBottom:14,textAlign:"left",cursor:"pointer"}} onClick={()=>setLgpd(l=>!l)}>
-          <div style={{width:20,height:20,borderRadius:6,border:`2px solid ${lgpd?"var(--ac)":"var(--muted)"}`,background:lgpd?"var(--ac)":"transparent",flexShrink:0,marginTop:1,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.15s"}}>
-            {lgpd&&<span style={{fontSize:12,color:"#fff",fontWeight:900}}>✓</span>}
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
+          <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
+            {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
           </div>
-          <div style={{fontSize:12,color:"var(--muted2)",lineHeight:1.6}}>
-            Concordo que minha avaliação seja usada para melhorar os serviços do <strong style={{color:"var(--text)"}}>{est.name}</strong>. Nenhum dado pessoal será compartilhado com terceiros.
+          <div style={{ fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
+            Concordo que minha avaliação seja usada para melhorar os serviços do <strong style={{ color: "var(--text)" }}>{est.name}</strong>. Nenhum dado pessoal será compartilhado com terceiros.
           </div>
         </div>
+        {temCardapio && (
+          <button className="btn btn-ghost" style={{ marginBottom: 8, fontSize: 13 }} onClick={() => setStep("cardapio")}>
+            ← Ver cardápio
+          </button>
+        )}
         <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}>
           {lgpd || masterMode ? "Começar pesquisa →" : "Aceite os termos para continuar"}
         </button>
@@ -853,7 +1023,11 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         </div>
         {est.questions.map((q, i) => <QuestionItem key={q.id} q={q} idx={i} answer={answers[q.id]} onChange={v => setAnswers(a => ({ ...a, [q.id]: v }))} />)}
         <div style={{ marginTop: 16 }}>
-          <button className="btn btn-red" onClick={() => { const sqs = est.questions.filter(q => q.type === "stars"); setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5); setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm"); }} disabled={!allDone}>
+          <button className="btn btn-red" onClick={() => {
+            const sqs = est.questions.filter(q => q.type === "stars");
+            setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
+            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm");
+          }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
         </div>
@@ -868,14 +1042,13 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="confirm-icon">✅</div>
           <div className="confirm-title" style={{ color: "var(--ac)" }}>Obrigado!</div>
           <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
-          <div className="confirm-sub">Sua resposta foi registrada!<br/>Agora gire a roleta e descubra seu prêmio 🎁</div>
+          <div className="confirm-sub">Sua resposta foi registrada!<br />Agora gire a roleta e descubra seu prêmio 🎁</div>
           <div className="div" />
           <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p); setSaving(true);
             await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
-            // Dispara email para o dono se nota baixa (1-3 estrelas) e não for modo demo
             if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
               const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
               const comentario = savedAnswers?.q_sug || "";
@@ -883,37 +1056,15 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
               try {
                 await fetch("https://api.resend.com/emails", {
                   method: "POST",
-                  headers: {
-                    "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev",
-                    "Content-Type": "application/json",
-                  },
+                  headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
                   body: JSON.stringify({
                     from: "NotaCheia <notificacoes@notacheia.com.br>",
                     to: [est.owner],
                     subject: `⚠️ Avaliação negativa no ${est.name}`,
-                    html: `
-                      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;">
-                        <h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2>
-                        <p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p>
-                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
-                          <p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p>
-                          <p style="margin:0;font-weight:700;">${cliente}</p>
-                        </div>
-                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
-                          <p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p>
-                          <p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p>
-                        </div>
-                        <div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;">
-                          <p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p>
-                          <p style="margin:0;font-weight:700;">${nps}</p>
-                        </div>
-                        ${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}
-                        <p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p>
-                      </div>
-                    `,
+                    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${cliente}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
                   }),
                 });
-              } catch(e) { console.log("Erro ao enviar email:", e); }
+              } catch (e) { console.log("Erro ao enviar email:", e); }
             }
             setStep("prize");
           }} />
@@ -923,65 +1074,59 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
-  if (step === "prize") {
-    return (
-      <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
-        <div className="card prize-wrap">
-          <div className="prize-emoji">{prize.emoji}</div>
-          <div className="prize-title">PARABÉNS!</div>
-          <div className="prize-name">{prize.label}</div>
-          <div className="prize-congrats">{nome && nome !== "Anônimo" ? `${nome}, você` : "Você"} ganhou este prêmio!</div>
-          <div className="coupon-box">
-            <div className="coupon-id">{coupon}</div>
-            <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
-          </div>
-          <button className="btn-download" onClick={() => { const txt=`NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`;const blob=new Blob([txt],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`premio-${coupon}.txt`;a.click(); }}>⬇️ Baixar comprovante</button>
-          {est.googleUrl && avgStars >= 4 && (
-            <button className="btn btn-red" style={{marginTop:8}} onClick={() => setStep("google")}>
-              Continuar →
-            </button>
-          )}
-          <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>{est.name} · Powered by NotaCheia ⭐</div>
+  if (step === "prize") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
+      <div className="card prize-wrap">
+        <div className="prize-emoji">{prize.emoji}</div>
+        <div className="prize-title">PARABÉNS!</div>
+        <div className="prize-name">{prize.label}</div>
+        <div className="prize-congrats">{nome && nome !== "Anônimo" ? `${nome}, você` : "Você"} ganhou este prêmio!</div>
+        <div className="coupon-box">
+          <div className="coupon-id">{coupon}</div>
+          <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
         </div>
-      </div>
-    );
-  }
-
-  if (step === "google") {
-    return (
-      <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}20, transparent 60%), var(--dark)` }}>
-        <div className="card" style={{textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:12}}>🌟</div>
-          <div style={{fontFamily:"var(--ff-head)",fontSize:22,marginBottom:8}}>Você adorou, né?</div>
-          <div style={{fontSize:14,color:"var(--muted2)",lineHeight:1.7,marginBottom:20}}>
-            Que tal contar pra mais pessoas?<br/>
-            Uma avaliação no Google ajuda muito o <strong style={{color:"var(--text)"}}>{est.name}</strong> a crescer! 🙏
-          </div>
-          <button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")} style={{marginBottom:12}}>
-            🌐 Avaliar no Google Maps
+        <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
+        {est.googleUrl && avgStars >= 4 && (
+          <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
+            Continuar →
           </button>
-          <button className="btn btn-ghost" style={{fontSize:13}} onClick={() => setStep("fim")}>
-            Agora não
-          </button>
-        </div>
+        )}
+        <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>{est.name} · Powered by NotaCheia ⭐</div>
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (step === "fim") {
-    return (
-      <div className="page page-center fade-up" style={{ background: "var(--dark)" }}>
-        <div className="card" style={{textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:12}}>🙏</div>
-          <div style={{fontFamily:"var(--ff-head)",fontSize:22,marginBottom:8}}>Obrigado!</div>
-          <div style={{fontSize:14,color:"var(--muted2)",lineHeight:1.7}}>
-            Sua opinião foi registrada.<br/>Até a próxima visita! 😊
-          </div>
-          <div style={{fontSize:11,color:"#444",marginTop:20}}>{est.name} · Powered by NotaCheia ⭐</div>
+  if (step === "google") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 52, marginBottom: 12 }}>🌟</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, marginBottom: 8 }}>Você adorou, né?</div>
+        <div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7, marginBottom: 20 }}>
+          Que tal contar pra mais pessoas?<br />
+          Uma avaliação no Google ajuda muito o <strong style={{ color: "var(--text)" }}>{est.name}</strong> a crescer! 🙏
         </div>
+        <button className="btn-google" onClick={() => window.open(est.googleUrl, "_blank")} style={{ marginBottom: 12 }}>
+          🌐 Avaliar no Google Maps
+        </button>
+        <button className="btn btn-ghost" style={{ fontSize: 13 }} onClick={() => setStep("fim")}>
+          Agora não
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
+
+  if (step === "fim") return (
+    <div className="page page-center fade-up" style={{ background: "var(--dark)" }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 52, marginBottom: 12 }}>🙏</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, marginBottom: 8 }}>Obrigado!</div>
+        <div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7 }}>
+          Sua opinião foi registrada.<br />Até a próxima visita! 😊
+        </div>
+        <div style={{ fontSize: 11, color: "#444", marginTop: 20 }}>{est.name} · Powered by NotaCheia ⭐</div>
+      </div>
+    </div>
+  );
 }
 
 function MiniBarChart({ data, color = "var(--ac)" }) {
@@ -989,244 +1134,166 @@ function MiniBarChart({ data, color = "var(--ac)" }) {
   return (<div className="bar-chart">{data.map((d, i) => (<div className="bar-col" key={i}><div className="bar-val">{d.val}</div><div className="bar" style={{ height: `${(d.val / max) * 70}px`, background: color, opacity: 0.7 + (i / data.length) * 0.3 }} /><div className="bar-lbl">{d.lbl}</div></div>))}</div>);
 }
 
-function CardapioEditor({ est, onSave }) {
-  const defaultC = est.cardapio || { layout: "bold-full", paleta: "dark", categorias: [] };
-  const [c, setC] = useState({ ...defaultC, categorias: defaultC.categorias.map(cat => ({ ...cat, itens: cat.itens.map(i => ({ ...i })) })) });
-  const [saved, setSaved] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [catAberta, setCatAberta] = useState(null);
-  const [novaCategoria, setNovaCategoria] = useState("");
-  const [novoItem, setNovoItem] = useState({ nome: "", descricao: "", preco: "", foto: "" });
-
-  const save = async () => { setSaving(true); await onSave(c); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
-
-  const addCategoria = () => {
-    if (!novaCategoria) return;
-    const nova = { id: uid(), nome: novaCategoria, itens: [] };
-    setC(s => ({ ...s, categorias: [...s.categorias, nova] }));
-    setNovaCategoria("");
-    setCatAberta(nova.id);
-  };
-
-  const removeCategoria = (id) => setC(s => ({ ...s, categorias: s.categorias.filter(c => c.id !== id) }));
-
-  const addItem = (catId) => {
-    if (!novoItem.nome) return;
-    setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: [...cat.itens, { id: uid(), ...novoItem }] } : cat) }));
-    setNovoItem({ nome: "", descricao: "", preco: "", foto: "" });
-  };
-
-  const removeItem = (catId, itemId) => setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: cat.itens.filter(i => i.id !== itemId) } : cat) }));
-
-  const updateItem = (catId, itemId, field, val) => setC(s => ({ ...s, categorias: s.categorias.map(cat => cat.id === catId ? { ...cat, itens: cat.itens.map(i => i.id === itemId ? { ...i, [field]: val } : i) } : cat) }));
-
-  return (
-    <div>
-      <div className="setup-box">
-        <div className="setup-box-title">🎨 Aparência</div>
-        <label className="lbl">Layout</label>
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
-          {CARDAPIO_LAYOUTS.map(l => (
-            <button key={l.id} onClick={() => setC(s => ({ ...s, layout: l.id }))}
-              style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${c.layout === l.id ? "var(--ac)" : "var(--border)"}`, background: c.layout === l.id ? "var(--ac)22" : "var(--d3)", color: c.layout === l.id ? "var(--text)" : "var(--muted2)" }}>
-              {l.label}<div style={{ fontSize: 10, fontWeight: 400, marginTop: 2, color: "var(--muted)" }}>{l.desc}</div>
-            </button>
-          ))}
-        </div>
-        <label className="lbl">Paleta de cores</label>
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 8 }}>
-          {CARDAPIO_PALETAS.map(p => (
-            <button key={p.id} onClick={() => setC(s => ({ ...s, paleta: p.id }))}
-              style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${c.paleta === p.id ? "var(--ac)" : "var(--border)"}`, background: p.bg, color: p.text, outline: c.paleta === p.id ? "2px solid var(--ac)" : "none", outlineOffset: 2 }}>
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="setup-box">
-        <div className="setup-box-title">📋 Categorias e Itens</div>
-        {c.categorias.map(cat => (
-          <div key={cat.id} style={{ background: "var(--d2)", borderRadius: 12, padding: 12, marginBottom: 10, border: "1px solid var(--border)" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-              <div style={{ fontWeight: 800, fontSize: 14 }}>{cat.nome} <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 400 }}>({cat.itens.length} {cat.itens.length === 1 ? "item" : "itens"})</span></div>
-              <div style={{ display: "flex", gap: 6 }}>
-                <button className="btn-sm btn-sm-ghost" onClick={() => setCatAberta(catAberta === cat.id ? null : cat.id)}>{catAberta === cat.id ? "▲ Fechar" : "▼ Editar"}</button>
-                <button className="btn-sm btn-sm-danger" onClick={() => removeCategoria(cat.id)}>✕</button>
-              </div>
-            </div>
-            {catAberta === cat.id && (
-              <div>
-                {cat.itens.map(item => (
-                  <div key={item.id} style={{ background: "var(--dark)", borderRadius: 8, padding: 10, marginBottom: 8, border: "1px solid var(--border)" }}>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
-                      <input className="field-inline" style={{ flex: 2 }} placeholder="Nome" value={item.nome} onChange={e => updateItem(cat.id, item.id, "nome", e.target.value)} />
-                      <input className="field-inline" style={{ width: 80, flexShrink: 0 }} placeholder="R$ Preço" value={item.preco} onChange={e => updateItem(cat.id, item.id, "preco", e.target.value)} />
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      <input className="field-inline" style={{ flex: 2 }} placeholder="Descrição" value={item.descricao} onChange={e => updateItem(cat.id, item.id, "descricao", e.target.value)} />
-                      <input className="field-inline" style={{ flex: 2 }} placeholder="URL da foto (opcional)" value={item.foto} onChange={e => updateItem(cat.id, item.id, "foto", e.target.value)} />
-                      <button className="btn-sm btn-sm-danger" onClick={() => removeItem(cat.id, item.id)}>✕</button>
-                    </div>
-                  </div>
-                ))}
-                <div style={{ background: "var(--dark)", borderRadius: 8, padding: 10, border: "1px dashed var(--border)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--muted)", marginBottom: 8 }}>+ Novo item</div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
-                    <input className="field-inline" style={{ flex: 2 }} placeholder="Nome do item" value={novoItem.nome} onChange={e => setNovoItem(s => ({ ...s, nome: e.target.value }))} />
-                    <input className="field-inline" style={{ width: 80 }} placeholder="Preço" value={novoItem.preco} onChange={e => setNovoItem(s => ({ ...s, preco: e.target.value }))} />
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <input className="field-inline" style={{ flex: 2 }} placeholder="Descrição (opcional)" value={novoItem.descricao} onChange={e => setNovoItem(s => ({ ...s, descricao: e.target.value }))} />
-                    <input className="field-inline" style={{ flex: 2 }} placeholder="URL da foto (opcional)" value={novoItem.foto} onChange={e => setNovoItem(s => ({ ...s, foto: e.target.value }))} />
-                    <button className="btn-sm btn-sm-red" onClick={() => addItem(cat.id)}>+ Adicionar</button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-          <input className="field-inline" placeholder="Nova categoria (ex: Sobremesas)" value={novaCategoria} onChange={e => setNovaCategoria(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategoria()} />
-          <button className="btn-sm btn-sm-red" onClick={addCategoria}>+ Categoria</button>
-        </div>
-      </div>
-
-      <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={save} disabled={saving}>
-        {saving ? "Salvando..." : saved ? "✅ Salvo!" : "Salvar cardápio"}
-      </button>
-    </div>
-  );
-}
-
 function OwnerDash({ est, onUpdate, onLogout }) {
   const [tab, setTab] = useState("overview");
-  const [ed, setEd] = useState({ ...est, questions: est.questions.map(q=>({...q})), prizes: est.prizes.map(p=>({...p})) });
+  const [ed, setEd] = useState({ ...est, questions: est.questions.map(q => ({ ...q })), prizes: est.prizes.map(p => ({ ...p })) });
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [cardapioSaving, setCardapioSaving] = useState(false);
+  const [cardapioSaved, setCardapioSaved] = useState(false);
   const [newQ, setNewQ] = useState({ label: "", type: "stars", options: "" });
   const [newP, setNewP] = useState({ label: "", emoji: "🎁", color: "#e63946" });
   const [filter, setFilter] = useState("todos");
   const [newPass, setNewPass] = useState({ atual: "", nova: "", confirma: "" });
   const [passMsg, setPassMsg] = useState("");
-  const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a","#f72585","#4cc9f0","#111","#333"];
+  const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a", "#f72585", "#4cc9f0", "#111", "#333"];
   const starQs = est.questions.filter(q => q.type === "stars");
-  const starAvg = (key) => { const v=est.feedbacks.map(f=>f.answers?.[key]).filter(v=>typeof v==="number"&&v>0); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
-  const overall = () => { if(!starQs.length||!est.feedbacks.length)return"-"; const v=est.feedbacks.flatMap(f=>starQs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0)); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
-  const npsAvg = () => { const v=est.feedbacks.map(f=>f.answers?.q_nps).filter(v=>v!==undefined); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
-  const staffRanking = () => { const map={}; est.feedbacks.forEach(f=>{const atd=f.answers?.q_atend;if(!atd)return;if(!map[atd])map[atd]={total:0,count:0};const s=starQs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0);if(s.length){map[atd].total+=s.reduce((a,b)=>a+b,0)/s.length;map[atd].count++;}}); return Object.entries(map).map(([name,d])=>({name,avg:d.count?(d.total/d.count).toFixed(1):0})).sort((a,b)=>b.avg-a.avg); };
-  const howKnew = () => { const map={}; est.feedbacks.forEach(f=>{const v=f.answers?.q_como;if(v)map[v]=(map[v]||0)+1;}); return Object.entries(map).sort((a,b)=>b[1]-a[1]); };
-  const chartData = (() => { const days=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"],result=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const lbl=days[d.getDay()],dateStr=d.toLocaleDateString("pt-BR");result.push({lbl,val:est.feedbacks.filter(f=>f.data?.includes(dateStr)).length});} return result; })();
-  const insights = () => { const list=[],ov=parseFloat(overall()),nps=parseFloat(npsAvg()); if(ov>=4.5)list.push({icon:"🏆",text:<><strong>Excelente!</strong> Nota acima de 4.5.</>}); if(nps>=8)list.push({icon:"📈",text:<><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</>}); const esp=parseFloat(starAvg("q_esp"));if(esp&&esp<3.5)list.push({icon:"⚠️",text:<><strong>Tempo de espera!</strong> Nota {esp}.</>}); const pv=est.feedbacks.map(f=>f.answers?.q_preco).filter(Boolean);const caro=pv.filter(v=>v==="Caro pelo que oferece").length;if(caro>pv.length*0.3)list.push({icon:"💰",text:<><strong>{Math.round(caro/pv.length*100)}% acham caro.</strong></>}); const prim=est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length;if(prim>0)list.push({icon:"🆕",text:<><strong>{prim} cliente{prim>1?"s":""} novo{prim>1?"s":""}</strong> recentemente!</>}); if(list.length===0)list.push({icon:"📊",text:<>Continue coletando feedbacks para receber insights.</>}); return list; };
-  const filteredFeedbacks = () => { if(filter==="positivos")return est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9); if(filter==="negativos")return est.feedbacks.filter(f=>(f.answers?.q_nps||0)<=6); if(filter==="neutros")return est.feedbacks.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}); return est.feedbacks; };
-  const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(()=>setSaved(false),2000); };
-  const addQ = () => { if(!newQ.label)return; const opts=newQ.options.split(",").map(s=>s.trim()).filter(Boolean); setEd(e=>({...e,questions:[...e.questions,{id:uid(),...newQ,options:opts,required:true}]})); setNewQ({label:"",type:"stars",options:""}); };
-  const removeQ = id => setEd(e=>({...e,questions:e.questions.filter(q=>q.id!==id)}));
-  const addP = () => { if(!newP.label)return; setEd(e=>({...e,prizes:[...e.prizes,{id:uid(),...newP}]})); setNewP({label:"",emoji:"🎁",color:"#e63946"}); };
-  const removeP = id => setEd(e=>({...e,prizes:e.prizes.filter(p=>p.id!==id)}));
-  const trocarSenha = async () => { if(newPass.atual!==est.pass){setPassMsg("❌ Senha incorreta.");setTimeout(()=>setPassMsg(""),3000);return;} if(newPass.nova.length<6){setPassMsg("❌ Mínimo 6 caracteres.");setTimeout(()=>setPassMsg(""),3000);return;} if(newPass.nova!==newPass.confirma){setPassMsg("❌ Senhas não coincidem.");setTimeout(()=>setPassMsg(""),3000);return;} const u={...est,pass:newPass.nova};await saveEstabelecimento(u);onUpdate(u);setPassMsg("✅ Senha alterada!");setNewPass({atual:"",nova:"",confirma:""});setTimeout(()=>setPassMsg(""),3000); };
-  const handleLogoUpload = (e) => { const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=(ev)=>setEd(s=>({...s,logoUrl:ev.target.result}));r.readAsDataURL(file); };
+  const starAvg = (key) => { const v = est.feedbacks.map(f => f.answers?.[key]).filter(v => typeof v === "number" && v > 0); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
+  const overall = () => { if (!starQs.length || !est.feedbacks.length) return "-"; const v = est.feedbacks.flatMap(f => starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0)); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
+  const npsAvg = () => { const v = est.feedbacks.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
+  const staffRanking = () => { const map = {}; est.feedbacks.forEach(f => { const atd = f.answers?.q_atend; if (!atd) return; if (!map[atd]) map[atd] = { total: 0, count: 0 }; const s = starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0); if (s.length) { map[atd].total += s.reduce((a, b) => a + b, 0) / s.length; map[atd].count++; } }); return Object.entries(map).map(([name, d]) => ({ name, avg: d.count ? (d.total / d.count).toFixed(1) : 0 })).sort((a, b) => b.avg - a.avg); };
+  const howKnew = () => { const map = {}; est.feedbacks.forEach(f => { const v = f.answers?.q_como; if (v) map[v] = (map[v] || 0) + 1; }); return Object.entries(map).sort((a, b) => b[1] - a[1]); };
+  const chartData = (() => { const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], result = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const lbl = days[d.getDay()], dateStr = d.toLocaleDateString("pt-BR"); result.push({ lbl, val: est.feedbacks.filter(f => f.data?.includes(dateStr)).length }); } return result; })();
+  const insights = () => { const list = [], ov = parseFloat(overall()), nps = parseFloat(npsAvg()); if (ov >= 4.5) list.push({ icon: "🏆", text: <><strong>Excelente!</strong> Nota acima de 4.5.</> }); if (nps >= 8) list.push({ icon: "📈", text: <><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</> }); const esp = parseFloat(starAvg("q_esp")); if (esp && esp < 3.5) list.push({ icon: "⚠️", text: <><strong>Tempo de espera!</strong> Nota {esp}.</> }); const pv = est.feedbacks.map(f => f.answers?.q_preco).filter(Boolean); const caro = pv.filter(v => v === "Caro pelo que oferece").length; if (caro > pv.length * 0.3) list.push({ icon: "💰", text: <><strong>{Math.round(caro / pv.length * 100)}% acham caro.</strong></> }); const prim = est.feedbacks.filter(f => f.answers?.q_first === "Sim").length; if (prim > 0) list.push({ icon: "🆕", text: <><strong>{prim} cliente{prim > 1 ? "s" : ""} novo{prim > 1 ? "s" : ""}</strong> recentemente!</> }); if (list.length === 0) list.push({ icon: "📊", text: <>Continue coletando feedbacks para receber insights.</> }); return list; };
+  const filteredFeedbacks = () => { if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9); if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6); if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }); return est.feedbacks; };
+  const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const addQ = () => { if (!newQ.label) return; const opts = newQ.options.split(",").map(s => s.trim()).filter(Boolean); setEd(e => ({ ...e, questions: [...e.questions, { id: uid(), ...newQ, options: opts, required: true }] })); setNewQ({ label: "", type: "stars", options: "" }); };
+  const removeQ = id => setEd(e => ({ ...e, questions: e.questions.filter(q => q.id !== id) }));
+  const addP = () => { if (!newP.label) return; setEd(e => ({ ...e, prizes: [...e.prizes, { id: uid(), ...newP }] })); setNewP({ label: "", emoji: "🎁", color: "#e63946" }); };
+  const removeP = id => setEd(e => ({ ...e, prizes: e.prizes.filter(p => p.id !== id) }));
+  const trocarSenha = async () => { if (newPass.atual !== est.pass) { setPassMsg("❌ Senha incorreta."); setTimeout(() => setPassMsg(""), 3000); return; } if (newPass.nova.length < 6) { setPassMsg("❌ Mínimo 6 caracteres."); setTimeout(() => setPassMsg(""), 3000); return; } if (newPass.nova !== newPass.confirma) { setPassMsg("❌ Senhas não coincidem."); setTimeout(() => setPassMsg(""), 3000); return; } const u = { ...est, pass: newPass.nova }; await saveEstabelecimento(u); onUpdate(u); setPassMsg("✅ Senha alterada!"); setNewPass({ atual: "", nova: "", confirma: "" }); setTimeout(() => setPassMsg(""), 3000); };
+  const handleLogoUpload = (e) => { const file = e.target.files[0]; if (!file) return; const r = new FileReader(); r.onload = (ev) => setEd(s => ({ ...s, logoUrl: ev.target.result })); r.readAsDataURL(file); };
+
+  const saveCardapio = async () => {
+    setCardapioSaving(true);
+    const updated = { ...est, cardapio: ed.cardapio };
+    await saveEstabelecimento(updated);
+    onUpdate(updated);
+    setCardapioSaving(false);
+    setCardapioSaved(true);
+    setTimeout(() => setCardapioSaved(false), 2000);
+  };
 
   return (
     <div className="shell">
       <Sidebar est={est} tab={tab} setTab={setTab} onLogout={onLogout} />
       <div className="main">
-        {tab==="overview"&&(<>
+        {tab === "overview" && (<>
           <div className="main-title">{est.emoji} {est.name}</div>
           <div className="metrics">
             <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div></div>
             <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
             <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
-            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length}</div><div className="metric-lbl">Promotores</div></div>
-            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f=>f.answers?.q_first==="Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
-            <div className="metric"><div className="metric-val" style={{fontSize:20}}>{est.googleUrl?"✅":"❌"}</div><div className="metric-lbl">Google Reviews</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length}</div><div className="metric-lbl">Promotores</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => f.answers?.q_first === "Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
+            <div className="metric"><div className="metric-val" style={{ fontSize: 20 }}>{est.googleUrl ? "✅" : "❌"}</div><div className="metric-lbl">Google Reviews</div></div>
           </div>
-          <div className="chart-wrap"><div className="chart-title">📅 Feedbacks — últimos 7 dias</div><MiniBarChart data={chartData}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8,marginBottom:14}}>
-            {starQs.map(q=>{const s=starAvg(q.id);return(<div key={q.id} style={{background:"var(--d1)",border:"1px solid var(--border)",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:s>=4?"var(--green)":s>=3?"var(--yellow)":"var(--red)"}}>{s}</div><div style={{fontSize:10,color:"var(--muted)",fontWeight:700,textTransform:"uppercase",marginTop:4}}>{q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","")}</div><div style={{height:3,background:"var(--d3)",borderRadius:2,marginTop:6}}><div style={{height:"100%",width:`${(parseFloat(s)/5)*100}%`,background:"var(--ac)",borderRadius:2}}/></div></div>);})}
+          <div className="chart-wrap"><div className="chart-title">📅 Feedbacks — últimos 7 dias</div><MiniBarChart data={chartData} /></div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: 8, marginBottom: 14 }}>
+            {starQs.map(q => { const s = starAvg(q.id); return (<div key={q.id} style={{ background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, textAlign: "center" }}><div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: s >= 4 ? "var(--green)" : s >= 3 ? "var(--yellow)" : "var(--red)" }}>{s}</div><div style={{ fontSize: 10, color: "var(--muted)", fontWeight: 700, textTransform: "uppercase", marginTop: 4 }}>{q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", "")}</div><div style={{ height: 3, background: "var(--d3)", borderRadius: 2, marginTop: 6 }}><div style={{ height: "100%", width: `${(parseFloat(s) / 5) * 100}%`, background: "var(--ac)", borderRadius: 2 }} /></div></div>); })}
           </div>
-          {staffRanking().length>0&&(<div className="chart-wrap"><div className="chart-title">🏆 Ranking colaboradores</div>{staffRanking().map((s,i)=>(<div className="rank-row" key={s.name}><div className="rank-num">{i+1}</div><div className="rank-name">{s.name}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(s.avg/5)*100}%`}}/></div><div className="rank-score">{s.avg}</div></div>))}</div>)}
-          {howKnew().length>0&&(<div className="chart-wrap"><div className="chart-title">📍 Como chegaram</div><MiniBarChart data={howKnew().map(([lbl,val])=>({lbl:lbl.slice(0,10),val}))} color="var(--green)"/></div>)}
+          {staffRanking().length > 0 && (<div className="chart-wrap"><div className="chart-title">🏆 Ranking colaboradores</div>{staffRanking().map((s, i) => (<div className="rank-row" key={s.name}><div className="rank-num">{i + 1}</div><div className="rank-name">{s.name}</div><div className="rank-bar"><div className="rank-fill" style={{ width: `${(s.avg / 5) * 100}%` }} /></div><div className="rank-score">{s.avg}</div></div>))}</div>)}
+          {howKnew().length > 0 && (<div className="chart-wrap"><div className="chart-title">📍 Como chegaram</div><MiniBarChart data={howKnew().map(([lbl, val]) => ({ lbl: lbl.slice(0, 10), val }))} color="var(--green)" /></div>)}
         </>)}
-        {tab==="feedbacks"&&(<>
+        {tab === "feedbacks" && (<>
           <div className="main-title">💬 Feedbacks</div>
-          <div className="filter-row">{[["todos","Todos"],["positivos","😍 Promotores"],["neutros","😐 Neutros"],["negativos","😞 Detratores"]].map(([k,l])=>(<button key={k} className={`filter-btn ${filter===k?"on":""}`} onClick={()=>setFilter(k)}>{l}</button>))}</div>
-          {filteredFeedbacks().length===0&&<div style={{color:"var(--muted)",textAlign:"center",marginTop:40}}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f,i)=>{const nps=f.answers?.q_nps;const npsColor=nps>=9?"var(--green)":nps>=7?"var(--yellow)":"var(--red)";return(<div className="fb" key={f.id||i}><div className="fb-top"><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:34,height:34,borderRadius:"50%",background:"var(--d3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div></div>{nps!==undefined&&(<div style={{background:"var(--d3)",border:`1px solid ${npsColor}44`,borderRadius:10,padding:"4px 10px",textAlign:"center"}}><div style={{fontSize:14,fontFamily:"var(--ff-head)",color:npsColor}}>{nps}</div><div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase"}}>NPS</div></div>)}</div><div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>{[["q_atend","👨‍💼"],["q_first","🆕"],["q_hora","⏰"],["q_mesa","🪑"],["q_como","📍"],["q_preco","💰"]].map(([key,icon])=>{const v=f.answers?.[key];if(!v)return null;const sl={q_atend:"Atend",q_first:"1ªvez",q_hora:"Hora",q_mesa:"Mesa",q_como:"Via",q_preco:"Preço"}[key];return(<div key={key} style={{background:"var(--d3)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:"3px 8px",fontSize:11,display:"flex",gap:3,alignItems:"center"}}><span>{icon}</span><span style={{color:"var(--muted2)",fontSize:10}}>{sl}:</span><span style={{color:"var(--text)",fontWeight:600}}>{String(v).replace("Outro:","")}</span></div>);})}</div><div style={{background:"var(--dark)",borderRadius:8,padding:"8px 10px",marginBottom:6}}>{starQs.map(q=>{const v=f.answers?.[q.id];if(!v)return null;const sn=q.label.replace("Como avalia nosso ","").replace("Como avalia a qualidade dos ","").replace("Como avalia a qualidade das ","").replace("Como avalia o ","").replace("?","");return(<div key={q.id} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}><span style={{fontSize:11,color:"var(--muted)",minWidth:90,fontWeight:600}}>{sn}</span><div style={{display:"flex",gap:2}}>{[1,2,3,4,5].map(s=><span key={s} style={{fontSize:12,filter:s<=v?"none":"grayscale(1) opacity(0.2)"}}>⭐</span>)}</div><span style={{fontSize:10,fontWeight:800,color:v>=4?"var(--green)":v>=3?"var(--yellow)":"var(--red)"}}>{["","Ruim","Regular","Bom","Ótimo","Excelente"][v]}</span></div>);})}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>);})}
+          <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
+          {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
+          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div className="fb-prize">🎁 {f.premio}</div>}</div>); })}
         </>)}
-        {tab==="insights"&&(<>
+        {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
-          {insights().map((ins,i)=>(<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
-          <div className="chart-wrap" style={{marginTop:16}}><div className="chart-title">📊 Distribuição NPS</div><div style={{display:"flex",gap:10}}>{[["😍 Promotores","9-10","var(--green)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)>=9).length],["😐 Neutros","7-8","var(--yellow)",est.feedbacks.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length],["😞 Detratores","0-6","var(--red)",est.feedbacks.filter(f=>(f.answers?.q_nps||0)<=6&&f.answers?.q_nps!==undefined).length]].map(([lbl,range,color,count])=>(<div key={lbl} style={{flex:1,background:"var(--d2)",border:`1px solid ${color}33`,borderRadius:10,padding:12,textAlign:"center"}}><div style={{fontSize:20,fontFamily:"var(--ff-head)",color}}>{count}</div><div style={{fontSize:10,color:"var(--muted)",marginTop:3}}>{lbl}</div><div style={{fontSize:9,color,marginTop:2}}>NPS {range}</div></div>))}</div></div>
-          <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"].map(v=>({lbl:v==="Barato pelo que oferece"?"Barato":v==="Ideal pelo que oferece"?"Ideal":"Caro",val:est.feedbacks.filter(f=>f.answers?.q_preco===v).length}))} color="var(--yellow)"/></div>
+          {insights().map((ins, i) => (<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
+          <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6 && f.answers?.q_nps !== undefined).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
+          <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
-        {tab==="qrcode"&&(<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est}/></>)}
-        {tab==="setup"&&(<>
+        {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
+
+        {tab === "cardapio" && (<>
+          <div className="main-title">🍽️ Cardápio Digital</div>
+          {!isRamoComida(est.ramo) && (
+            <div style={{ padding: 20, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 14, color: "var(--muted2)", fontSize: 13 }}>
+              O cardápio digital está disponível para ramos de alimentação.
+            </div>
+          )}
+          {isRamoComida(est.ramo) && (
+            <>
+              <div style={{ padding: "10px 14px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 10, fontSize: 12, color: "var(--muted2)", marginBottom: 16 }}>
+                🍽️ <strong style={{ color: "var(--text)" }}>Plano Pro</strong> — Cardápio digital integrado. Seus clientes veem o cardápio antes de avaliar.
+              </div>
+              <CardapioEditor
+                est={{ ...est, cardapio: ed.cardapio || makeDefaultCardapio() }}
+                onChange={(novoCardapio) => setEd(e => ({ ...e, cardapio: novoCardapio }))}
+              />
+              <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={saveCardapio} disabled={cardapioSaving}>
+                {cardapioSaving ? "Salvando..." : cardapioSaved ? "✅ Salvo!" : "Salvar cardápio"}
+              </button>
+            </>
+          )}
+        </>)}
+
+        {tab === "setup" && (<>
           <div className="main-title">⚙️ Configurar</div>
           <div className="setup-box">
             <div className="setup-box-title">🏪 Identidade</div>
             <label className="lbl">Logo do estabelecimento</label>
-            <div className="logo-upload-area" onClick={()=>document.getElementById("logo-input").click()}>
-              {ed.logoUrl?<img src={ed.logoUrl} alt="logo" style={{width:70,height:70,objectFit:"contain",borderRadius:8,display:"block",margin:"0 auto 6px"}}/>:<div style={{fontSize:12,color:"var(--muted)"}}>Clique para fazer upload da sua logo<br/><span style={{fontSize:10}}>PNG, JPG ou SVG</span></div>}
+            <div className="logo-upload-area" onClick={() => document.getElementById("logo-input").click()}>
+              {ed.logoUrl ? <img src={ed.logoUrl} alt="logo" style={{ width: 70, height: 70, objectFit: "contain", borderRadius: 8, display: "block", margin: "0 auto 6px" }} /> : <div style={{ fontSize: 12, color: "var(--muted)" }}>Clique para fazer upload da sua logo<br /><span style={{ fontSize: 10 }}>PNG, JPG ou SVG</span></div>}
             </div>
-            <input id="logo-input" type="file" accept="image/*" style={{display:"none"}} onChange={handleLogoUpload}/>
-            {ed.logoUrl&&<button className="btn-sm btn-sm-danger" style={{marginBottom:12}} onClick={()=>setEd(s=>({...s,logoUrl:""}))}>Remover logo</button>}
+            <input id="logo-input" type="file" accept="image/*" style={{ display: "none" }} onChange={handleLogoUpload} />
+            {ed.logoUrl && <button className="btn-sm btn-sm-danger" style={{ marginBottom: 12 }} onClick={() => setEd(s => ({ ...s, logoUrl: "" }))}>Remover logo</button>}
             <label className="lbl">Nome</label>
-            <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{ed.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} value={ed.name} onChange={e=>setEd(s=>({...s,name:e.target.value}))}/></div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}><div style={{ width: 48, height: 48, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{ed.emoji}</div><input className="field" style={{ marginBottom: 0, flex: 1 }} value={ed.name} onChange={e => setEd(s => ({ ...s, name: e.target.value }))} /></div>
             <label className="lbl">🔗 Link exclusivo (slug)</label>
-            <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
-              <span style={{fontSize:12,color:"var(--muted)",whiteSpace:"nowrap"}}>notacheia.com.br/r/</span>
-              <input className="field" style={{marginBottom:0,flex:1}} placeholder="meu-estabelecimento" value={ed.slug||makeSlug(ed.name)} onChange={e=>setEd(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+              <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/r/</span>
+              <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={ed.slug || makeSlug(ed.name)} onChange={e => setEd(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
             </div>
-            <div style={{fontSize:11,color:"var(--muted)",marginBottom:12}}>Apenas letras minúsculas, números e hífen.</div>
+            <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Apenas letras minúsculas, números e hífen.</div>
             <label className="lbl">Emoji</label>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","🧇","🍩","🍫","🥐","🍷","🥤","💇","💅","🏋️","🛍️","💊","🏥","🐾","🎮","🏪","🏬","🍽️","🎪"].map(e=>(<button key={e} onClick={()=>setEd(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:ed.emoji===e?"var(--ac)22":"var(--d3)",border:ed.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14, background: "var(--d2)", borderRadius: 10, padding: 10 }}>{["🍔", "🍕", "🍣", "🍜", "🍰", "🧁", "☕", "🍺", "🥗", "🍱", "🌮", "🍗", "🥩", "🍦", "🧇", "🍩", "🍫", "🥐", "🍷", "🥤", "💇", "💅", "🏋️", "🛍️", "💊", "🏥", "🐾", "🎮", "🏪", "🏬", "🍽️", "🎪"].map(e => (<button key={e} onClick={() => setEd(s => ({ ...s, emoji: e }))} style={{ width: 34, height: 34, fontSize: 18, background: ed.emoji === e ? "var(--ac)22" : "var(--d3)", border: ed.emoji === e ? "2px solid var(--ac)" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}>{e}</button>))}</div>
             <label className="lbl">Cor principal</label>
-            <div className="swatch-row">{COLORS.map(c=><div key={c} className={`swatch ${ed.color===c?"on":""}`} style={{background:c}} onClick={()=>setEd(s=>({...s,color:c}))}/>)}</div>
+            <div className="swatch-row">{COLORS.map(c => <div key={c} className={`swatch ${ed.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setEd(s => ({ ...s, color: c }))} />)}</div>
             <label className="lbl">🌐 Link Google Reviews</label>
-            <input className="field" placeholder="https://g.page/r/..." value={ed.googleUrl||""} onChange={e=>setEd(s=>({...s,googleUrl:e.target.value}))}/>
+            <input className="field" placeholder="https://g.page/r/..." value={ed.googleUrl || ""} onChange={e => setEd(s => ({ ...s, googleUrl: e.target.value }))} />
             <label className="lbl">⏱️ Intervalo entre feedbacks</label>
-            <div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>{[7,15,30,60].map(d=>(<button key={d} className="interval-btn" onClick={()=>setEd(s=>({...s,feedbackInterval:d}))} style={{border:`1.5px solid ${ed.feedbackInterval===d?"var(--ac)":"var(--border)"}`,background:ed.feedbackInterval===d?"var(--ac)22":"var(--d3)",color:ed.feedbackInterval===d?"var(--text)":"var(--muted2)"}}>{d} dias</button>))}</div>
-            <div style={{fontSize:11,color:"var(--muted)",marginBottom:4}}>O cliente só poderá responder novamente após este período.</div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>{[7, 15, 30, 60].map(d => (<button key={d} className="interval-btn" onClick={() => setEd(s => ({ ...s, feedbackInterval: d }))} style={{ border: `1.5px solid ${ed.feedbackInterval === d ? "var(--ac)" : "var(--border)"}`, background: ed.feedbackInterval === d ? "var(--ac)22" : "var(--d3)", color: ed.feedbackInterval === d ? "var(--text)" : "var(--muted2)" }}>{d} dias</button>))}</div>
+            <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4 }}>O cliente só poderá responder novamente após este período.</div>
           </div>
           <div className="setup-box">
             <div className="setup-box-title">❓ Perguntas</div>
-            {ed.questions.map(q=>(<div className="pill-row" key={q.id}><div style={{flex:1}}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={()=>removeQ(q.id)}>✕</button></div>))}
-            <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
-              <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e=>setNewQ(s=>({...s,label:e.target.value}))}/>
-              <select className="type-sel" value={newQ.type} onChange={e=>setNewQ(s=>({...s,type:e.target.value}))}><option value="stars">⭐ Estrelas</option><option value="choice">☑️ Múltipla escolha</option><option value="nps">📊 NPS 0-10</option><option value="text">📝 Texto livre</option><option value="staff">👤 Colaborador</option></select>
-              {(newQ.type==="choice"||newQ.type==="staff")&&<input className="field-inline" placeholder="Opções por vírgula" value={newQ.options} onChange={e=>setNewQ(s=>({...s,options:e.target.value}))}/>}
+            {ed.questions.map(q => (<div className="pill-row" key={q.id}><div style={{ flex: 1 }}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={() => removeQ(q.id)}>✕</button></div>))}
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e => setNewQ(s => ({ ...s, label: e.target.value }))} />
+              <select className="type-sel" value={newQ.type} onChange={e => setNewQ(s => ({ ...s, type: e.target.value }))}><option value="stars">⭐ Estrelas</option><option value="choice">☑️ Múltipla escolha</option><option value="nps">📊 NPS 0-10</option><option value="text">📝 Texto livre</option><option value="staff">👤 Colaborador</option></select>
+              {(newQ.type === "choice" || newQ.type === "staff") && <input className="field-inline" placeholder="Opções por vírgula" value={newQ.options} onChange={e => setNewQ(s => ({ ...s, options: e.target.value }))} />}
               <button className="btn-sm btn-sm-red" onClick={addQ}>+ Adicionar</button>
             </div>
           </div>
           <div className="setup-box">
             <div className="setup-box-title">🎡 Prêmios da Roleta</div>
-            {ed.prizes.map(p=>(<div className="pill-row" key={p.id}><span style={{fontSize:18}}>{p.emoji}</span><div style={{width:12,height:12,borderRadius:4,background:p.color,flexShrink:0}}/><div className="pill-lbl" style={{flex:1}}>{p.label}</div><button className="btn-sm btn-sm-danger" onClick={()=>removeP(p.id)}>✕</button></div>))}
-            <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
-              <input className="field-inline" placeholder="Nome do brinde" value={newP.label} onChange={e=>setNewP(s=>({...s,label:e.target.value}))}/>
-              <input className="field-inline" placeholder="Emoji" value={newP.emoji} onChange={e=>setNewP(s=>({...s,emoji:e.target.value}))} style={{maxWidth:60}}/>
-              <input type="color" value={newP.color} onChange={e=>setNewP(s=>({...s,color:e.target.value}))} style={{width:40,height:40,border:"none",background:"none",cursor:"pointer",borderRadius:8}}/>
+            {ed.prizes.map(p => (<div className="pill-row" key={p.id}><span style={{ fontSize: 18 }}>{p.emoji}</span><div style={{ width: 12, height: 12, borderRadius: 4, background: p.color, flexShrink: 0 }} /><div className="pill-lbl" style={{ flex: 1 }}>{p.label}</div><button className="btn-sm btn-sm-danger" onClick={() => removeP(p.id)}>✕</button></div>))}
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <input className="field-inline" placeholder="Nome do brinde" value={newP.label} onChange={e => setNewP(s => ({ ...s, label: e.target.value }))} />
+              <input className="field-inline" placeholder="Emoji" value={newP.emoji} onChange={e => setNewP(s => ({ ...s, emoji: e.target.value }))} style={{ maxWidth: 60 }} />
+              <input type="color" value={newP.color} onChange={e => setNewP(s => ({ ...s, color: e.target.value }))} style={{ width: 40, height: 40, border: "none", background: "none", cursor: "pointer", borderRadius: 8 }} />
               <button className="btn-sm btn-sm-red" onClick={addP}>+ Adicionar</button>
             </div>
           </div>
-          <button className="btn btn-red" style={{maxWidth:220}} onClick={save} disabled={saving}>{saving?"Salvando...":saved?"✅ Salvo!":"Salvar alterações"}</button>
+          <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={save} disabled={saving}>{saving ? "Salvando..." : saved ? "✅ Salvo!" : "Salvar alterações"}</button>
         </>)}
-        {tab==="cardapio"&&(<>
-          <div className="main-title">🍽️ Cardápio Digital</div>
-          <CardapioEditor est={est} onSave={async(cardapio) => { const updated = {...est, cardapio}; await saveEstabelecimento(updated); onUpdate(updated); }} />
-        </>)}
-        {tab==="senha"&&(<>
+        {tab === "senha" && (<>
           <div className="main-title">🔑 Trocar Senha</div>
-          <div className="setup-box" style={{maxWidth:420}}>
+          <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">Alterar senha de acesso</div>
-            {passMsg&&<div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:13,fontWeight:700,background:passMsg.includes("✅")?"#0a2a0a":"#1a0505",color:passMsg.includes("✅")?"var(--green)":"var(--red)",border:`1px solid ${passMsg.includes("✅")?"var(--green)":"var(--red)"}33`}}>{passMsg}</div>}
+            {passMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: passMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: passMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${passMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{passMsg}</div>}
             <label className="lbl">Senha atual</label>
-            <input className="field" type="password" value={newPass.atual} onChange={e=>setNewPass(s=>({...s,atual:e.target.value}))}/>
+            <input className="field" type="password" value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
             <label className="lbl">Nova senha</label>
-            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e=>setNewPass(s=>({...s,nova:e.target.value}))}/>
+            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e => setNewPass(s => ({ ...s, nova: e.target.value }))} />
             <label className="lbl">Confirmar nova senha</label>
-            <input className="field" type="password" value={newPass.confirma} onChange={e=>setNewPass(s=>({...s,confirma:e.target.value}))}/>
-            <button className="btn btn-red" style={{maxWidth:220}} onClick={trocarSenha}>Alterar senha</button>
+            <input className="field" type="password" value={newPass.confirma} onChange={e => setNewPass(s => ({ ...s, confirma: e.target.value }))} />
+            <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarSenha}>Alterar senha</button>
           </div>
         </>)}
       </div>
@@ -1234,8 +1301,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   );
 }
 
-const RAMOS = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria","Clínica Odontológica","Clínica Médica","Barbearia","Salão de Beleza","Academia","Pet Shop","Farmácia","Outro"];
-const PLANOS = ["R$ 99/mês","R$ 169/mês","R$ 229/mês","Personalizado"];
+const RAMOS = ["Hamburgueria", "Pizzaria", "Restaurante", "Cafeteria", "Lanchonete", "Bar", "Sorveteria", "Padaria", "Sushi/Japonês", "Churrascaria", "Clínica Odontológica", "Clínica Médica", "Barbearia", "Salão de Beleza", "Academia", "Pet Shop", "Farmácia", "Outro"];
+const PLANOS = ["R$ 99/mês", "R$ 169/mês", "R$ 229/mês", "Personalizado"];
 
 function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [tab, setTab] = useState("ests");
@@ -1251,21 +1318,28 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [copied, setCopied] = useState(null);
   const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
   const [masterPassMsg, setMasterPassMsg] = useState("");
-  const COLORS = ["#e63946","#f4a261","#2a9d8f","#457b9d","#6d597a","#e76f51","#264653","#e9c46a"];
-  const total = establishments.reduce((a,e)=>a+e.feedbacks.length,0);
-  const mrr = establishments.filter(e=>e.ativo).length*99;
-  const ativos = establishments.filter(e=>e.ativo).length;
-  const toggleAtivo = async(id)=>{const est=establishments.find(e=>e.id===id);const u={...est,ativo:!est.ativo};await saveEstabelecimento(u);setEstablishments(prev=>prev.map(e=>e.id===id?{...e,ativo:!e.ativo}:e));};
-  const deleteEst = async(id)=>{if(!window.confirm("Excluir este estabelecimento?"))return;await deleteEstabelecimentoFromDB(id);setEstablishments(prev=>prev.filter(e=>e.id!==id));};
-  const addEst = async()=>{
-    if(!newEst.name||!newEst.owner||!newEst.pass)return;
+  const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
+  const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
+  const mrr = establishments.filter(e => e.ativo).length * 99;
+  const ativos = establishments.filter(e => e.ativo).length;
+  const toggleAtivo = async (id) => { const est = establishments.find(e => e.id === id); const u = { ...est, ativo: !est.ativo }; await saveEstabelecimento(u); setEstablishments(prev => prev.map(e => e.id === id ? { ...e, ativo: !e.ativo } : e)); };
+  const deleteEst = async (id) => { if (!window.confirm("Excluir este estabelecimento?")) return; await deleteEstabelecimentoFromDB(id); setEstablishments(prev => prev.filter(e => e.id !== id)); };
+  const addEst = async () => {
+    if (!newEst.name || !newEst.owner || !newEst.pass) return;
     setActionLoading(true);
     const slug = newEst.slug || makeSlug(newEst.name);
-    const novo={...newEst,slug,id:"est_"+uid(),ativo:true,logoUrl:"",feedbackInterval:30,questions:makeDefaultQuestions(),prizes:[{id:uid(),label:"Brinde Grátis",emoji:"🎁",color:newEst.color},{id:uid(),label:"10% Desconto",emoji:"🏷️",color:"#333"},{id:uid(),label:"Surpresa!",emoji:"🎉",color:"#6d597a"}],feedbacks:[],desde:new Date().toLocaleDateString("pt-BR"),cardapio:isRamoComida(newEst.ramo)?makeDefaultCardapio():null};
+    const temCardapio = isRamoComida(newEst.ramo);
+    const novo = {
+      ...newEst, slug, id: "est_" + uid(), ativo: true, logoUrl: "", feedbackInterval: 30,
+      questions: makeDefaultQuestions(),
+      prizes: [{ id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color }, { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" }, { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" }],
+      cardapio: temCardapio ? makeDefaultCardapio() : null,
+      feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
+    };
     await createEstabelecimento(novo);
-    setEstablishments(prev=>[...prev,novo]);
+    setEstablishments(prev => [...prev, novo]);
     setNewEst(EMPTY_EST);
-    setShowAdd(false);setActionLoading(false);
+    setShowAdd(false); setActionLoading(false);
   };
 
   const saveEditEst = async () => {
@@ -1277,13 +1351,13 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   };
 
   const trocarSenhaMaster = async () => {
-    if (masterPass.atual !== MASTER.pass) { setMasterPassMsg("❌ Senha atual incorreta."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
-    if (masterPass.nova.length < 6) { setMasterPassMsg("❌ Mínimo 6 caracteres."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
-    if (masterPass.nova !== masterPass.confirma) { setMasterPassMsg("❌ Senhas não coincidem."); setTimeout(()=>setMasterPassMsg(""),3000); return; }
+    if (masterPass.atual !== MASTER.pass) { setMasterPassMsg("❌ Senha atual incorreta."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
+    if (masterPass.nova.length < 6) { setMasterPassMsg("❌ Mínimo 6 caracteres."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
+    if (masterPass.nova !== masterPass.confirma) { setMasterPassMsg("❌ Senhas não coincidem."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
     MASTER.pass = masterPass.nova;
     setMasterPass({ atual: "", nova: "", confirma: "" });
     setMasterPassMsg("✅ Senha alterada! Anote a nova senha.");
-    setTimeout(()=>setMasterPassMsg(""),5000);
+    setTimeout(() => setMasterPassMsg(""), 5000);
   };
 
   const copyLink = (e) => {
@@ -1293,64 +1367,63 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  if (demoEst) {
-    return (
-      <>
-        <style>{CSS(demoEst.color)}</style>
-        <div className="top-bar">
-          <button className="top-btn top-btn-ghost" onClick={() => setDemoEst(null)}>← Voltar ao Master</button>
-        </div>
-        <ClientApp est={demoEst} onSubmit={async () => {}} masterMode={true} key={demoEst.id + "_demo"} />
-      </>
-    );
-  }
+  if (demoEst) return (
+    <>
+      <style>{CSS(demoEst.color)}</style>
+      <div className="top-bar">
+        <button className="top-btn top-btn-ghost" onClick={() => setDemoEst(null)}>← Voltar ao Master</button>
+      </div>
+      <ClientApp est={demoEst} onSubmit={async () => { }} masterMode={true} key={demoEst.id + "_demo"} />
+    </>
+  );
 
   const EstCard = ({ e }) => {
     const sqs = e.questions.filter(q => q.type === "stars");
-    const vals = e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v => v > 0));
-    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : "-";
+    const vals = e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0));
+    const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "-";
     const slug = e.slug || makeSlug(e.name);
     return (
       <div className="est-card">
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,minWidth:0}}>
-            <span style={{fontSize:22,flexShrink:0}}>{e.emoji}</span>
-            <div style={{minWidth:0}}>
-              <div style={{fontWeight:800,fontSize:14,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.name}</div>
-              <div style={{fontSize:11,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.responsavel||e.owner}</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <span style={{ fontSize: 22, flexShrink: 0 }}>{e.emoji}</span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.name}</div>
+              <div style={{ fontSize: 11, color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.responsavel || e.owner}</div>
             </div>
           </div>
-          {e.ativo ? <span className="badge badge-green" style={{marginLeft:8}}><span className="live-dot" style={{marginRight:4}}/>Ativo</span> : <span className="badge badge-red" style={{marginLeft:8}}>Bloqueado</span>}
+          {e.ativo ? <span className="badge badge-green" style={{ marginLeft: 8 }}><span className="live-dot" style={{ marginRight: 4 }} />Ativo</span> : <span className="badge badge-red" style={{ marginLeft: 8 }}>Bloqueado</span>}
         </div>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
-          {e.cidade&&<span style={{background:"var(--d3)",border:"1px solid var(--border)",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--muted2)"}}>📍 {e.cidade}</span>}
-          {e.ramo&&<span style={{background:"var(--d3)",border:"1px solid var(--border)",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--muted2)"}}>🏷️ {e.ramo}</span>}
-          <span style={{background:"var(--ac)22",border:"1px solid var(--ac)44",borderRadius:20,padding:"2px 8px",fontSize:11,color:"var(--ac)",fontWeight:700}}>💳 {e.plano||"R$ 99/mês"}</span>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
+          {e.cidade && <span style={{ background: "var(--d3)", border: "1px solid var(--border)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted2)" }}>📍 {e.cidade}</span>}
+          {e.ramo && <span style={{ background: "var(--d3)", border: "1px solid var(--border)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted2)" }}>🏷️ {e.ramo}</span>}
+          <span style={{ background: "var(--ac)22", border: "1px solid var(--ac)44", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--ac)", fontWeight: 700 }}>💳 {e.plano || "R$ 99/mês"}</span>
+          {e.cardapio && <span style={{ background: "#0a1f0a", border: "1px solid var(--green)33", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--green)", fontWeight: 700 }}>🍽️ Pro</span>}
         </div>
-        <div className="slug-box" style={{marginBottom:10}}>
+        <div className="slug-box" style={{ marginBottom: 10 }}>
           <span className="slug-text">notacheia.com.br/r/{slug}</span>
-          <button className="btn-sm btn-sm-ghost" onClick={()=>copyLink(e)}>{copied===e.id?"✅":"📋"}</button>
+          <button className="btn-sm btn-sm-ghost" onClick={() => copyLink(e)}>{copied === e.id ? "✅" : "📋"}</button>
         </div>
-        <div style={{display:"flex",gap:8,marginBottom:12}}>
-          <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
-            <div style={{fontFamily:"var(--ff-head)",fontSize:18}}>{e.feedbacks.length}</div>
-            <div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase",fontWeight:700}}>Feedbacks</div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 18 }}>{e.feedbacks.length}</div>
+            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Feedbacks</div>
           </div>
-          <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
-            <div style={{fontFamily:"var(--ff-head)",fontSize:18,color:"var(--ac)"}}>⭐ {avg}</div>
-            <div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase",fontWeight:700}}>Nota</div>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, color: "var(--ac)" }}>⭐ {avg}</div>
+            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Nota</div>
           </div>
-          <div style={{flex:1,background:"var(--d2)",borderRadius:10,padding:"8px 10px",textAlign:"center"}}>
-            <div style={{fontSize:12,fontWeight:800,color:"var(--muted2)"}}>{e.desde||"—"}</div>
-            <div style={{fontSize:9,color:"var(--muted)",textTransform:"uppercase",fontWeight:700}}>Desde</div>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: "var(--muted2)" }}>{e.desde || "—"}</div>
+            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Desde</div>
           </div>
         </div>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          <button className="btn-sm btn-sm-ghost" onClick={()=>setViewEst(e)}>👁️ Ver</button>
-          <button className="btn-sm btn-sm-ghost" onClick={()=>setEditEst({...e})}>✏️ Editar</button>
-          <button className="btn-sm btn-sm-ghost" onClick={()=>setDemoEst(e)}>🎯 Demo</button>
-          <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒 Bloquear":"✅ Ativar"}</button>
-          <button className="btn-sm btn-sm-danger" onClick={()=>deleteEst(e.id)}>🗑️</button>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          <button className="btn-sm btn-sm-ghost" onClick={() => setViewEst(e)}>👁️ Ver</button>
+          <button className="btn-sm btn-sm-ghost" onClick={() => setEditEst({ ...e })}>✏️ Editar</button>
+          <button className="btn-sm btn-sm-ghost" onClick={() => setDemoEst(e)}>🎯 Demo</button>
+          <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒 Bloquear" : "✅ Ativar"}</button>
+          <button className="btn-sm btn-sm-danger" onClick={() => deleteEst(e.id)}>🗑️</button>
         </div>
       </div>
     );
@@ -1360,39 +1433,44 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     <div className="shell">
       <Sidebar tab={tab} setTab={setTab} onLogout={onLogout} isMaster />
       <div className="main">
-        {tab==="ests"&&(<>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-            <div className="main-title" style={{marginBottom:0}}>🏢 Estabelecimentos</div>
-            <button className="btn-sm btn-sm-red" onClick={()=>setShowAdd(true)}>+ Novo</button>
+        {tab === "ests" && (<>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <div className="main-title" style={{ marginBottom: 0 }}>🏢 Estabelecimentos</div>
+            <button className="btn-sm btn-sm-red" onClick={() => setShowAdd(true)}>+ Novo</button>
           </div>
-          <div className="metrics" style={{marginBottom:20}}>
+          <div className="metrics" style={{ marginBottom: 20 }}>
             <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Cadastrados</div></div>
             <div className="metric"><div className="metric-val">{ativos}</div><div className="metric-lbl">Ativos</div></div>
             <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
           <div className="tbl-wrap" id="master-table">
-            <div className="tbl-head" style={{gridTemplateColumns:"1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px",minWidth:650}}>
+            <div className="tbl-head" style={{ gridTemplateColumns: "1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px", minWidth: 650 }}>
               <span>Estabelecimento</span><span>Responsável</span><span>Cidade</span><span>Plano</span><span>Feedbacks</span><span>Status</span><span>Ações</span>
             </div>
-            {establishments.map(e=>{
-              const sqs=e.questions.filter(q=>q.type==="stars");
-              const vals=e.feedbacks.flatMap(f=>sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0));
-              const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"-";
-              return(
-                <div className="tbl-row" key={e.id} style={{gridTemplateColumns:"1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px",minWidth:650}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,minWidth:0}}><span>{e.emoji}</span><span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.name}</span><span style={{fontSize:10,color:"var(--muted)",fontWeight:400,flexShrink:0}}>⭐{avg}</span></div>
-                  <div style={{minWidth:0}}><div style={{color:"var(--muted2)",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.responsavel||"—"}</div><div style={{fontSize:10,color:"var(--muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.owner}</div></div>
-                  <div style={{color:"var(--muted2)",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.cidade||"—"}</div>
-                  <div style={{color:"var(--ac)",fontSize:12,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.plano||"R$ 99/mês"}</div>
-                  <div style={{fontWeight:700,textAlign:"center"}}>{e.feedbacks.length}</div>
-                  <div>{e.ativo?<span className="badge badge-green"><span className="live-dot" style={{marginRight:4}}/>Ativo</span>:<span className="badge badge-red">Bloqueado</span>}</div>
-                  <div style={{display:"flex",gap:3,flexWrap:"nowrap"}}>
-                    <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" style={{padding:"5px 7px"}} onClick={()=>setViewEst(e)}>👁️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Editar" style={{padding:"5px 7px"}} onClick={()=>setEditEst({...e})}>✏️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Demo" style={{padding:"5px 7px"}} onClick={()=>setDemoEst(e)}>🎯</button>
-                    <button className={`btn-sm ${e.ativo?"btn-sm-danger":"btn-sm-green"}`} style={{padding:"5px 7px"}} onClick={()=>toggleAtivo(e.id)}>{e.ativo?"🔒":"✅"}</button>
-                    <button className="btn-sm btn-sm-danger" style={{padding:"5px 7px"}} onClick={()=>deleteEst(e.id)}>🗑️</button>
+            {establishments.map(e => {
+              const sqs = e.questions.filter(q => q.type === "stars");
+              const vals = e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0));
+              const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "-";
+              return (
+                <div className="tbl-row" key={e.id} style={{ gridTemplateColumns: "1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px", minWidth: 650 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 700, minWidth: 0 }}>
+                    <span>{e.emoji}</span>
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.name}</span>
+                    <span style={{ fontSize: 10, color: "var(--muted)", fontWeight: 400, flexShrink: 0 }}>⭐{avg}</span>
+                    {e.cardapio && <span style={{ fontSize: 9, color: "var(--green)", fontWeight: 800, flexShrink: 0 }}>🍽️Pro</span>}
+                  </div>
+                  <div style={{ minWidth: 0 }}><div style={{ color: "var(--muted2)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.responsavel || "—"}</div><div style={{ fontSize: 10, color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.owner}</div></div>
+                  <div style={{ color: "var(--muted2)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.cidade || "—"}</div>
+                  <div style={{ color: "var(--ac)", fontSize: 12, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.plano || "R$ 99/mês"}</div>
+                  <div style={{ fontWeight: 700, textAlign: "center" }}>{e.feedbacks.length}</div>
+                  <div>{e.ativo ? <span className="badge badge-green"><span className="live-dot" style={{ marginRight: 4 }} />Ativo</span> : <span className="badge badge-red">Bloqueado</span>}</div>
+                  <div style={{ display: "flex", gap: 3, flexWrap: "nowrap" }}>
+                    <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" style={{ padding: "5px 7px" }} onClick={() => setViewEst(e)}>👁️</button>
+                    <button className="btn-sm btn-sm-ghost" title="Editar" style={{ padding: "5px 7px" }} onClick={() => setEditEst({ ...e })}>✏️</button>
+                    <button className="btn-sm btn-sm-ghost" title="Demo" style={{ padding: "5px 7px" }} onClick={() => setDemoEst(e)}>🎯</button>
+                    <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} style={{ padding: "5px 7px" }} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒" : "✅"}</button>
+                    <button className="btn-sm btn-sm-danger" style={{ padding: "5px 7px" }} onClick={() => deleteEst(e.id)}>🗑️</button>
                   </div>
                 </div>
               );
@@ -1401,121 +1479,124 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <div id="master-cards">
             {establishments.map(e => <EstCard key={e.id} e={e} />)}
           </div>
-          <div style={{fontSize:12,color:"var(--muted)",marginTop:8}}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
+          <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
         </>)}
-        {tab==="metricas"&&(<>
+        {tab === "metricas" && (<>
           <div className="main-title">📊 Métricas Gerais</div>
           <div className="metrics">
             <div className="metric"><div className="metric-val">{establishments.length}</div><div className="metric-lbl">Total clientes</div></div>
             <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
-            <div className="metric"><div className="metric-val">R$ {(mrr*12).toLocaleString("pt-BR")}</div><div className="metric-lbl">ARR projetado</div></div>
+            <div className="metric"><div className="metric-val">R$ {(mrr * 12).toLocaleString("pt-BR")}</div><div className="metric-lbl">ARR projetado</div></div>
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
-            <div className="metric"><div className="metric-val">R$ {(mrr-150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
+            <div className="metric"><div className="metric-val">R$ {(mrr - 150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
           </div>
         </>)}
-        {tab==="senha"&&(<>
+        {tab === "senha" && (<>
           <div className="main-title">🔑 Trocar Senha Master</div>
-          <div className="setup-box" style={{maxWidth:420}}>
+          <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">Alterar senha de acesso Master</div>
-            <div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:12,color:"var(--muted2)",background:"var(--d2)",border:"1px solid var(--border)",lineHeight:1.6}}>
-              ⚠️ <strong style={{color:"var(--yellow)"}}>Atenção:</strong> a nova senha só dura enquanto o app estiver aberto. Se recarregar a página, volta para a senha original do código. Para trocar permanentemente, precisa editar o código.
+            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>
+              ⚠️ <strong style={{ color: "var(--yellow)" }}>Atenção:</strong> a nova senha só dura enquanto o app estiver aberto. Se recarregar a página, volta para a senha original do código.
             </div>
-            {masterPassMsg&&<div style={{padding:"10px 14px",borderRadius:10,marginBottom:14,fontSize:13,fontWeight:700,background:masterPassMsg.includes("✅")?"#0a2a0a":"#1a0505",color:masterPassMsg.includes("✅")?"var(--green)":"var(--red)",border:`1px solid ${masterPassMsg.includes("✅")?"var(--green)":"var(--red)"}33`}}>{masterPassMsg}</div>}
+            {masterPassMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: masterPassMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{masterPassMsg}</div>}
             <label className="lbl">Senha atual</label>
-            <input className="field" type="password" value={masterPass.atual} onChange={e=>setMasterPass(s=>({...s,atual:e.target.value}))}/>
+            <input className="field" type="password" value={masterPass.atual} onChange={e => setMasterPass(s => ({ ...s, atual: e.target.value }))} />
             <label className="lbl">Nova senha</label>
-            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={masterPass.nova} onChange={e=>setMasterPass(s=>({...s,nova:e.target.value}))}/>
+            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={masterPass.nova} onChange={e => setMasterPass(s => ({ ...s, nova: e.target.value }))} />
             <label className="lbl">Confirmar nova senha</label>
-            <input className="field" type="password" value={masterPass.confirma} onChange={e=>setMasterPass(s=>({...s,confirma:e.target.value}))}/>
-            <button className="btn btn-red" style={{maxWidth:220}} onClick={trocarSenhaMaster}>Alterar senha</button>
-            <div style={{marginTop:14,padding:"10px 14px",background:"var(--d2)",borderRadius:10,fontSize:12,color:"var(--muted2)",lineHeight:1.6}}>
-              💡 Para trocar a senha permanentemente, me chame aqui no chat e eu altero no código em 1 minuto.
-            </div>
+            <input className="field" type="password" value={masterPass.confirma} onChange={e => setMasterPass(s => ({ ...s, confirma: e.target.value }))} />
+            <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarSenhaMaster}>Alterar senha</button>
           </div>
         </>)}
       </div>
-      {viewEst&&(<div className="modal-bg" onClick={()=>setViewEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length===0&&<div style={{color:"var(--muted)"}}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f,i)=>(<div className="fb" key={i} style={{marginBottom:8}}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data||"Agora"}</div></div><div style={{fontSize:12,color:"var(--muted2)"}}>NPS: {f.answers?.q_nps??"-"} · Atendente: {f.answers?.q_atend??"-"}</div>{f.answers?.q_sug&&<div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio&&<div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{marginTop:14}} onClick={()=>setViewEst(null)}>Fechar</button></div></div>)}
-      {showAdd&&(<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
+
+      {/* Modal ver feedbacks */}
+      {viewEst && (<div className="modal-bg" onClick={() => setViewEst(null)}><div className="modal" onClick={e => e.stopPropagation()}><div className="modal-title">{viewEst.emoji} {viewEst.name}</div>{viewEst.feedbacks.length === 0 && <div style={{ color: "var(--muted)" }}>Nenhum feedback ainda.</div>}{viewEst.feedbacks.map((f, i) => (<div className="fb" key={i} style={{ marginBottom: 8 }}><div className="fb-top"><div className="fb-name">👤 {f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div><div style={{ fontSize: 12, color: "var(--muted2)" }}>NPS: {f.answers?.q_nps ?? "-"} · Atendente: {f.answers?.q_atend ?? "-"}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div className="fb-prize">🎁 {f.premio}</div>}</div>))}<button className="btn btn-ghost" style={{ marginTop: 14 }} onClick={() => setViewEst(null)}>Fechar</button></div></div>)}
+
+      {/* Modal novo estabelecimento */}
+      {showAdd && (<div className="modal-bg" onClick={() => setShowAdd(false)}><div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-title">➕ Novo Estabelecimento</div>
-
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>📋 Dados do Estabelecimento</div>
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>📋 Dados do Estabelecimento</div>
         <label className="lbl">Nome do estabelecimento</label>
-        <div style={{display:"flex",gap:8,marginBottom:12}}><div style={{width:48,height:48,background:"var(--d2)",border:"1.5px solid var(--border)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{newEst.emoji}</div><input className="field" style={{marginBottom:0,flex:1}} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e=>setNewEst(s=>({...s,name:e.target.value,slug:s.slug||makeSlug(e.target.value)}))}/></div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}><div style={{ width: 48, height: 48, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{newEst.emoji}</div><input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e => setNewEst(s => ({ ...s, name: e.target.value, slug: s.slug || makeSlug(e.target.value) }))} /></div>
         <label className="lbl">🔗 Link exclusivo</label>
-        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}>
-          <span style={{fontSize:11,color:"var(--muted)",whiteSpace:"nowrap"}}>/r/</span>
-          <input className="field" style={{marginBottom:0,flex:1}} placeholder="meu-estabelecimento" value={newEst.slug||makeSlug(newEst.name)} onChange={e=>setNewEst(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+        <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
+          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>/r/</span>
+          <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={newEst.slug || makeSlug(newEst.name)} onChange={e => setNewEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
         </div>
-        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12}}>Gerado automaticamente. Pode editar se quiser.</div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
-          <div><label className="lbl">Ramo</label><select className="field" style={{marginBottom:0}} value={newEst.ramo} onChange={e=>setNewEst(s=>({...s,ramo:e.target.value}))}>{RAMOS.map(r=><option key={r}>{r}</option>)}</select></div>
-          <div><label className="lbl">Cidade</label><input className="field" style={{marginBottom:0}} placeholder="Ex: Matinhos" value={newEst.cidade} onChange={e=>setNewEst(s=>({...s,cidade:e.target.value}))}/></div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Gerado automaticamente. Pode editar se quiser.</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+          <div><label className="lbl">Ramo</label>
+            <select className="field" style={{ marginBottom: 0 }} value={newEst.ramo} onChange={e => setNewEst(s => ({ ...s, ramo: e.target.value }))}>
+              {RAMOS.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div><label className="lbl">Cidade</label><input className="field" style={{ marginBottom: 0 }} placeholder="Ex: Matinhos" value={newEst.cidade} onChange={e => setNewEst(s => ({ ...s, cidade: e.target.value }))} /></div>
         </div>
+        {isRamoComida(newEst.ramo) && (
+          <div style={{ padding: "8px 12px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 8, fontSize: 12, color: "var(--muted2)", marginBottom: 12 }}>
+            🍽️ Este ramo terá <strong style={{ color: "var(--text)" }}>cardápio digital</strong> disponível (Plano Pro).
+          </div>
+        )}
         <label className="lbl">Emoji</label>
-        <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14,background:"var(--d2)",borderRadius:10,padding:10}}>{["🍔","🍕","🍣","🍜","🍰","🧁","☕","🍺","🥗","🍱","🌮","🍗","🥩","🍦","💇","💅","🏋️","🛍️","💊","🏥","🐾","🏪"].map(e=>(<button key={e} onClick={()=>setNewEst(s=>({...s,emoji:e}))} style={{width:34,height:34,fontSize:18,background:newEst.emoji===e?"var(--ac)22":"var(--d3)",border:newEst.emoji===e?"2px solid var(--ac)":"1px solid var(--border)",borderRadius:8,cursor:"pointer"}}>{e}</button>))}</div>
-        <label className="lbl">Cor</label><div className="swatch-row" style={{marginBottom:14}}>{COLORS.map(c=><div key={c} className={`swatch ${newEst.color===c?"on":""}`} style={{background:c}} onClick={()=>setNewEst(s=>({...s,color:c}))}/>)}</div>
-
-        <div className="div"/>
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>👤 Dados do Responsável</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14, background: "var(--d2)", borderRadius: 10, padding: 10 }}>{["🍔", "🍕", "🍣", "🍜", "🍰", "🧁", "☕", "🍺", "🥗", "🍱", "🌮", "🍗", "🥩", "🍦", "💇", "💅", "🏋️", "🛍️", "💊", "🏥", "🐾", "🏪"].map(e => (<button key={e} onClick={() => setNewEst(s => ({ ...s, emoji: e }))} style={{ width: 34, height: 34, fontSize: 18, background: newEst.emoji === e ? "var(--ac)22" : "var(--d3)", border: newEst.emoji === e ? "2px solid var(--ac)" : "1px solid var(--border)", borderRadius: 8, cursor: "pointer" }}>{e}</button>))}</div>
+        <label className="lbl">Cor</label><div className="swatch-row" style={{ marginBottom: 14 }}>{COLORS.map(c => <div key={c} className={`swatch ${newEst.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setNewEst(s => ({ ...s, color: c }))} />)}</div>
+        <div className="div" />
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>👤 Dados do Responsável</div>
         <label className="lbl">Nome do responsável</label>
-        <input className="field" placeholder="Nome completo" value={newEst.responsavel} onChange={e=>setNewEst(s=>({...s,responsavel:e.target.value}))}/>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:0}}>
-          <div><label className="lbl">Telefone</label><input className="field" style={{marginBottom:0}} placeholder="(41) 99999-0000" value={newEst.telefone} onChange={e=>setNewEst(s=>({...s,telefone:e.target.value}))}/></div>
-          <div><label className="lbl">WhatsApp</label><input className="field" style={{marginBottom:0}} placeholder="5541999990000" value={newEst.whatsapp} onChange={e=>setNewEst(s=>({...s,whatsapp:e.target.value}))}/></div>
+        <input className="field" placeholder="Nome completo" value={newEst.responsavel} onChange={e => setNewEst(s => ({ ...s, responsavel: e.target.value }))} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 0 }}>
+          <div><label className="lbl">Telefone</label><input className="field" style={{ marginBottom: 0 }} placeholder="(41) 99999-0000" value={newEst.telefone} onChange={e => setNewEst(s => ({ ...s, telefone: e.target.value }))} /></div>
+          <div><label className="lbl">WhatsApp</label><input className="field" style={{ marginBottom: 0 }} placeholder="5541999990000" value={newEst.whatsapp} onChange={e => setNewEst(s => ({ ...s, whatsapp: e.target.value }))} /></div>
         </div>
-        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12,marginTop:4}}>WhatsApp: código do país + DDD + número, sem espaços.</div>
-        <label className="lbl">E-mail de acesso</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e=>setNewEst(s=>({...s,owner:e.target.value}))}/>
-        <label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e=>setNewEst(s=>({...s,pass:e.target.value}))}/>
-
-        <div className="div"/>
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>💳 Plano & Configuração</div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12, marginTop: 4 }}>WhatsApp: código do país + DDD + número, sem espaços.</div>
+        <label className="lbl">E-mail de acesso</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e => setNewEst(s => ({ ...s, owner: e.target.value }))} />
+        <label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e => setNewEst(s => ({ ...s, pass: e.target.value }))} />
+        <div className="div" />
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>💳 Plano & Configuração</div>
         <label className="lbl">Plano</label>
-        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{PLANOS.map(p=>(<button key={p} onClick={()=>setNewEst(s=>({...s,plano:p}))} style={{padding:"8px 14px",borderRadius:10,fontFamily:"var(--ff-body)",fontSize:13,fontWeight:700,cursor:"pointer",border:`1.5px solid ${newEst.plano===p?"var(--ac)":"var(--border)"}`,background:newEst.plano===p?"var(--ac)22":"var(--d3)",color:newEst.plano===p?"var(--text)":"var(--muted2)"}}>{p}</button>))}</div>
-        <label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e=>setNewEst(s=>({...s,googleUrl:e.target.value}))}/>
-
-        <div style={{display:"flex",gap:10,marginTop:4}}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading?"Criando...":"Criar estabelecimento"}</button><button className="btn btn-ghost" onClick={()=>setShowAdd(false)}>Cancelar</button></div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>{PLANOS.map(p => (<button key={p} onClick={() => setNewEst(s => ({ ...s, plano: p }))} style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${newEst.plano === p ? "var(--ac)" : "var(--border)"}`, background: newEst.plano === p ? "var(--ac)22" : "var(--d3)", color: newEst.plano === p ? "var(--text)" : "var(--muted2)" }}>{p}</button>))}</div>
+        <label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e => setNewEst(s => ({ ...s, googleUrl: e.target.value }))} />
+        <div style={{ display: "flex", gap: 10, marginTop: 4 }}><button className="btn btn-red" onClick={addEst} disabled={actionLoading}>{actionLoading ? "Criando..." : "Criar estabelecimento"}</button><button className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancelar</button></div>
       </div></div>)}
 
-      {editEst&&(<div className="modal-bg" onClick={()=>setEditEst(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      {/* Modal editar */}
+      {editEst && (<div className="modal-bg" onClick={() => setEditEst(null)}><div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-title">✏️ Editar — {editEst.name}</div>
-
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>📋 Dados do Estabelecimento</div>
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>📋 Dados do Estabelecimento</div>
         <label className="lbl">Nome</label>
-        <input className="field" value={editEst.name} onChange={e=>setEditEst(s=>({...s,name:e.target.value}))}/>
+        <input className="field" value={editEst.name} onChange={e => setEditEst(s => ({ ...s, name: e.target.value }))} />
         <label className="lbl">🔗 Link exclusivo</label>
-        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:12}}>
-          <span style={{fontSize:11,color:"var(--muted)",whiteSpace:"nowrap"}}>/r/</span>
-          <input className="field" style={{marginBottom:0,flex:1}} value={editEst.slug||makeSlug(editEst.name)} onChange={e=>setEditEst(s=>({...s,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"")}))}/>
+        <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>/r/</span>
+          <input className="field" style={{ marginBottom: 0, flex: 1 }} value={editEst.slug || makeSlug(editEst.name)} onChange={e => setEditEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
-          <div><label className="lbl">Ramo</label><select className="field" style={{marginBottom:0}} value={editEst.ramo||""} onChange={e=>setEditEst(s=>({...s,ramo:e.target.value}))}>{RAMOS.map(r=><option key={r}>{r}</option>)}</select></div>
-          <div><label className="lbl">Cidade</label><input className="field" style={{marginBottom:0}} value={editEst.cidade||""} onChange={e=>setEditEst(s=>({...s,cidade:e.target.value}))}/></div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+          <div><label className="lbl">Ramo</label><select className="field" style={{ marginBottom: 0 }} value={editEst.ramo || ""} onChange={e => setEditEst(s => ({ ...s, ramo: e.target.value }))}>{RAMOS.map(r => <option key={r}>{r}</option>)}</select></div>
+          <div><label className="lbl">Cidade</label><input className="field" style={{ marginBottom: 0 }} value={editEst.cidade || ""} onChange={e => setEditEst(s => ({ ...s, cidade: e.target.value }))} /></div>
         </div>
         <label className="lbl">Google Reviews</label>
-        <input className="field" placeholder="https://g.page/r/..." value={editEst.googleUrl||""} onChange={e=>setEditEst(s=>({...s,googleUrl:e.target.value}))}/>
-
-        <div className="div"/>
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>👤 Dados do Responsável</div>
+        <input className="field" placeholder="https://g.page/r/..." value={editEst.googleUrl || ""} onChange={e => setEditEst(s => ({ ...s, googleUrl: e.target.value }))} />
+        <div className="div" />
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>👤 Dados do Responsável</div>
         <label className="lbl">Nome do responsável</label>
-        <input className="field" value={editEst.responsavel||""} onChange={e=>setEditEst(s=>({...s,responsavel:e.target.value}))}/>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:0}}>
-          <div><label className="lbl">Telefone</label><input className="field" style={{marginBottom:0}} value={editEst.telefone||""} onChange={e=>setEditEst(s=>({...s,telefone:e.target.value}))}/></div>
-          <div><label className="lbl">WhatsApp</label><input className="field" style={{marginBottom:0}} value={editEst.whatsapp||""} onChange={e=>setEditEst(s=>({...s,whatsapp:e.target.value}))}/></div>
+        <input className="field" value={editEst.responsavel || ""} onChange={e => setEditEst(s => ({ ...s, responsavel: e.target.value }))} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 0 }}>
+          <div><label className="lbl">Telefone</label><input className="field" style={{ marginBottom: 0 }} value={editEst.telefone || ""} onChange={e => setEditEst(s => ({ ...s, telefone: e.target.value }))} /></div>
+          <div><label className="lbl">WhatsApp</label><input className="field" style={{ marginBottom: 0 }} value={editEst.whatsapp || ""} onChange={e => setEditEst(s => ({ ...s, whatsapp: e.target.value }))} /></div>
         </div>
-        <div style={{fontSize:11,color:"var(--muted)",marginBottom:12,marginTop:4}}>WhatsApp: código país + DDD + número sem espaços.</div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12, marginTop: 4 }}>WhatsApp: código país + DDD + número sem espaços.</div>
         <label className="lbl">E-mail de acesso</label>
-        <input className="field" value={editEst.owner} onChange={e=>setEditEst(s=>({...s,owner:e.target.value}))}/>
+        <input className="field" value={editEst.owner} onChange={e => setEditEst(s => ({ ...s, owner: e.target.value }))} />
         <label className="lbl">Senha</label>
-        <input className="field" type="password" placeholder="Nova senha (deixe em branco para manter)" value={editEst.pass} onChange={e=>setEditEst(s=>({...s,pass:e.target.value}))}/>
-
-        <div className="div"/>
-        <div style={{fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>💳 Plano</div>
-        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{PLANOS.map(p=>(<button key={p} onClick={()=>setEditEst(s=>({...s,plano:p}))} style={{padding:"8px 14px",borderRadius:10,fontFamily:"var(--ff-body)",fontSize:13,fontWeight:700,cursor:"pointer",border:`1.5px solid ${editEst.plano===p?"var(--ac)":"var(--border)"}`,background:editEst.plano===p?"var(--ac)22":"var(--d3)",color:editEst.plano===p?"var(--text)":"var(--muted2)"}}>{p}</button>))}</div>
-        <div style={{fontSize:11,color:"var(--muted)",marginBottom:4}}>Cliente desde: <strong style={{color:"var(--text)"}}>{editEst.desde||"—"}</strong></div>
-
-        <div style={{display:"flex",gap:10,marginTop:14}}>
-          <button className="btn btn-red" onClick={saveEditEst} disabled={editSaving}>{editSaving?"Salvando...":editSaved?"✅ Salvo!":"Salvar alterações"}</button>
-          <button className="btn btn-ghost" onClick={()=>setEditEst(null)}>Fechar</button>
+        <input className="field" type="password" placeholder="Nova senha (deixe em branco para manter)" value={editEst.pass} onChange={e => setEditEst(s => ({ ...s, pass: e.target.value }))} />
+        <div className="div" />
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>💳 Plano</div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>{PLANOS.map(p => (<button key={p} onClick={() => setEditEst(s => ({ ...s, plano: p }))} style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editEst.plano === p ? "var(--ac)" : "var(--border)"}`, background: editEst.plano === p ? "var(--ac)22" : "var(--d3)", color: editEst.plano === p ? "var(--text)" : "var(--muted2)" }}>{p}</button>))}</div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4 }}>Cliente desde: <strong style={{ color: "var(--text)" }}>{editEst.desde || "—"}</strong></div>
+        <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+          <button className="btn btn-red" onClick={saveEditEst} disabled={editSaving}>{editSaving ? "Salvando..." : editSaved ? "✅ Salvo!" : "Salvar alterações"}</button>
+          <button className="btn btn-ghost" onClick={() => setEditEst(null)}>Fechar</button>
         </div>
       </div></div>)}
     </div>
@@ -1527,23 +1608,23 @@ function LoginScreen({ title, hint, onLogin, prefillEmail = "", prefillPass = ""
   const [pass, setPass] = useState(prefillPass);
   const [show, setShow] = useState(false);
   const [err, setErr] = useState("");
-  const handle = () => { const ok=onLogin(email,pass); if(!ok){setErr("E-mail ou senha incorretos.");setTimeout(()=>setErr(""),3000);} };
+  const handle = () => { const ok = onLogin(email, pass); if (!ok) { setErr("E-mail ou senha incorretos."); setTimeout(() => setErr(""), 3000); } };
   return (
-    <div className="page page-center fade-up" style={{background:"radial-gradient(ellipse at 50% 0%, #e6394615, transparent 50%), var(--dark)"}}>
+    <div className="page page-center fade-up" style={{ background: "radial-gradient(ellipse at 50% 0%, #e6394615, transparent 50%), var(--dark)" }}>
       <div className="card">
-        <LogoSVG size={170} style={{margin:"0 auto 14px"}}/>
-        <div style={{textAlign:"center",marginBottom:18}}><div style={{fontSize:11,letterSpacing:3,textTransform:"uppercase",color:"var(--muted)"}}>{title}</div></div>
-        <div className="div"/>
-        {err&&<div className="err">⚠️ {err}</div>}
+        <LogoSVG size={170} style={{ margin: "0 auto 14px" }} />
+        <div style={{ textAlign: "center", marginBottom: 18 }}><div style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: "var(--muted)" }}>{title}</div></div>
+        <div className="div" />
+        {err && <div className="err">⚠️ {err}</div>}
         <label className="lbl">E-mail</label>
-        <input className="field" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handle()}/>
+        <input className="field" placeholder="seu@email.com" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handle()} />
         <label className="lbl">Senha</label>
-        <div style={{position:"relative",marginBottom:14}}>
-          <input className="field" style={{marginBottom:0,paddingRight:48}} type={show?"text":"password"} placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handle()}/>
-          <button onClick={()=>setShow(s=>!s)} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:16,color:"#555"}}>{show?"🙈":"👁️"}</button>
+        <div style={{ position: "relative", marginBottom: 14 }}>
+          <input className="field" style={{ marginBottom: 0, paddingRight: 48 }} type={show ? "text" : "password"} placeholder="••••••••" value={pass} onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === "Enter" && handle()} />
+          <button onClick={() => setShow(s => !s)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#555" }}>{show ? "🙈" : "👁️"}</button>
         </div>
         <button className="btn btn-red" onClick={handle}>Entrar →</button>
-        <div style={{textAlign:"center",fontSize:11,color:"var(--muted)",marginTop:14}}>{hint}</div>
+        <div style={{ textAlign: "center", fontSize: 11, color: "var(--muted)", marginTop: 14 }}>{hint}</div>
       </div>
     </div>
   );
@@ -1561,7 +1642,7 @@ export default function App() {
     async function init() {
       const data = await loadEstabelecimentos();
       if (data && data.length > 0) {
-        const withFeedbacks = await Promise.all(data.map(async(e)=>({...e,feedbacks:await loadFeedbacks(e.id)})));
+        const withFeedbacks = await Promise.all(data.map(async (e) => ({ ...e, feedbacks: await loadFeedbacks(e.id) })));
         setEsts(withFeedbacks);
         if (slug) {
           const found = withFeedbacks.find(e => (e.slug || makeSlug(e.name)) === slug);
@@ -1584,8 +1665,17 @@ export default function App() {
   }, []);
 
   const css = CSS(activeEst?.color || "#e63946");
-  const addFeedback = async(fb) => { await saveFeedbackToSupabase(activeEst.id,fb); const nf={...fb,id:Date.now(),data:new Date().toLocaleString("pt-BR")}; setEsts(prev=>prev.map(e=>e.id===activeEst.id?{...e,feedbacks:[...e.feedbacks,nf]}:e)); setActiveEst(e=>({...e,feedbacks:[...e.feedbacks,nf]})); };
-  const updateEst = (updated) => { setEsts(prev=>prev.map(e=>e.id===updated.id?updated:e)); setLoggedEst(updated); if(activeEst?.id===updated.id)setActiveEst(updated); };
+  const addFeedback = async (fb) => {
+    await saveFeedbackToSupabase(activeEst.id, fb);
+    const nf = { ...fb, id: Date.now(), data: new Date().toLocaleString("pt-BR") };
+    setEsts(prev => prev.map(e => e.id === activeEst.id ? { ...e, feedbacks: [...e.feedbacks, nf] } : e));
+    setActiveEst(e => ({ ...e, feedbacks: [...e.feedbacks, nf] }));
+  };
+  const updateEst = (updated) => {
+    setEsts(prev => prev.map(e => e.id === updated.id ? updated : e));
+    setLoggedEst(updated);
+    if (activeEst?.id === updated.id) setActiveEst(updated);
+  };
 
   if (loading) return (<><style>{CSS()}</style><LoadingScreen /></>);
 
@@ -1594,21 +1684,21 @@ export default function App() {
       <style>{css}</style>
       <div>
         <div className="top-bar">
-          {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={()=>setMode("client")}>📱 Cliente</button>}
+          {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
           {mode === "client" && (<>
-            <select style={{background:"var(--d2)",color:"var(--text)",border:"1px solid var(--border)",borderRadius:8,padding:"6px 10px",fontFamily:"var(--ff-body)",fontSize:12,cursor:"pointer"}}
-              value={activeEst?.id} onChange={e=>setActiveEst(ests.find(x=>x.id===e.target.value))}>
-              {ests.map(e=><option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
+            <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
+              value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
+              {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
-            <button className="top-btn top-btn-ghost" onClick={()=>setMode("ownerLogin")}>🏪 Dono</button>
-            <button className="top-btn top-btn-red" onClick={()=>setMode("masterLogin")}>👑 Master</button>
+            <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerLogin")}>🏪 Dono</button>
+            <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
           </>)}
         </div>
-        {mode==="client"&&activeEst&&<ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id}/>}
-        {mode==="ownerLogin"&&<LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email,pass)=>{const found=ests.find(e=>e.owner===email&&e.pass===pass);if(found){setLoggedEst(found);setMode("ownerDash");return true;}return false;}}/>}
-        {mode==="ownerDash"&&loggedEst&&<OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={()=>{setLoggedEst(null);setMode("client");}}/>}
-        {mode==="masterLogin"&&<LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email,pass)=>{if(email===MASTER.user&&pass===MASTER.pass){setMode("masterDash");return true;}return false;}}/>}
-        {mode==="masterDash"&&<MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={()=>setMode("client")}/>}
+        {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
+        {mode === "ownerLogin" && <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email, pass) => { const found = ests.find(e => e.owner === email && e.pass === pass); if (found) { setLoggedEst(found); setMode("ownerDash"); return true; } return false; }} />}
+        {mode === "ownerDash" && loggedEst && <OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={() => { setLoggedEst(null); setMode("client"); }} />}
+        {mode === "masterLogin" && <LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email, pass) => { if (email === MASTER.user && pass === MASTER.pass) { setMode("masterDash"); return true; } return false; }} />}
+        {mode === "masterDash" && <MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={() => setMode("client")} />}
       </div>
     </>
   );
