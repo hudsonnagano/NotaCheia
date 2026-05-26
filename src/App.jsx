@@ -84,7 +84,7 @@ const SEED = [
   {
     id: "est_demo", owner: "demo@notacheia.com.br", pass: "demo123", ativo: true,
     name: "Fake Burguer", emoji: "🍔", color: "#f4a261", slug: "fake-burguer",
-    googleUrl: "GOOGLE_NOTACHEIA_LINK", logoUrl: "", feedbackInterval: 0,
+    googleUrl: "", logoUrl: "", feedbackInterval: 0,
     // Perguntas de prospecção — para mostrar o produto a donos de estabelecimento
     questions: [
       { id: "qd_ramo",  type: "text",   label: "Qual é o seu ramo de atuação?", required: true },
@@ -93,7 +93,6 @@ const SEED = [
       { id: "qd_fav",   type: "choice", label: "Você sabe qual prato/produto é o favorito dos seus clientes?", options: ["Sei sim!", "Acho que sei", "Não faço ideia"], required: true },
       { id: "qd_fb",    type: "choice", label: "Como você recebe feedback dos clientes hoje?", options: ["Não recebo", "Pelo Google", "Pessoalmente", "Redes sociais"], required: true },
       { id: "qd_goal",  type: "choice", label: "O que mais te interessa no seu negócio?", options: ["Fidelizar clientes", "Entender meu negócio melhor", "Atrair clientes novos", "Tudo isso!"], required: true },
-      { id: "qd_demo",  type: "stars",  label: "O que achou desta demonstração?", required: true },
     ],
     prizes: [
       { id: "pd1", label: "1 Mês Grátis",           emoji: "🎁", color: "#e63946" },
@@ -743,7 +742,7 @@ async function loadFeedbacks(estId) {
   return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio }));
 }
 async function saveFeedbackToSupabase(estId, fb) {
-  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio });
+  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, whatsapp: fb.whatsapp || null, answers: fb.answers, premio: fb.premio });
   return !error;
 }
 async function saveEstabelecimento(est) {
@@ -909,6 +908,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
     : [
         { id: "overview", icon: "📊", lbl: "Visão Geral" },
         { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
+        { id: "clientes", icon: "👥", lbl: "Clientes" },
         { id: "insights", icon: "💡", lbl: "Insights" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
         ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
@@ -952,6 +952,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const initialStep = temCardapio ? "cardapio" : "welcome";
   const [step, setStep] = useState(initialStep);
   const [nome, setNome] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
@@ -959,6 +960,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
   const [savedNome, setSavedNome] = useState("");
+  const [savedWhatsapp, setSavedWhatsapp] = useState("");
   const [lgpd, setLgpd] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
@@ -1005,6 +1007,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
         <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
+        <input className="field" placeholder="WhatsApp (opcional) — receba ofertas exclusivas" value={whatsapp} onChange={e => setWhatsapp(e.target.value.replace(/\D/g, ""))} inputMode="tel" style={{ marginTop: 0 }} />
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
@@ -1042,7 +1045,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <button className="btn btn-red" onClick={() => {
             const sqs = est.questions.filter(q => q.type === "stars");
             setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
-            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm");
+            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setSavedWhatsapp(whatsapp); setStep("confirm");
           }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
@@ -1062,7 +1065,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="div" />
           <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p); setSaving(true);
-            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            await onSubmit({ nome: savedNome, whatsapp: savedWhatsapp, answers: savedAnswers, premio: p.label });
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
             if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
@@ -1102,7 +1105,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-        {est.googleUrl && avgStars >= 4 && (
+        {est.googleUrl && savedAnswers?.q_nps >= 9 && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
@@ -1216,6 +1219,48 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
           {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div className="fb-prize">🎁 {f.premio}</div>}</div>); })}
+        </>)}
+        {tab === "clientes" && (<>
+          <div className="main-title">👥 Base de Clientes</div>
+          {(() => {
+            const comWhatsapp = est.feedbacks.filter(f => f.whatsapp);
+            const mapaFreq = {};
+            est.feedbacks.forEach(f => {
+              const chave = f.whatsapp || (f.nome && f.nome !== "Anônimo" ? f.nome : null);
+              if (!chave) return;
+              if (!mapaFreq[chave]) mapaFreq[chave] = { nome: f.nome, whatsapp: f.whatsapp || "", visitas: 0, ultimaVisita: "" };
+              mapaFreq[chave].visitas++;
+              if (!mapaFreq[chave].ultimaVisita || f.data > mapaFreq[chave].ultimaVisita) mapaFreq[chave].ultimaVisita = f.data;
+            });
+            const lista = Object.values(mapaFreq).sort((a, b) => b.visitas - a.visitas);
+            return (<>
+              <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{lista.length}</div><div className="metric-lbl">Clientes únicos</div></div>
+                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{comWhatsapp.length}</div><div className="metric-lbl">Com WhatsApp</div></div>
+                <div className="metric" style={{ flex: 1 }}><div className="metric-val">{lista.filter(c => c.visitas > 1).length}</div><div className="metric-lbl">Retornaram</div></div>
+              </div>
+              {lista.length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40, fontSize: 14 }}>Nenhum cliente identificado ainda.<br /><span style={{ fontSize: 12 }}>Clientes que informarem nome ou WhatsApp aparecerão aqui.</span></div>}
+              {lista.map((c, i) => (
+                <div key={i} style={{ background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>👤</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{c.nome || "Anônimo"}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 2 }}>
+                      {c.whatsapp ? <span>📱 {c.whatsapp.replace(/^(\d{2})(\d{2})(\d{4,5})(\d{4})$/, "+$1 ($2) $3-$4")}</span> : <span style={{ color: "var(--muted)" }}>Sem WhatsApp</span>}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>🗓️ Última visita: {c.ultimaVisita || "—"}</div>
+                  </div>
+                  <div style={{ textAlign: "center", flexShrink: 0 }}>
+                    <div style={{ fontFamily: "var(--ff-head)", fontSize: 20, color: c.visitas > 1 ? "var(--green)" : "var(--muted2)" }}>{c.visitas}</div>
+                    <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>{c.visitas === 1 ? "visita" : "visitas"}</div>
+                  </div>
+                  {c.whatsapp && (
+                    <a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "6px 10px", fontSize: 16, fontWeight: 700, cursor: "pointer", textDecoration: "none", flexShrink: 0 }}>💬</a>
+                  )}
+                </div>
+              ))}
+            </>);
+          })()}
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
@@ -1728,7 +1773,7 @@ export default function App() {
           {mode === "client" && (<>
             <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
               value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
-              {ests.filter(e => e.id !== "est_demo").map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
+              {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
             <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
             <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
