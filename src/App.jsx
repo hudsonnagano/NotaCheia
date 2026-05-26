@@ -82,19 +82,34 @@ const SEED = [
     responsavel: "João Silva", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99999-0001", whatsapp: "5541999990001",
   },
   {
-    id: "est_2", owner: "ana@cafezinho.com", pass: "123456", ativo: true,
-    name: "Café Veloz", emoji: "☕", color: "#6f4e37", slug: "cafe-veloz",
-    googleUrl: "", logoUrl: "", feedbackInterval: 30,
-    questions: makeDefaultQuestions(),
+    id: "est_demo", owner: "demo@notacheia.com.br", pass: "demo123", ativo: true,
+    name: "Fake Burguer", emoji: "🍔", color: "#f4a261", slug: "fake-burguer",
+    googleUrl: "", logoUrl: "", feedbackInterval: 0,
+    // Perguntas de prospecção — para mostrar o produto a donos de estabelecimento
+    questions: [
+      { id: "qd_ramo",  type: "text",   label: "Qual é o seu ramo de atuação?", required: true },
+      { id: "qd_fluxo", type: "choice", label: "Quantos clientes passam pelo seu estabelecimento por dia?", options: ["Menos de 50", "50 a 100", "Mais de 100", "Não sei ao certo"], required: true },
+      { id: "qd_brind", type: "choice", label: "Você estaria disposto a oferecer brindes para seus clientes?", options: ["Sim, com certeza!", "Talvez, depende do custo", "Prefiro oferecer descontos", "Não sei ainda"], required: true },
+      { id: "qd_fav",   type: "choice", label: "Você sabe qual prato/produto é o favorito dos seus clientes?", options: ["Sei sim!", "Acho que sei", "Não faço ideia"], required: true },
+      { id: "qd_fb",    type: "choice", label: "Como você recebe feedback dos clientes hoje?", options: ["Não recebo", "Pelo Google", "Pessoalmente", "Redes sociais"], required: true },
+      { id: "qd_goal",  type: "choice", label: "O que mais te interessa no seu negócio?", options: ["Fidelizar clientes", "Entender meu negócio melhor", "Atrair clientes novos", "Tudo isso!"], required: true },
+    ],
     prizes: [
-      { id: "p1", label: "Café Grátis",     emoji: "☕", color: "#6f4e37" },
-      { id: "p2", label: "Bolo Grátis",     emoji: "🎂", color: "#5a3e2b" },
-      { id: "p3", label: "10% Desconto",    emoji: "🏷️", color: "#8b5e3c" },
-      { id: "p4", label: "Brinde Surpresa", emoji: "🎁", color: "#4a2f1a" },
+      { id: "pd1", label: "1 Mês Grátis",           emoji: "🎁", color: "#e63946" },
+      { id: "pd2", label: "Setup Grátis",            emoji: "🛠️", color: "#2a9d8f" },
+      { id: "pd3", label: "50% no 1º Mês",           emoji: "🏷️", color: "#457b9d" },
+      { id: "pd4", label: "2 Meses pelo Preço de 1", emoji: "🎉", color: "#6d597a" },
+      { id: "pd5", label: "Plano Pro c/ Desconto",   emoji: "⭐", color: "#f4a261" },
     ],
     cardapio: null,
-    feedbacks: [], plano: "R$ 99/mês", desde: "05/05/2026",
-    responsavel: "Ana Costa", cidade: "Paranaguá", ramo: "Cafeteria", telefone: "(41) 99999-0002", whatsapp: "5541999990002",
+    feedbacks: [
+      { id: "fd1", nome: "Carlos Souza",  data: "25/05/2026 14:32", answers: { qd_ramo: "Pizzaria", qd_fluxo: "50 a 100", qd_brind: "Sim, com certeza!", qd_fav: "Acho que sei", qd_fb: "Pelo Google", qd_goal: "Fidelizar clientes" }, premio: "1 Mês Grátis" },
+      { id: "fd2", nome: "Mariana Lima",  data: "24/05/2026 11:10", answers: { qd_ramo: "Lanchonete", qd_fluxo: "Mais de 100", qd_brind: "Talvez, depende do custo", qd_fav: "Sei sim!", qd_fb: "Pessoalmente", qd_goal: "Atrair clientes novos" }, premio: "Setup Grátis" },
+      { id: "fd3", nome: "Roberto Alves", data: "23/05/2026 19:45", answers: { qd_ramo: "Bar", qd_fluxo: "50 a 100", qd_brind: "Sim, com certeza!", qd_fav: "Não faço ideia", qd_fb: "Não recebo", qd_goal: "Entender meu negócio melhor" }, premio: "50% no 1º Mês" },
+      { id: "fd4", nome: "Patrícia Costa", data: "22/05/2026 13:00", answers: { qd_ramo: "Restaurante", qd_fluxo: "Mais de 100", qd_brind: "Prefiro oferecer descontos", qd_fav: "Sei sim!", qd_fb: "Redes sociais", qd_goal: "Tudo isso!" }, premio: "Plano Pro c/ Desconto" },
+    ],
+    plano: "Demo", desde: "01/05/2026",
+    responsavel: "Hudson Nagano", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99675-6776", whatsapp: "5541996756776",
   },
 ];
 
@@ -1603,6 +1618,30 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   );
 }
 
+
+// Tela de escolha: Demo do painel OU login real
+function OwnerGateway({ onDemo, onLogin }) {
+  return (
+    <div className="page page-center fade-up" style={{ background: "radial-gradient(ellipse at 50% 0%, #e6394615, transparent 50%), var(--dark)" }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <LogoSVG size={150} style={{ margin: "0 auto 18px" }} />
+        <div style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: "var(--muted)", marginBottom: 20 }}>ÁREA DO PROPRIETÁRIO</div>
+        <div className="div" />
+        <div style={{ background: "var(--d2)", border: "1.5px solid var(--ac)44", borderRadius: 16, padding: 20, marginBottom: 12, cursor: "pointer" }} onClick={onDemo}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🎯</div>
+          <div style={{ fontFamily: "var(--ff-head)", fontSize: 17, marginBottom: 6 }}>Ver demonstração</div>
+          <div style={{ fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>Explore o painel completo sem precisar de senha.<br /><span style={{ color: "var(--ac)", fontWeight: 700 }}>Ideal para apresentações.</span></div>
+        </div>
+        <div style={{ background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 16, padding: 20, cursor: "pointer" }} onClick={onLogin}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🔑</div>
+          <div style={{ fontFamily: "var(--ff-head)", fontSize: 17, marginBottom: 6 }}>Já sou cliente</div>
+          <div style={{ fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>Acesse seu painel com e-mail e senha.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LoginScreen({ title, hint, onLogin, prefillEmail = "", prefillPass = "" }) {
   const [email, setEmail] = useState(prefillEmail);
   const [pass, setPass] = useState(prefillPass);
@@ -1690,11 +1729,12 @@ export default function App() {
               value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
               {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
-            <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerLogin")}>🏪 Dono</button>
+            <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
             <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
           </>)}
         </div>
         {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
+        {mode === "ownerGateway" && <OwnerGateway onDemo={() => { const demo = ests.find(e => e.id === "est_demo") || SEED.find(e => e.id === "est_demo"); setLoggedEst(demo); setMode("ownerDash"); }} onLogin={() => setMode("ownerLogin")} />}
         {mode === "ownerLogin" && <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email, pass) => { const found = ests.find(e => e.owner === email && e.pass === pass); if (found) { setLoggedEst(found); setMode("ownerDash"); return true; } return false; }} />}
         {mode === "ownerDash" && loggedEst && <OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={() => { setLoggedEst(null); setMode("client"); }} />}
         {mode === "masterLogin" && <LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email, pass) => { if (email === MASTER.user && pass === MASTER.pass) { setMode("masterDash"); return true; } return false; }} />}
