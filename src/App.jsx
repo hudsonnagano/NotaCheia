@@ -84,7 +84,7 @@ const SEED = [
   {
     id: "est_demo", owner: "demo@notacheia.com.br", pass: "demo123", ativo: true,
     name: "Fake Burguer", emoji: "🍔", color: "#f4a261", slug: "fake-burguer",
-    googleUrl: "", logoUrl: "", feedbackInterval: 0,
+    googleUrl: "GOOGLE_NOTACHEIA_LINK", logoUrl: "", feedbackInterval: 0,
     // Perguntas de prospecção — para mostrar o produto a donos de estabelecimento
     questions: [
       { id: "qd_ramo",  type: "text",   label: "Qual é o seu ramo de atuação?", required: true },
@@ -93,6 +93,7 @@ const SEED = [
       { id: "qd_fav",   type: "choice", label: "Você sabe qual prato/produto é o favorito dos seus clientes?", options: ["Sei sim!", "Acho que sei", "Não faço ideia"], required: true },
       { id: "qd_fb",    type: "choice", label: "Como você recebe feedback dos clientes hoje?", options: ["Não recebo", "Pelo Google", "Pessoalmente", "Redes sociais"], required: true },
       { id: "qd_goal",  type: "choice", label: "O que mais te interessa no seu negócio?", options: ["Fidelizar clientes", "Entender meu negócio melhor", "Atrair clientes novos", "Tudo isso!"], required: true },
+      { id: "qd_demo",  type: "stars",  label: "O que achou desta demonstração?", required: true },
     ],
     prizes: [
       { id: "pd1", label: "1 Mês Grátis",           emoji: "🎁", color: "#e63946" },
