@@ -114,6 +114,18 @@ const SEED = [
 ];
 
 const MASTER = { user: "master@notacheia.com.br", pass: "hu2001" };
+
+async function loadMasterPass() {
+  try {
+    const { data } = await supabase.from("config").select("value").eq("key", "master_pass").single();
+    if (data?.value) MASTER.pass = data.value;
+  } catch {}
+}
+
+async function saveMasterPass(newPass) {
+  await supabase.from("config").upsert({ key: "master_pass", value: newPass });
+  MASTER.pass = newPass;
+}
 const uid = () => Math.random().toString(36).slice(2, 8);
 const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase();
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
@@ -1847,9 +1859,9 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     if (masterPass.atual !== MASTER.pass) { setMasterPassMsg("❌ Senha atual incorreta."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
     if (masterPass.nova.length < 6) { setMasterPassMsg("❌ Mínimo 6 caracteres."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
     if (masterPass.nova !== masterPass.confirma) { setMasterPassMsg("❌ Senhas não coincidem."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
-    MASTER.pass = masterPass.nova;
+    await saveMasterPass(masterPass.nova);
     setMasterPass({ atual: "", nova: "", confirma: "" });
-    setMasterPassMsg("✅ Senha alterada! Anote a nova senha.");
+    setMasterPassMsg("✅ Senha salva no banco! Vai persistir mesmo após recarregar.");
     setTimeout(() => setMasterPassMsg(""), 5000);
   };
 
@@ -2139,7 +2151,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">Alterar senha de acesso Master</div>
             <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>
-              ⚠️ <strong style={{ color: "var(--yellow)" }}>Atenção:</strong> a nova senha só dura enquanto o app estiver aberto. Se recarregar a página, volta para a senha original do código.
+              ✅ A senha fica salva no banco de dados e <strong style={{ color: "var(--green)" }}>persiste mesmo após recarregar a página</strong>.
             </div>
             {masterPassMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: masterPassMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{masterPassMsg}</div>}
             <label className="lbl">Senha atual</label>
@@ -2307,6 +2319,7 @@ export default function App() {
   useEffect(() => {
     const slug = window.location.pathname.match(/^\/r\/([^/]+)/)?.[1];
     async function init() {
+      await loadMasterPass();
       const data = await loadEstabelecimentos();
       if (data && data.length > 0) {
         const withFeedbacks = await Promise.all(data.map(async (e) => ({ ...e, feedbacks: await loadFeedbacks(e.id) })));
