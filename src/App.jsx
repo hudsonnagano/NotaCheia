@@ -12,6 +12,7 @@ const makeSlug = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-
 // Ramos que têm cardápio digital
 const RAMOS_COMIDA = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria"];
 const isRamoComida = (ramo) => RAMOS_COMIDA.includes(ramo);
+const temCardapioPorPlano = (plano) => plano === "R$ 129/mês" || plano === "Pro";
 
 const CARDAPIO_LAYOUTS = [
   { id: "bold-full",   label: "Bold Full",       desc: "Foto pequena + nome e preço" },
@@ -78,7 +79,7 @@ const SEED = [
       { id: "p6", label: "Brinde Surpresa",  emoji: "🎁", color: "#111" },
     ],
     cardapio: makeDefaultCardapio(),
-    feedbacks: [], plano: "R$ 169/mês", desde: "01/05/2026",
+    feedbacks: [], plano: "R$ 129/mês", desde: "01/05/2026",
     responsavel: "João Silva", cidade: "Matinhos", ramo: "Hamburgueria", telefone: "(41) 99999-0001", whatsapp: "5541999990001",
   },
   {
@@ -1083,7 +1084,7 @@ function QRCodeView({ est }) {
 
 function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   const [open, setOpen] = useState(false);
-  const temCardapio = est && isRamoComida(est.ramo);
+  const temCardapio = est && temCardapioPorPlano(est.plano);
   const navs = isMaster
     ? [{ id: "ests", icon: "🏢", lbl: "Estabelecimentos" }, { id: "metricas", icon: "📊", lbl: "Métricas gerais" }, { id: "prospeccao", icon: "🗺️", lbl: "Prospecção" }, { id: "contrato", icon: "📄", lbl: "Gerar contrato" }, { id: "senha", icon: "🔑", lbl: "Trocar senha" }]
     : [
@@ -1126,7 +1127,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
 // ============================================================
 function ClientApp({ est, onSubmit, masterMode = false }) {
   const interval = est.feedbackInterval || 30;
-  const temCardapio = isRamoComida(est.ramo) && est.cardapio;
+  const temCardapio = temCardapioPorPlano(est.plano) && est.cardapio;
   const blocked = !canLeaveFeedback(est.id, interval, masterMode);
   const daysLeft = daysUntilNext(est.id, interval);
 
@@ -1645,15 +1646,15 @@ function OwnerDash({ est, onUpdate, onLogout }) {
 
         {tab === "cardapio" && (<>
           <div className="main-title">🍽️ Cardápio Digital</div>
-          {!isRamoComida(est.ramo) && (
+          {!temCardapioPorPlano(est.plano) && (
             <div style={{ padding: 20, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 14, color: "var(--muted2)", fontSize: 13 }}>
-              O cardápio digital está disponível para ramos de alimentação.
+              O cardápio digital está disponível no <strong style={{color:"var(--text)"}}>Plano Pro R$ 129/mês</strong>. Solicite ao administrador a mudança de plano.
             </div>
           )}
-          {isRamoComida(est.ramo) && (
+          {temCardapioPorPlano(est.plano) && (
             <>
               <div style={{ padding: "10px 14px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 10, fontSize: 12, color: "var(--muted2)", marginBottom: 16 }}>
-                🍽️ <strong style={{ color: "var(--text)" }}>Plano Pro</strong> — Cardápio digital integrado. Seus clientes veem o cardápio antes de avaliar.
+                🍽️ <strong style={{ color: "var(--text)" }}>Plano Pro R$ 129,90/mês</strong> — Cardápio digital integrado. Seus clientes veem o cardápio antes de avaliar.
               </div>
               <CardapioEditor
                 est={{ ...est, cardapio: ed.cardapio || makeDefaultCardapio() }}
@@ -1787,7 +1788,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
 }
 
 const RAMOS = ["Hamburgueria", "Pizzaria", "Restaurante", "Cafeteria", "Lanchonete", "Bar", "Sorveteria", "Padaria", "Sushi/Japonês", "Churrascaria", "Clínica Odontológica", "Clínica Médica", "Barbearia", "Salão de Beleza", "Academia", "Pet Shop", "Farmácia", "Outro"];
-const PLANOS = ["R$ 99/mês", "R$ 169/mês", "R$ 229/mês", "Personalizado"];
+const PLANOS = ["R$ 99/mês", "R$ 129/mês", "Personalizado"];
 
 function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [tab, setTab] = useState("ests");
@@ -1888,7 +1889,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     if (!newEst.name || !newEst.owner || !newEst.pass) return;
     setActionLoading(true);
     const slug = newEst.slug || makeSlug(newEst.name);
-    const temCardapio = isRamoComida(newEst.ramo);
+    const temCardapio = temCardapioPorPlano(newEst.plano);
     const novo = {
       ...newEst, slug, id: "est_" + uid(), ativo: true, logoUrl: "", feedbackInterval: 30,
       questions: makeDefaultQuestions(),
@@ -2210,11 +2211,11 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         {tab === "contrato" && (() => {
           const estSel = establishments.find(e => e.id === contrato.estId) || null;
           const hoje = contrato.dataContrato;
-          const valorMensal = contrato.plano === "R$ 99/mês" ? "99,90" : contrato.plano === "R$ 169/mês" ? "169,90" : contrato.plano === "R$ 229/mês" ? "229,90" : "—";
-          const nomePlano = contrato.plano === "R$ 99/mês" ? "Basic" : contrato.plano === "R$ 169/mês" ? "Pro" : contrato.plano === "R$ 229/mês" ? "Premium" : "Personalizado";
+          const valorMensal = contrato.plano === "R$ 99/mês" ? "99,90" : contrato.plano === "R$ 129/mês" ? "129,90" : "—";
+          const nomePlano = contrato.plano === "R$ 99/mês" ? "Basic" : contrato.plano === "R$ 129/mês" ? "Pro" : "Personalizado";
           const itensPlano = contrato.plano === "R$ 99/mês"
-            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com histórico de visitas e WhatsApp"]
-            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas"];
+            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com histórico de visitas e WhatsApp", "Suporte via WhatsApp"]
+            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas", "Suporte via WhatsApp"];
 
           const imprimirContrato = () => {
             const win = window.open("", "_blank");
@@ -2317,7 +2318,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
 
               <label className="lbl">Plano</label>
               <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
-                {[["R$ 99/mês","Basic — R$ 99,90/mês"],["R$ 169/mês","Pro — R$ 169,90/mês"]].map(([v,l]) => (
+                {[["R$ 99/mês","Basic — R$ 99,90/mês"],["R$ 129/mês","Pro — R$ 129,90/mês"]].map(([v,l]) => (
                   <button key={v} onClick={() => setContrato(s => ({ ...s, plano: v }))}
                     style={{ padding: "9px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.plano === v ? "var(--ac)" : "var(--border)"}`, background: contrato.plano === v ? "var(--ac)22" : "var(--d3)", color: contrato.plano === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
                 ))}
@@ -2399,11 +2400,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           </div>
           <div><label className="lbl">Cidade</label><input className="field" style={{ marginBottom: 0 }} placeholder="Ex: Matinhos" value={newEst.cidade} onChange={e => setNewEst(s => ({ ...s, cidade: e.target.value }))} /></div>
         </div>
-        {isRamoComida(newEst.ramo) && (
-          <div style={{ padding: "8px 12px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 8, fontSize: 12, color: "var(--muted2)", marginBottom: 12 }}>
-            🍽️ Este ramo terá <strong style={{ color: "var(--text)" }}>cardápio digital</strong> disponível (Plano Pro).
-          </div>
-        )}
+
         <label className="lbl">Emoji do estabelecimento</label>
         <EmojiPicker value={newEst.emoji} ramoAtual={newEst.ramo} onChange={emoji => setNewEst(s => ({ ...s, emoji }))} />
         <label className="lbl">Cor</label><div className="swatch-row" style={{ marginBottom: 14 }}>{COLORS.map(c => <div key={c} className={`swatch ${newEst.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setNewEst(s => ({ ...s, color: c }))} />)}</div>
