@@ -939,6 +939,7 @@ async function deleteEstabelecimentoFromDB(id) {
 async function createEstabelecimento(est) {
   const { feedbacks, ...data } = est;
   const { error } = await supabase.from("estabelecimentos").insert(data);
+  if (error) console.error("Erro Supabase:", error.message, error.details);
   return !error;
 }
 
@@ -1049,7 +1050,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
 
 function QRCodeView({ est }) {
   const slug = est.slug || makeSlug(est.name);
-  const url = `https://notacheia.com.br/r/${slug}`;
+  const url = `https://notacheia.com.br/${slug}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=111111&margin=10`;
   return (
     <div>
@@ -1681,7 +1682,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}><div style={{ width: 48, height: 48, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{ed.emoji}</div><input className="field" style={{ marginBottom: 0, flex: 1 }} value={ed.name} onChange={e => setEd(s => ({ ...s, name: e.target.value }))} /></div>
             <label className="lbl">🔗 Link exclusivo (slug)</label>
             <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
-              <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/r/</span>
+              <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/</span>
               <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={ed.slug || makeSlug(ed.name)} onChange={e => setEd(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
             </div>
             <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Apenas letras minúsculas, números e hífen.</div>
@@ -1810,7 +1811,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     setEnviando(e.id);
     const slug = e.slug || makeSlug(e.name);
     const linkPainel = "https://nota-cheia.vercel.app";
-    const linkQR = `https://notacheia.com.br/r/${slug}`;
+    const linkQR = `https://notacheia.com.br/${slug}`;
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -1897,7 +1898,12 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
       cardapio: temCardapio ? makeDefaultCardapio() : null,
       feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
     };
-    await createEstabelecimento(novo);
+    const ok = await createEstabelecimento(novo);
+    if (!ok) {
+      alert("❌ Erro ao salvar. Verifique sua conexão e tente novamente.");
+      setActionLoading(false);
+      return;
+    }
     setEstablishments(prev => [...prev, novo]);
     setNewEst(EMPTY_EST);
     setShowAdd(false); setActionLoading(false);
@@ -1923,7 +1929,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
 
   const copyLink = (e) => {
     const slug = e.slug || makeSlug(e.name);
-    navigator.clipboard.writeText(`https://notacheia.com.br/r/${slug}`);
+    navigator.clipboard.writeText(`https://notacheia.com.br/${slug}`);
     setCopied(e.id);
     setTimeout(() => setCopied(null), 2000);
   };
@@ -1962,7 +1968,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           {e.cardapio && <span style={{ background: "#0a1f0a", border: "1px solid var(--green)33", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--green)", fontWeight: 700 }}>🍽️ Pro</span>}
         </div>
         <div className="slug-box" style={{ marginBottom: 10 }}>
-          <span className="slug-text">notacheia.com.br/r/{slug}</span>
+          <span className="slug-text">notacheia.com.br/{slug}</span>
           <button className="btn-sm btn-sm-ghost" onClick={() => copyLink(e)}>{copied === e.id ? "✅" : "📋"}</button>
         </div>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
@@ -2388,7 +2394,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}><div style={{ width: 48, height: 48, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{newEst.emoji}</div><input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e => setNewEst(s => ({ ...s, name: e.target.value, slug: s.slug || makeSlug(e.target.value) }))} /></div>
         <label className="lbl">🔗 Link exclusivo</label>
         <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
-          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>/r/</span>
+          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/</span>
           <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={newEst.slug || makeSlug(newEst.name)} onChange={e => setNewEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
         </div>
         <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Gerado automaticamente. Pode editar se quiser.</div>
@@ -2431,7 +2437,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
         <input className="field" value={editEst.name} onChange={e => setEditEst(s => ({ ...s, name: e.target.value }))} />
         <label className="lbl">🔗 Link exclusivo</label>
         <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 12 }}>
-          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>/r/</span>
+          <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/</span>
           <input className="field" style={{ marginBottom: 0, flex: 1 }} value={editEst.slug || makeSlug(editEst.name)} onChange={e => setEditEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
@@ -2525,7 +2531,7 @@ export default function App() {
   const [loggedEst, setLoggedEst] = useState(null);
 
   useEffect(() => {
-    const slug = window.location.pathname.match(/^\/r\/([^/]+)/)?.[1];
+    const slug = window.location.pathname.match(/^\/([^/]+)/)?.[1];
     async function init() {
       await loadMasterPass();
       const data = await loadEstabelecimentos();
