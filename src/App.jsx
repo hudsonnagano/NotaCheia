@@ -1026,7 +1026,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
   return (
     <div className={`q-wrap ${answered ? "answered" : ""}`}>
       <div className="q-num">Pergunta {idx + 1}</div>
-      <div className="q-label">{q.label}</div>
+      <div className="q-label">{q.emoji ? <span style={{marginRight:6}}>{q.emoji}</span> : null}{q.label}</div>
       {q.type === "staff" && (<div className="staff-grid">{q.options.map(o => <button key={o} className={`staff-btn ${answer === o ? "sel" : ""}`} onClick={() => onChange(o)}>{o}</button>)}</div>)}
       {q.type === "choice" && (
         <div className="choice-list">
@@ -1340,6 +1340,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [cardapioSaving, setCardapioSaving] = useState(false);
   const [cardapioSaved, setCardapioSaved] = useState(false);
   const [newQ, setNewQ] = useState({ label: "", type: "stars", options: "" });
+  const [qEmojiOpen, setQEmojiOpen] = useState(null);
+  const [qEmojiCat, setQEmojiCat] = useState(Object.keys(WA_CATS)[0]);
   const [newP, setNewP] = useState({ label: "", emoji: "🎁", color: "#e63946" });
   const [filter, setFilter] = useState("todos");
   const [newPass, setNewPass] = useState({ atual: "", nova: "", confirma: "" });
@@ -1694,7 +1696,42 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </div>
           <div className="setup-box">
             <div className="setup-box-title">❓ Perguntas</div>
-            {ed.questions.map(q => (<div className="pill-row" key={q.id}><div style={{ flex: 1 }}><div className="pill-lbl">{q.label}</div><div className="pill-sub">{q.type}</div></div><button className="btn-sm btn-sm-danger" onClick={() => removeQ(q.id)}>✕</button></div>))}
+            {ed.questions.map(q => (
+              <div className="pill-row" key={q.id} style={{ position: "relative" }}>
+                <button
+                  onClick={() => setQEmojiOpen(qEmojiOpen === q.id ? null : q.id)}
+                  style={{ width: 32, height: 32, fontSize: 18, border: "1.5px solid var(--border)", borderRadius: 8, background: "var(--d3)", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+                  title={q.emoji ? "Trocar emoji" : "Adicionar emoji"}>
+                  {q.emoji || <span style={{fontSize:12,color:"var(--muted)"}}>😊</span>}
+                </button>
+                {qEmojiOpen === q.id && (
+                  <div style={{ position: "absolute", top: 40, left: 0, zIndex: 999, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: 10, width: 260, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+                    <div style={{ display: "flex", gap: 3, overflowX: "auto", marginBottom: 8 }}>
+                      {Object.keys(WA_CATS).map(k => (
+                        <button key={k} onClick={() => setQEmojiCat(k)} style={{ padding: "3px 7px", fontSize: 11, border: `1px solid ${qEmojiCat===k?"var(--ac)":"var(--border)"}`, borderRadius: 20, cursor: "pointer", background: qEmojiCat===k?"var(--ac)22":"none", color: qEmojiCat===k?"var(--text)":"var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k.split(" ")[0]}</button>
+                      ))}
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, maxHeight: 160, overflowY: "auto" }}>
+                      {(WA_CATS[qEmojiCat]||[]).map(e => (
+                        <button key={e} onClick={() => { setEd(ed => ({ ...ed, questions: ed.questions.map(x => x.id === q.id ? { ...x, emoji: e } : x) })); setQEmojiOpen(null); }}
+                          style={{ width: 30, height: 30, fontSize: 17, border: "none", background: q.emoji===e?"var(--ac)22":"none", borderRadius: 6, cursor: "pointer" }}>
+                          {e}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+                      {q.emoji && <button className="btn-sm btn-sm-danger" style={{fontSize:11}} onClick={() => { setEd(ed => ({ ...ed, questions: ed.questions.map(x => x.id === q.id ? { ...x, emoji: "" } : x) })); setQEmojiOpen(null); }}>✕ Remover</button>}
+                      <button className="btn-sm btn-sm-ghost" style={{fontSize:11}} onClick={() => setQEmojiOpen(null)}>Fechar</button>
+                    </div>
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="pill-lbl">{q.emoji ? <span style={{marginRight:4}}>{q.emoji}</span> : null}{q.label}</div>
+                  <div className="pill-sub">{q.type}</div>
+                </div>
+                <button className="btn-sm btn-sm-danger" onClick={() => removeQ(q.id)}>✕</button>
+              </div>
+            ))}
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <input className="field-inline" placeholder="Texto da pergunta" value={newQ.label} onChange={e => setNewQ(s => ({ ...s, label: e.target.value }))} />
               <select className="type-sel" value={newQ.type} onChange={e => setNewQ(s => ({ ...s, type: e.target.value }))}><option value="stars">⭐ Estrelas</option><option value="choice">☑️ Múltipla escolha</option><option value="nps">📊 NPS 0-10</option><option value="text">📝 Texto livre</option><option value="staff">👤 Colaborador</option></select>
