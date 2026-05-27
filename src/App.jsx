@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://lhdbevkcpycikyudzqng.supabase.co";
@@ -2241,7 +2241,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               <p class="clausula"><strong>3.3 Suspensão:</strong> Em caso de inadimplência, o acesso ao sistema poderá ser suspenso até a regularização do pagamento.</p>
               <p class="clausula"><strong>3.4 Entregáveis:</strong> O prestador irá configurar o sistema, gerar o QR Code personalizado e entregar as instruções de uso em até 24 horas após o pagamento do setup.</p>
               <p class="clausula"><strong>3.5 Dúvidas:</strong> Em caso de dúvidas sobre o sistema, o contratante pode entrar em contato pelo WhatsApp (41) 99675-6776.</p>
-              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são d</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
+              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
 
               <h2>4. Assinaturas</h2>
               <p style="font-size:12px;color:#888;margin-bottom:20px;">Matinhos — PR, ${hoje}</p>
