@@ -251,16 +251,21 @@ const CSS = (ac = "#e63946") => `
   .shell { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; background: var(--d1); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 12px; gap: 3px; flex-shrink: 0; }
   .main { flex: 1; overflow-y: auto; padding: 28px; background: var(--dark); }
-  .mobile-header { display: none; position: sticky; top: 0; z-index: 100; background: var(--d1); border-bottom: 1px solid var(--border); padding: 12px 16px; align-items: center; justify-content: space-between; }
-  .hamburger { background: none; border: none; cursor: pointer; color: var(--text); font-size: 22px; padding: 4px; }
+  .mobile-header { display: none; position: sticky; top: 0; z-index: 400; background: var(--d1); border-bottom: 1px solid var(--border); padding: 14px 16px; align-items: center; justify-content: space-between; min-height: 56px; }
+  .hamburger { background: var(--d3); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-size: 20px; padding: 8px 12px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
   .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 400; background: var(--d1); border-top: 1px solid var(--border); padding: 6px 0 env(safe-area-inset-bottom, 6px); }
+  .bottom-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--muted2); padding: 6px 4px; min-height: 56px; font-family: var(--ff-body); transition: color 0.15s; }
+  .bottom-nav-btn.on { color: var(--ac); }
+  .bottom-nav-btn:active { opacity: 0.7; }
   @media (max-width: 768px) {
     .shell { display: block; }
     .sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 300; transform: translateX(-100%); width: 260px; padding-top: 56px; transition: transform 0.3s ease; }
     .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
     .sidebar-overlay.open { display: block; }
     .mobile-header { display: flex; }
-    .main { padding: 14px; width: 100%; }
+    .bottom-nav { display: flex; }
+    .main { padding: 14px 14px 84px; width: 100%; min-height: calc(100vh - 56px); overflow-y: auto; }
     .main-title { font-size: 20px; margin-bottom: 14px; }
     .metrics { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
     .metric { padding: 14px; }
@@ -315,7 +320,7 @@ const CSS = (ac = "#e63946") => `
   .field-inline { flex: 1; padding: 9px 12px; background: var(--d2); border: 1.5px solid var(--border); border-radius: 9px; color: var(--text); font-family: var(--ff-body); font-size: 13px; outline: none; transition: border 0.2s; min-width: 0; }
   .field-inline:focus { border-color: var(--ac); }
   .type-sel { padding: 9px 10px; background: var(--d2); border: 1.5px solid var(--border); border-radius: 9px; color: var(--text); font-family: var(--ff-body); font-size: 13px; outline: none; cursor: pointer; }
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 999; display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; background: linear-gradient(var(--dark), transparent); }
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; background: linear-gradient(var(--dark), transparent); }
   .top-btn { padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; font-family: var(--ff-body); font-weight: 700; font-size: 12px; transition: all 0.2s; }
   .top-btn-red { background: var(--ac); color: #fff; }
   .top-btn-ghost { background: var(--d2); color: var(--muted2); border: 1px solid var(--border); }
@@ -1099,13 +1104,27 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
         { id: "senha", icon: "🔑", lbl: "Trocar senha" },
       ];
+
+  // Abas exibidas na bottom nav (máx 5): as mais importantes + "Mais"
+  const bottomNavPrimary = isMaster
+    ? [{ id: "ests", icon: "🏢", lbl: "Clientes" }, { id: "metricas", icon: "📊", lbl: "Métricas" }, { id: "prospeccao", icon: "🗺️", lbl: "Prospecção" }]
+    : [
+        { id: "overview", icon: "📊", lbl: "Início" },
+        { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
+        { id: "insights", icon: "💡", lbl: "Insights" },
+        { id: "qrcode", icon: "📱", lbl: "QR Code" },
+      ];
+
   return (
     <>
+      {/* Mobile Header — topo com nome e botão ☰ para menu completo */}
       <div className="mobile-header">
         <button className="hamburger" onClick={() => setOpen(true)}>☰</button>
         <div style={{ fontFamily: "var(--ff-head)", fontSize: 15 }}>{isMaster ? "👑 Master" : `${est?.emoji} ${est?.name}`}</div>
-        <div style={{ width: 32 }} />
+        <div style={{ width: 44 }} />
       </div>
+
+      {/* Sidebar gaveta — menu completo */}
       <div className={`sidebar-overlay ${open ? "open" : ""}`} onClick={() => setOpen(false)} />
       <div className={`sidebar ${open ? "open" : ""}`}>
         <div style={{ padding: "0 4px 14px", borderBottom: "1px solid var(--border)", marginBottom: 10 }}><LogoSVG size={130} /></div>
@@ -1118,6 +1137,20 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         {navs.map(n => <button key={n.id} className={`nav ${tab === n.id ? "on" : ""}`} onClick={() => { setTab(n.id); setOpen(false); }}><span>{n.icon}</span><span>{n.lbl}</span></button>)}
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
+      </div>
+
+      {/* Bottom Nav Bar — visível apenas no mobile */}
+      <div className="bottom-nav">
+        {bottomNavPrimary.map(n => (
+          <button key={n.id} className={`bottom-nav-btn ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
+            <span style={{ fontSize: 20 }}>{n.icon}</span>
+            <span style={{ fontSize: 10, marginTop: 2, fontWeight: 700 }}>{n.lbl}</span>
+          </button>
+        ))}
+        <button className={`bottom-nav-btn ${!bottomNavPrimary.find(n => n.id === tab) ? "on" : ""}`} onClick={() => setOpen(true)}>
+          <span style={{ fontSize: 20 }}>⋯</span>
+          <span style={{ fontSize: 10, marginTop: 2, fontWeight: 700 }}>Mais</span>
+        </button>
       </div>
     </>
   );
@@ -2577,7 +2610,7 @@ export default function App() {
     <>
       <style>{css}</style>
       <div>
-        <div className="top-bar">
+        {(mode === "client" || mode === "ownerGateway" || mode === "ownerLogin" || mode === "masterLogin") && <div className="top-bar">
           {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
           {mode === "client" && (<>
             <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
