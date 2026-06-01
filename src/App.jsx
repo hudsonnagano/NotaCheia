@@ -924,7 +924,7 @@ async function loadFeedbacks(estId) {
   return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio, brinde_entregue: f.brinde_entregue || false }));
 }
 async function saveFeedbackToSupabase(estId, fb) {
-  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio });
+  const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio, whatsapp: fb.whatsapp || "" });
   return !error;
 }
 async function saveEstabelecimento(est) {
@@ -1167,6 +1167,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
   const [savedNome, setSavedNome] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [lgpd, setLgpd] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
@@ -1213,6 +1214,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
         <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
+        <input className="field" placeholder="WhatsApp (opcional, ex: 41999990000)" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} />
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
@@ -1270,7 +1272,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div className="div" />
           <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p); setSaving(true);
-            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label, whatsapp });
             if (!masterMode) await saveCupom(est.id, coupon, p.label, savedNome);
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
@@ -1315,7 +1317,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           </div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-       {est.googleUrl && savedAnswers?.q_nps >= 9 && (
+        {est.googleUrl && savedAnswers?.q_nps >= 9 && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
@@ -1613,6 +1615,54 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6 && f.answers?.q_nps !== undefined).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
           <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
+        {tab === "clientes" && (() => {
+          const mapa = {};
+          est.feedbacks.forEach(f => {
+            const chave = (f.nome || "Anônimo").trim().toLowerCase();
+            if (!mapa[chave]) {
+              mapa[chave] = { nome: f.nome || "Anônimo", whatsapp: f.whatsapp || "", ultima: f.data, visitas: 0 };
+            }
+            mapa[chave].visitas++;
+            if (f.data > mapa[chave].ultima) mapa[chave].ultima = f.data;
+            if (!mapa[chave].whatsapp && f.whatsapp) mapa[chave].whatsapp = f.whatsapp;
+          });
+          const clientes = Object.values(mapa).sort((a, b) => b.visitas - a.visitas);
+          return (<>
+            <div className="main-title">👥 Clientes</div>
+            <div className="metrics" style={{ marginBottom: 16 }}>
+              <div className="metric"><div className="metric-val">{clientes.length}</div><div className="metric-lbl">Clientes únicos</div></div>
+              <div className="metric"><div className="metric-val">{clientes.filter(c => c.visitas > 1).length}</div><div className="metric-lbl">Retornaram</div></div>
+              <div className="metric"><div className="metric-val">{clientes.filter(c => c.whatsapp).length}</div><div className="metric-lbl">Com WhatsApp</div></div>
+            </div>
+            {clientes.length === 0 && (
+              <div style={{ textAlign: "center", color: "var(--muted)", padding: 40, fontSize: 14 }}>
+                Nenhum cliente ainda.<br />
+                <span style={{ fontSize: 12 }}>Os clientes aparecem aqui conforme respondem a pesquisa.</span>
+              </div>
+            )}
+            {clientes.map((c, i) => (
+              <div key={i} style={{ background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>👤</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: 14 }}>{c.nome}</div>
+                  <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>🗓️ Última visita: {c.ultima || "—"}</div>
+                  {c.whatsapp && <div style={{ fontSize: 11, color: "var(--muted2)", marginTop: 2 }}>📱 {c.whatsapp}</div>}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+                  <div style={{ background: c.visitas > 1 ? "var(--ac)22" : "var(--d3)", border: `1px solid ${c.visitas > 1 ? "var(--ac)44" : "var(--border)"}`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, color: c.visitas > 1 ? "var(--ac)" : "var(--muted)" }}>
+                    {c.visitas}x {c.visitas > 1 ? "visitas" : "visita"}
+                  </div>
+                  {c.whatsapp && (
+                    <a href={`https://wa.me/55${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
+                      style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "4px 10px", fontSize: 11, fontWeight: 700, textDecoration: "none" }}>
+                      💬 WA
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </>);
+        })()}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
 
         {tab === "relatorio" && (() => {
