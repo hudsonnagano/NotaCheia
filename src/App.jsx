@@ -1315,7 +1315,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           </div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-        {est.googleUrl && avgStars >= 4 && (
+       {est.googleUrl && savedAnswers?.q_nps >= 9 && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
