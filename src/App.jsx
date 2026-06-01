@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://lhdbevkcpycikyudzqng.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoZGJldmtjcHljaWt5dWR6cW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NjE0MTcsImV4cCI6MjA5NDQzNzQxN30.KP2WoosRvyGrOc23jSxFV2dSdaA6MybOFyIi-s7x9J0";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://lhdbevkcpycikyudzqng.supabase.co";
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY || "sb_publishable_x98wrvkKncTzTV0QnZZjzA_MjD21sCw";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');`;
@@ -251,21 +251,16 @@ const CSS = (ac = "#e63946") => `
   .shell { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; background: var(--d1); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 12px; gap: 3px; flex-shrink: 0; }
   .main { flex: 1; overflow-y: auto; padding: 28px; background: var(--dark); }
-  .mobile-header { display: none; position: sticky; top: 0; z-index: 400; background: var(--d1); border-bottom: 1px solid var(--border); padding: 14px 16px; align-items: center; justify-content: space-between; min-height: 56px; }
-  .hamburger { background: var(--d3); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-size: 20px; padding: 8px 12px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+  .mobile-header { display: none; position: sticky; top: 0; z-index: 100; background: var(--d1); border-bottom: 1px solid var(--border); padding: 12px 16px; align-items: center; justify-content: space-between; }
+  .hamburger { background: none; border: none; cursor: pointer; color: var(--text); font-size: 22px; padding: 4px; }
   .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
-  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 400; background: var(--d1); border-top: 1px solid var(--border); padding: 6px 0 env(safe-area-inset-bottom, 6px); }
-  .bottom-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--muted2); padding: 6px 4px; min-height: 56px; font-family: var(--ff-body); transition: color 0.15s; }
-  .bottom-nav-btn.on { color: var(--ac); }
-  .bottom-nav-btn:active { opacity: 0.7; }
   @media (max-width: 768px) {
     .shell { display: block; }
     .sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 300; transform: translateX(-100%); width: 260px; padding-top: 56px; transition: transform 0.3s ease; }
     .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
     .sidebar-overlay.open { display: block; }
     .mobile-header { display: flex; }
-    .bottom-nav { display: flex; }
-    .main { padding: 14px 14px 84px; width: 100%; min-height: calc(100vh - 56px); overflow-y: auto; }
+    .main { padding: 14px; width: 100%; }
     .main-title { font-size: 20px; margin-bottom: 14px; }
     .metrics { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
     .metric { padding: 14px; }
@@ -320,7 +315,7 @@ const CSS = (ac = "#e63946") => `
   .field-inline { flex: 1; padding: 9px 12px; background: var(--d2); border: 1.5px solid var(--border); border-radius: 9px; color: var(--text); font-family: var(--ff-body); font-size: 13px; outline: none; transition: border 0.2s; min-width: 0; }
   .field-inline:focus { border-color: var(--ac); }
   .type-sel { padding: 9px 10px; background: var(--d2); border: 1.5px solid var(--border); border-radius: 9px; color: var(--text); font-family: var(--ff-body); font-size: 13px; outline: none; cursor: pointer; }
-  .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; background: linear-gradient(var(--dark), transparent); }
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 999; display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; background: linear-gradient(var(--dark), transparent); }
   .top-btn { padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; font-family: var(--ff-body); font-weight: 700; font-size: 12px; transition: all 0.2s; }
   .top-btn-red { background: var(--ac); color: #fff; }
   .top-btn-ghost { background: var(--d2); color: var(--muted2); border: 1px solid var(--border); }
@@ -926,7 +921,7 @@ async function loadEstabelecimentos() {
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
   if (error) return [];
-  return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio }));
+  return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio, brinde_entregue: f.brinde_entregue || false }));
 }
 async function saveFeedbackToSupabase(estId, fb) {
   const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio });
@@ -939,7 +934,31 @@ async function saveEstabelecimento(est) {
 }
 async function deleteEstabelecimentoFromDB(id) {
   await supabase.from("feedbacks").delete().eq("estabelecimento_id", id);
+  await supabase.from("cupons").delete().eq("estabelecimento_id", id);
   await supabase.from("estabelecimentos").delete().eq("id", id);
+}
+async function marcarBrindeEntregue(feedbackId) {
+  await supabase.from("feedbacks").update({ brinde_entregue: true }).eq("id", feedbackId);
+}
+async function saveCupom(estId, codigo, premio, nomeCliente) {
+  const { error } = await supabase.from("cupons").insert({
+    id: uid(),
+    estabelecimento_id: estId,
+    codigo,
+    premio,
+    nome_cliente: nomeCliente,
+    usado: false,
+  });
+  return !error;
+}
+async function validarCupom(codigo, estId) {
+  const { data, error } = await supabase.from("cupons").select("*").eq("codigo", codigo).eq("estabelecimento_id", estId).single();
+  if (error || !data) return { valido: false, motivo: "Cupom não encontrado." };
+  if (data.usado) return { valido: false, motivo: "Este cupom já foi utilizado." };
+  return { valido: true, cupom: data };
+}
+async function marcarCupomUsado(codigo, estId) {
+  await supabase.from("cupons").update({ usado: true }).eq("codigo", codigo).eq("estabelecimento_id", estId);
 }
 async function createEstabelecimento(est) {
   const { feedbacks, ...data } = est;
@@ -1104,27 +1123,13 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
         { id: "senha", icon: "🔑", lbl: "Trocar senha" },
       ];
-
-  // Abas exibidas na bottom nav (máx 5): as mais importantes + "Mais"
-  const bottomNavPrimary = isMaster
-    ? [{ id: "ests", icon: "🏢", lbl: "Clientes" }, { id: "metricas", icon: "📊", lbl: "Métricas" }, { id: "prospeccao", icon: "🗺️", lbl: "Prospecção" }]
-    : [
-        { id: "overview", icon: "📊", lbl: "Início" },
-        { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
-        { id: "insights", icon: "💡", lbl: "Insights" },
-        { id: "qrcode", icon: "📱", lbl: "QR Code" },
-      ];
-
   return (
     <>
-      {/* Mobile Header — topo com nome e botão ☰ para menu completo */}
       <div className="mobile-header">
         <button className="hamburger" onClick={() => setOpen(true)}>☰</button>
         <div style={{ fontFamily: "var(--ff-head)", fontSize: 15 }}>{isMaster ? "👑 Master" : `${est?.emoji} ${est?.name}`}</div>
-        <div style={{ width: 44 }} />
+        <div style={{ width: 32 }} />
       </div>
-
-      {/* Sidebar gaveta — menu completo */}
       <div className={`sidebar-overlay ${open ? "open" : ""}`} onClick={() => setOpen(false)} />
       <div className={`sidebar ${open ? "open" : ""}`}>
         <div style={{ padding: "0 4px 14px", borderBottom: "1px solid var(--border)", marginBottom: 10 }}><LogoSVG size={130} /></div>
@@ -1137,20 +1142,6 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         {navs.map(n => <button key={n.id} className={`nav ${tab === n.id ? "on" : ""}`} onClick={() => { setTab(n.id); setOpen(false); }}><span>{n.icon}</span><span>{n.lbl}</span></button>)}
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
-      </div>
-
-      {/* Bottom Nav Bar — visível apenas no mobile */}
-      <div className="bottom-nav">
-        {bottomNavPrimary.map(n => (
-          <button key={n.id} className={`bottom-nav-btn ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
-            <span style={{ fontSize: 20 }}>{n.icon}</span>
-            <span style={{ fontSize: 10, marginTop: 2, fontWeight: 700 }}>{n.lbl}</span>
-          </button>
-        ))}
-        <button className={`bottom-nav-btn ${!bottomNavPrimary.find(n => n.id === tab) ? "on" : ""}`} onClick={() => setOpen(true)}>
-          <span style={{ fontSize: 20 }}>⋯</span>
-          <span style={{ fontSize: 10, marginTop: 2, fontWeight: 700 }}>Mais</span>
-        </button>
       </div>
     </>
   );
@@ -1280,6 +1271,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <Wheel prizes={est.prizes} onResult={async (p) => {
             setPrize(p); setSaving(true);
             await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            if (!masterMode) await saveCupom(est.id, coupon, p.label, savedNome);
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
             if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
@@ -1317,6 +1309,10 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="coupon-box">
           <div className="coupon-id">{coupon}</div>
           <div className="coupon-validity">🗓️ Válido até: {addDays(7)} · Apresente ao atendente</div>
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent("https://notacheia.com.br/validar/" + est.id + "/" + coupon)}&bgcolor=1a1a1a&color=f0ede8&margin=8`} alt="QR Validação" style={{ borderRadius: 8, width: 100, height: 100 }} />
+            <div style={{ fontSize: 10, color: "var(--muted)", textAlign: "center" }}>Dono: escaneie para validar</div>
+          </div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
         {est.googleUrl && avgStars >= 4 && (
@@ -1609,7 +1605,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="main-title">💬 Feedbacks</div>
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div className="fb-prize">🎁 {f.premio}</div>}</div>); })}
+          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
@@ -2506,6 +2502,94 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
 }
 
 
+
+// ============================================================
+// VALIDAR CUPOM — página acessada pelo dono ao escanear o QR
+// ============================================================
+function ValidarCupom({ ests }) {
+  const path = window.location.pathname;
+  const m = path.match(/\/validar\/([^/]+)\/([^/]+)/);
+  const estId = m?.[1];
+  const codigo = m?.[2];
+  const est = ests.find(e => e.id === estId);
+  const [status, setStatus] = useState("loading");
+  const [cupom, setCupom] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    if (!estId || !codigo) { setStatus("erro"); setMsg("Link inválido."); return; }
+    validarCupom(codigo, estId).then(res => {
+      if (res.valido) { setCupom(res.cupom); setStatus("valido"); }
+      else { setMsg(res.motivo); setStatus("invalido"); }
+    });
+  }, []);
+
+  const confirmar = async () => {
+    setStatus("confirmando");
+    await marcarCupomUsado(codigo, estId);
+    setStatus("entregue");
+  };
+
+  const ac = est?.color || "#e63946";
+
+  return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${ac}20, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 24, marginBottom: 6 }}>{est?.emoji || "🎁"}</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 4 }}>{est?.name || "NotaCheia"}</div>
+        <div style={{ fontSize: 11, color: "var(--muted)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 20 }}>Validação de Cupom</div>
+        <div className="div" />
+
+        {status === "loading" && <div style={{ color: "var(--muted)", padding: 20 }}>Verificando cupom...</div>}
+
+        {status === "valido" && cupom && (
+          <>
+            <div style={{ fontSize: 52, marginBottom: 8 }}>✅</div>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--green)", marginBottom: 6 }}>CUPOM VÁLIDO!</div>
+            <div style={{ background: "var(--d2)", border: "2px dashed var(--green)88", borderRadius: 14, padding: 16, margin: "14px 0" }}>
+              <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Prêmio</div>
+              <div style={{ fontFamily: "var(--ff-head)", fontSize: 24, color: "var(--text)" }}>{cupom.premio}</div>
+              <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 6 }}>👤 {cupom.nome_cliente || "Anônimo"}</div>
+              <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>Código: {cupom.codigo}</div>
+            </div>
+            <button className="btn btn-red" onClick={confirmar} style={{ background: "var(--green)", marginBottom: 8 }}>
+              ✅ Confirmar entrega do brinde
+            </button>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Clique para marcar como entregue e invalidar o cupom.</div>
+          </>
+        )}
+
+        {status === "confirmando" && <div style={{ color: "var(--muted)", padding: 20 }}>Registrando...</div>}
+
+        {status === "entregue" && (
+          <>
+            <div style={{ fontSize: 52, marginBottom: 8 }}>🎁</div>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 8 }}>Brinde entregue!</div>
+            <div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7 }}>Cupom marcado como utilizado.<br />Não pode ser usado novamente.</div>
+          </>
+        )}
+
+        {status === "invalido" && (
+          <>
+            <div style={{ fontSize: 52, marginBottom: 8 }}>❌</div>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--red)", marginBottom: 8 }}>Cupom inválido</div>
+            <div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div>
+          </>
+        )}
+
+        {status === "erro" && (
+          <>
+            <div style={{ fontSize: 52, marginBottom: 8 }}>⚠️</div>
+            <div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div>
+          </>
+        )}
+
+        <div style={{ fontSize: 11, color: "#444", marginTop: 20 }}>NotaCheia ⭐ · Validação de cupom</div>
+      </div>
+    </div>
+  );
+}
+
 // Tela de escolha: Demo do painel OU login real
 function OwnerGateway({ onDemo, onLogin }) {
   return (
@@ -2564,7 +2648,10 @@ export default function App() {
   const [loggedEst, setLoggedEst] = useState(null);
 
   useEffect(() => {
-    const slug = window.location.pathname.match(/^\/([^/]+)/)?.[1];
+    const path = window.location.pathname;
+    const validarMatch = path.match(/^\/validar\/([^/]+)\/([^/]+)/);
+    if (validarMatch) { setMode("validar"); }
+    const slug = path.match(/^\/([^/]+)/)?.[1];
     async function init() {
       await loadMasterPass();
       const data = await loadEstabelecimentos();
@@ -2610,25 +2697,24 @@ export default function App() {
     <>
       <style>{css}</style>
       <div>
-        {(mode === "client" || mode === "ownerGateway" || mode === "ownerLogin" || mode === "masterLogin") && (
-          <div className="top-bar">
-            {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
-            {mode === "client" && (<>
-              <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
-                value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
-                {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
-              </select>
-              <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
-              <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
-            </>)}
-          </div>
-        )}
+        <div className="top-bar">
+          {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
+          {mode === "client" && (<>
+            <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
+              value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
+              {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
+            </select>
+            <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
+            <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
+          </>)}
+        </div>
         {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
         {mode === "ownerGateway" && <OwnerGateway onDemo={() => { const demo = ests.find(e => e.id === "est_demo") || SEED.find(e => e.id === "est_demo"); setLoggedEst(demo); setMode("ownerDash"); }} onLogin={() => setMode("ownerLogin")} />}
         {mode === "ownerLogin" && <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email, pass) => { const found = ests.find(e => e.owner === email && e.pass === pass); if (found) { setLoggedEst(found); setMode("ownerDash"); return true; } return false; }} />}
         {mode === "ownerDash" && loggedEst && <OwnerDash est={loggedEst} onUpdate={updateEst} onLogout={() => { setLoggedEst(null); setMode("client"); }} />}
         {mode === "masterLogin" && <LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email, pass) => { if (email === MASTER.user && pass === MASTER.pass) { setMode("masterDash"); return true; } return false; }} />}
         {mode === "masterDash" && <MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={() => setMode("client")} />}
+        {mode === "validar" && <ValidarCupom ests={ests} />}
       </div>
     </>
   );
