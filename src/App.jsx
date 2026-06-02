@@ -9,7 +9,6 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Syne:wght@7
 
 const makeSlug = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-// Ramos que têm cardápio digital
 const RAMOS_COMIDA = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Sushi/Japonês","Churrascaria"];
 const isRamoComida = (ramo) => RAMOS_COMIDA.includes(ramo);
 const temCardapioPorPlano = (plano) => plano === "R$ 129/mês" || plano === "Pro";
@@ -86,7 +85,6 @@ const SEED = [
     id: "est_demo", owner: "demo@notacheia.com.br", pass: "demo123", ativo: true,
     name: "Fake Burguer", emoji: "🍔", color: "#f4a261", slug: "fake-burguer",
     googleUrl: "", logoUrl: "", feedbackInterval: 0,
-    // Perguntas de prospecção — para mostrar o produto a donos de estabelecimento
     questions: [
       { id: "qd_ramo",  type: "text",   label: "Qual é o seu ramo de atuação?", required: true },
       { id: "qd_fluxo", type: "choice", label: "Quantos clientes passam pelo seu estabelecimento por dia?", options: ["Menos de 50", "50 a 100", "Mais de 100", "Não sei ao certo"], required: true },
@@ -365,7 +363,6 @@ const CSS = (ac = "#e63946") => `
   .est-card { background: var(--d1); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 10px; }
   .slug-box { display: flex; align-items: center; gap: 8px; background: var(--d2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
   .slug-text { font-size: 12px; color: var(--ac); font-weight: 700; flex: 1; word-break: break-all; }
-  /* ---- CARDÁPIO ---- */
   .cardapio-page { min-height: 100vh; padding-bottom: 90px; }
   .cardapio-header { padding: 20px 16px 14px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .cardapio-nome { font-family: var(--ff-head); font-size: 22px; letter-spacing: 1px; }
@@ -376,7 +373,6 @@ const CSS = (ac = "#e63946") => `
   .cardapio-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .cardapio-footer-txt { font-size: 12px; font-weight: 700; flex: 1; }
   .cardapio-footer-btn { padding: 12px 22px; border: none; border-radius: 12px; font-family: var(--ff-body); font-size: 14px; font-weight: 800; cursor: pointer; white-space: nowrap; }
-  /* item bold-full */
   .item-bold { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .item-bold-foto { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
   .item-bold-foto-ph { width: 64px; height: 64px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
@@ -384,7 +380,6 @@ const CSS = (ac = "#e63946") => `
   .item-bold-nome { font-weight: 800; font-size: 14px; margin-bottom: 3px; }
   .item-bold-desc { font-size: 12px; opacity: 0.6; line-height: 1.4; }
   .item-bold-preco { font-family: var(--ff-head); font-size: 15px; margin-top: 5px; }
-  /* item foto-grande */
   .item-foto { border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
   .item-foto-img { width: 100%; height: 180px; object-fit: cover; display: block; }
   .item-foto-img-ph { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 52px; }
@@ -392,12 +387,10 @@ const CSS = (ac = "#e63946") => `
   .item-foto-nome { font-weight: 800; font-size: 15px; margin-bottom: 3px; }
   .item-foto-desc { font-size: 12px; opacity: 0.6; line-height: 1.4; }
   .item-foto-preco { font-family: var(--ff-head); font-size: 16px; margin-top: 6px; }
-  /* item lista */
   .item-lista { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px; }
   .item-lista-nome { font-weight: 700; font-size: 13px; }
   .item-lista-desc { font-size: 11px; opacity: 0.55; margin-top: 1px; }
   .item-lista-preco { font-family: var(--ff-head); font-size: 13px; flex-shrink: 0; }
-  /* item grade */
   .grade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .item-grade { border-radius: 14px; overflow: hidden; }
   .item-grade-img { width: 100%; height: 110px; object-fit: cover; display: block; }
@@ -405,7 +398,6 @@ const CSS = (ac = "#e63946") => `
   .item-grade-body { padding: 10px; }
   .item-grade-nome { font-weight: 800; font-size: 13px; margin-bottom: 2px; }
   .item-grade-preco { font-family: var(--ff-head); font-size: 13px; margin-top: 4px; }
-  /* item magazine */
   .item-mag-destaque { border-radius: 16px; overflow: hidden; margin-bottom: 14px; }
   .item-mag-destaque-img { width: 100%; height: 200px; object-fit: cover; display: block; }
   .item-mag-destaque-img-ph { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 64px; }
@@ -423,9 +415,6 @@ const CSS = (ac = "#e63946") => `
 `;
 
 
-// ============================================================
-// EMOJI PICKER — Estilo WhatsApp com ramos de negócio
-// ============================================================
 const RAMOS_EMOJIS = [
   { ramo: "Hamburgueria",        emoji: "🍔", desc: "Lanches e hambúrgueres" },
   { ramo: "Pizzaria",            emoji: "🍕", desc: "Pizzas e massas" },
@@ -500,14 +489,7 @@ function EmojiPicker({ value, onChange, ramoAtual }) {
   const [search, setSearch] = React.useState("");
   const [waCat, setWaCat] = React.useState(Object.keys(WA_CATS)[0]);
   const [selectedRamo, setSelectedRamo] = React.useState(ramoAtual || null);
-
-  const filteredRamos = search
-    ? RAMOS_EMOJIS.filter(r =>
-        r.ramo.toLowerCase().includes(search.toLowerCase()) ||
-        r.desc.toLowerCase().includes(search.toLowerCase())
-      )
-    : RAMOS_EMOJIS;
-
+  const filteredRamos = search ? RAMOS_EMOJIS.filter(r => r.ramo.toLowerCase().includes(search.toLowerCase()) || r.desc.toLowerCase().includes(search.toLowerCase())) : RAMOS_EMOJIS;
   const waEmojis = React.useMemo(() => {
     if (search && tab === "todos") {
       const q = search.toLowerCase();
@@ -519,15 +501,9 @@ function EmojiPicker({ value, onChange, ramoAtual }) {
     }
     return WA_CATS[waCat] || [];
   }, [search, tab, waCat]);
-
-  const selectRamo = (r) => {
-    setSelectedRamo(r.ramo);
-    onChange(r.emoji);
-  };
-
+  const selectRamo = (r) => { setSelectedRamo(r.ramo); onChange(r.emoji); };
   return (
     <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: 12, marginBottom: 14 }}>
-      {/* Preview */}
       <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10, padding: "8px 10px", background: "var(--dark)", borderRadius: 8 }}>
         <div style={{ width: 44, height: 44, background: "var(--d3)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{value}</div>
         <div style={{ flex: 1 }}>
@@ -535,51 +511,38 @@ function EmojiPicker({ value, onChange, ramoAtual }) {
           <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>Clique em um ramo ou escolha na aba "Todos os emojis"</div>
         </div>
       </div>
-
-      {/* Tabs */}
       <div style={{ display: "flex", gap: 0, borderBottom: "1px solid var(--border)", marginBottom: 10 }}>
         {[["ramos","🏪 Por ramo"],["todos","😀 Todos os emojis"]].map(([k,l]) => (
           <button key={k} onClick={() => { setTab(k); setSearch(""); }} style={{ padding: "7px 14px", fontSize: 12, fontWeight: 700, border: "none", background: "none", color: tab === k ? "var(--text)" : "var(--muted)", borderBottom: `2px solid ${tab === k ? "var(--ac)" : "transparent"}`, cursor: "pointer", marginBottom: -1, fontFamily: "var(--ff-body)" }}>{l}</button>
         ))}
       </div>
-
-      {/* Busca */}
-      <input className="field" placeholder={tab === "ramos" ? "🔍 Buscar ramo... ex: pizza, academia, hotel" : "🔍 Buscar emoji... ex: coração, foguete, rindo"} value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 8, fontSize: 13 }} />
-
-      {/* Aba: ramos */}
+      <input className="field" placeholder={tab === "ramos" ? "🔍 Buscar ramo..." : "🔍 Buscar emoji..."} value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 8, fontSize: 13 }} />
       {tab === "ramos" && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(86px, 1fr))", gap: 5, maxHeight: 260, overflowY: "auto", paddingRight: 2 }}>
           {filteredRamos.map(r => (
             <button key={r.ramo} onClick={() => selectRamo(r)} title={r.desc}
               style={{ padding: "7px 4px", border: `1.5px solid ${selectedRamo === r.ramo ? "var(--ac)" : "var(--border)"}`, borderRadius: 8, cursor: "pointer", background: selectedRamo === r.ramo ? "var(--ac)22" : "var(--d3)", color: selectedRamo === r.ramo ? "var(--text)" : "var(--muted2)", fontSize: 10, textAlign: "center", lineHeight: 1.3, transition: "all .15s", fontFamily: "var(--ff-body)", fontWeight: selectedRamo === r.ramo ? 800 : 600 }}>
-              <div style={{ fontSize: 22, marginBottom: 3 }}>{r.emoji}</div>
-              {r.ramo}
+              <div style={{ fontSize: 22, marginBottom: 3 }}>{r.emoji}</div>{r.ramo}
             </button>
           ))}
           {filteredRamos.length === 0 && <div style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--muted)", fontSize: 12, padding: 16 }}>Nenhum ramo encontrado</div>}
         </div>
       )}
-
-      {/* Aba: todos os emojis WhatsApp */}
       {tab === "todos" && (
         <>
           {!search && (
             <div style={{ display: "flex", gap: 4, overflowX: "auto", paddingBottom: 6, marginBottom: 6 }}>
               {Object.keys(WA_CATS).map(k => (
-                <button key={k} onClick={() => setWaCat(k)}
-                  style={{ padding: "4px 9px", fontSize: 11, fontWeight: 700, border: `1.5px solid ${waCat === k ? "var(--ac)" : "var(--border)"}`, borderRadius: 20, cursor: "pointer", background: waCat === k ? "var(--ac)22" : "none", color: waCat === k ? "var(--text)" : "var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k}</button>
+                <button key={k} onClick={() => setWaCat(k)} style={{ padding: "4px 9px", fontSize: 11, fontWeight: 700, border: `1.5px solid ${waCat === k ? "var(--ac)" : "var(--border)"}`, borderRadius: 20, cursor: "pointer", background: waCat === k ? "var(--ac)22" : "none", color: waCat === k ? "var(--text)" : "var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k}</button>
               ))}
             </div>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(32px, 1fr))", gap: 2, maxHeight: 200, overflowY: "auto" }}>
             {waEmojis.map(e => (
               <button key={e} onClick={() => { onChange(e); setSelectedRamo(null); }}
-                style={{ width: 32, height: 32, fontSize: 18, border: value === e ? "2px solid var(--ac)" : "1px solid transparent", background: value === e ? "var(--ac)22" : "none", borderRadius: 6, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {e}
-              </button>
+                style={{ width: 32, height: 32, fontSize: 18, border: value === e ? "2px solid var(--ac)" : "1px solid transparent", background: value === e ? "var(--ac)22" : "none", borderRadius: 6, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>{e}</button>
             ))}
           </div>
-          {/* Campo de digitação direta */}
           <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: "var(--dark)", borderRadius: 8 }}>
             <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>✏️ Digite direto:</span>
             <input className="field" placeholder="Cole ou digite um emoji..." style={{ marginBottom: 0, flex: 1, fontSize: 18, padding: "4px 10px", height: 36 }}
@@ -593,11 +556,7 @@ function EmojiPicker({ value, onChange, ramoAtual }) {
 
 function LogoSVG({ size = 140, style = {} }) {
   const [err, setErr] = useState(false);
-  if (err) return (
-    <div style={{ fontFamily: "var(--ff-head)", fontSize: 20, textAlign: "center", ...style }}>
-      <span style={{ color: "#1d6fa4" }}>Nota</span><span style={{ color: "#2d9e6b" }}>Cheia</span>
-    </div>
-  );
+  if (err) return (<div style={{ fontFamily: "var(--ff-head)", fontSize: 20, textAlign: "center", ...style }}><span style={{ color: "#1d6fa4" }}>Nota</span><span style={{ color: "#2d9e6b" }}>Cheia</span></div>);
   return <img src="/logo.png" alt="NotaCheia" style={{ width: size, height: "auto", objectFit: "contain", ...style }} onError={() => setErr(true)} />;
 }
 
@@ -617,35 +576,19 @@ function LoadingScreen() {
   );
 }
 
-// ============================================================
-// CARDÁPIO VIEW — tela pública que o cliente vê
-// ============================================================
+
 function CardapioView({ est, onAvaliar }) {
   const cardapio = est.cardapio || makeDefaultCardapio();
   const paleta = CARDAPIO_PALETAS.find(p => p.id === cardapio.paleta) || CARDAPIO_PALETAS[0];
   const [catAtiva, setCatAtiva] = useState(cardapio.categorias?.[0]?.id || "");
   const catAtual = cardapio.categorias?.find(c => c.id === catAtiva) || cardapio.categorias?.[0];
   const ac = est.color || "#e63946";
-
-  const estilos = {
-    bg: paleta.bg,
-    text: paleta.text,
-    card: paleta.card,
-    ac,
-  };
-
+  const estilos = { bg: paleta.bg, text: paleta.text, card: paleta.card, ac };
   const renderItem = (item) => {
     const layout = cardapio.layout;
-    const fotoEl = item.foto
-      ? <img src={item.foto} alt={item.nome} style={{ objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
-      : null;
-
     if (layout === "bold-full") return (
       <div className="item-bold" key={item.id}>
-        {item.foto
-          ? <img src={item.foto} alt={item.nome} className="item-bold-foto" />
-          : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>
-        }
+        {item.foto ? <img src={item.foto} alt={item.nome} className="item-bold-foto" /> : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>}
         <div className="item-bold-info">
           <div className="item-bold-nome" style={{ color: estilos.text }}>{item.nome}</div>
           {item.desc && <div className="item-bold-desc" style={{ color: estilos.text }}>{item.desc}</div>}
@@ -653,13 +596,9 @@ function CardapioView({ est, onAvaliar }) {
         </div>
       </div>
     );
-
     if (layout === "foto-grande") return (
       <div className="item-foto" key={item.id} style={{ background: estilos.card }}>
-        {item.foto
-          ? <img src={item.foto} alt={item.nome} className="item-foto-img" />
-          : <div className="item-foto-img-ph" style={{ background: estilos.card, opacity: 0.5 }}>🍽️</div>
-        }
+        {item.foto ? <img src={item.foto} alt={item.nome} className="item-foto-img" /> : <div className="item-foto-img-ph" style={{ background: estilos.card, opacity: 0.5 }}>🍽️</div>}
         <div className="item-foto-body">
           <div className="item-foto-nome" style={{ color: estilos.text }}>{item.nome}</div>
           {item.desc && <div className="item-foto-desc" style={{ color: estilos.text }}>{item.desc}</div>}
@@ -667,7 +606,6 @@ function CardapioView({ est, onAvaliar }) {
         </div>
       </div>
     );
-
     if (layout === "lista") return (
       <div className="item-lista" key={item.id}>
         <div>
@@ -677,15 +615,11 @@ function CardapioView({ est, onAvaliar }) {
         {item.preco && <div className="item-lista-preco" style={{ color: ac }}>{item.preco}</div>}
       </div>
     );
-
     if (layout === "magazine") {
       const isFirst = catAtual?.itens?.[0]?.id === item.id;
       if (isFirst) return (
         <div className="item-mag-destaque" key={item.id} style={{ background: estilos.card }}>
-          {item.foto
-            ? <img src={item.foto} alt={item.nome} className="item-mag-destaque-img" />
-            : <div className="item-mag-destaque-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>
-          }
+          {item.foto ? <img src={item.foto} alt={item.nome} className="item-mag-destaque-img" /> : <div className="item-mag-destaque-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>}
           <div className="item-mag-destaque-body">
             <div className="item-mag-destaque-nome" style={{ color: estilos.text }}>{item.nome}</div>
             {item.desc && <div className="item-mag-destaque-desc" style={{ color: estilos.text }}>{item.desc}</div>}
@@ -695,10 +629,7 @@ function CardapioView({ est, onAvaliar }) {
       );
       return (
         <div className="item-bold" key={item.id}>
-          {item.foto
-            ? <img src={item.foto} alt={item.nome} className="item-bold-foto" />
-            : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>
-          }
+          {item.foto ? <img src={item.foto} alt={item.nome} className="item-bold-foto" /> : <div className="item-bold-foto-ph" style={{ background: estilos.card }}>🍽️</div>}
           <div className="item-bold-info">
             <div className="item-bold-nome" style={{ color: estilos.text }}>{item.nome}</div>
             {item.desc && <div className="item-bold-desc" style={{ color: estilos.text }}>{item.desc}</div>}
@@ -707,19 +638,13 @@ function CardapioView({ est, onAvaliar }) {
         </div>
       );
     }
-
-    // grade
     return null;
   };
-
   const renderGrade = (itens) => (
     <div className="grade-grid">
       {itens.map(item => (
         <div className="item-grade" key={item.id} style={{ background: estilos.card }}>
-          {item.foto
-            ? <img src={item.foto} alt={item.nome} className="item-grade-img" />
-            : <div className="item-grade-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>
-          }
+          {item.foto ? <img src={item.foto} alt={item.nome} className="item-grade-img" /> : <div className="item-grade-img-ph" style={{ background: estilos.card, opacity: 0.4 }}>🍽️</div>}
           <div className="item-grade-body">
             <div className="item-grade-nome" style={{ color: estilos.text }}>{item.nome}</div>
             {item.desc && <div style={{ fontSize: 11, opacity: 0.6, color: estilos.text }}>{item.desc}</div>}
@@ -729,128 +654,65 @@ function CardapioView({ est, onAvaliar }) {
       ))}
     </div>
   );
-
   return (
     <div className="cardapio-page fade-up" style={{ background: estilos.bg, minHeight: "100vh" }}>
-      {/* Header */}
       <div className="cardapio-header" style={{ background: estilos.card }}>
         <div style={{ fontSize: 32, marginBottom: 6 }}>{est.emoji}</div>
         <div className="cardapio-nome" style={{ color: estilos.text }}>{est.name}</div>
         <div style={{ fontSize: 12, color: estilos.text, opacity: 0.5, marginTop: 3 }}>Cardápio digital</div>
       </div>
-
-      {/* Tabs de categorias */}
       <div className="cardapio-cat-tabs" style={{ background: estilos.card }}>
         {cardapio.categorias?.map(cat => (
-          <div key={cat.id} className="cardapio-tab"
-            onClick={() => setCatAtiva(cat.id)}
-            style={{
-              background: catAtiva === cat.id ? ac : "transparent",
-              color: catAtiva === cat.id ? "#fff" : estilos.text,
-              border: `1.5px solid ${catAtiva === cat.id ? ac : "rgba(255,255,255,0.12)"}`,
-              opacity: catAtiva === cat.id ? 1 : 0.7,
-            }}>
+          <div key={cat.id} className="cardapio-tab" onClick={() => setCatAtiva(cat.id)}
+            style={{ background: catAtiva === cat.id ? ac : "transparent", color: catAtiva === cat.id ? "#fff" : estilos.text, border: `1.5px solid ${catAtiva === cat.id ? ac : "rgba(255,255,255,0.12)"}`, opacity: catAtiva === cat.id ? 1 : 0.7 }}>
             {cat.nome}
           </div>
         ))}
       </div>
-
-      {/* Itens */}
       <div className="cardapio-items">
-        {catAtual && (
-          cardapio.layout === "grade"
-            ? renderGrade(catAtual.itens || [])
-            : (catAtual.itens || []).map(item => renderItem(item))
-        )}
-        {(!catAtual || !catAtual.itens?.length) && (
-          <div style={{ textAlign: "center", color: estilos.text, opacity: 0.4, padding: "40px 0", fontSize: 13 }}>
-            Nenhum item nesta categoria ainda.
-          </div>
-        )}
+        {catAtual && (cardapio.layout === "grade" ? renderGrade(catAtual.itens || []) : (catAtual.itens || []).map(item => renderItem(item)))}
+        {(!catAtual || !catAtual.itens?.length) && <div style={{ textAlign: "center", color: estilos.text, opacity: 0.4, padding: "40px 0", fontSize: 13 }}>Nenhum item nesta categoria ainda.</div>}
       </div>
-
-      {/* Footer fixo */}
       <div className="cardapio-footer" style={{ background: estilos.card, borderColor: "rgba(255,255,255,0.08)" }}>
-        <div className="cardapio-footer-txt" style={{ color: estilos.text, opacity: 0.7 }}>
-          🎁 Avalie e ganhe um brinde!
-        </div>
-        <button className="cardapio-footer-btn" onClick={onAvaliar}
-          style={{ background: ac, color: "#fff" }}>
-          Avaliar e girar 🎰
-        </button>
+        <div className="cardapio-footer-txt" style={{ color: estilos.text, opacity: 0.7 }}>🎁 Avalie e ganhe um brinde!</div>
+        <button className="cardapio-footer-btn" onClick={onAvaliar} style={{ background: ac, color: "#fff" }}>Avaliar e girar 🎰</button>
       </div>
     </div>
   );
 }
 
-// ============================================================
-// CARDÁPIO EDITOR — painel do dono
-// ============================================================
 function CardapioEditor({ est, onChange }) {
   const cardapio = est.cardapio || makeDefaultCardapio();
-  const [catEdit, setCatEdit] = useState(null); // id da categoria sendo editada
   const [newCat, setNewCat] = useState("");
   const [newItem, setNewItem] = useState({ nome: "", desc: "", preco: "", foto: "" });
   const [addingItemCat, setAddingItemCat] = useState(null);
-
   const update = (patch) => onChange({ ...cardapio, ...patch });
   const updateCats = (cats) => update({ categorias: cats });
-
-  const addCat = () => {
-    if (!newCat.trim()) return;
-    updateCats([...cardapio.categorias, { id: uid(), nome: newCat.trim(), itens: [] }]);
-    setNewCat("");
-  };
+  const addCat = () => { if (!newCat.trim()) return; updateCats([...cardapio.categorias, { id: uid(), nome: newCat.trim(), itens: [] }]); setNewCat(""); };
   const removeCat = (id) => updateCats(cardapio.categorias.filter(c => c.id !== id));
   const addItem = (catId) => {
     if (!newItem.nome.trim()) return;
-    updateCats(cardapio.categorias.map(c =>
-      c.id === catId ? { ...c, itens: [...(c.itens || []), { id: uid(), ...newItem }] } : c
-    ));
-    setNewItem({ nome: "", desc: "", preco: "", foto: "" });
-    setAddingItemCat(null);
+    updateCats(cardapio.categorias.map(c => c.id === catId ? { ...c, itens: [...(c.itens || []), { id: uid(), ...newItem }] } : c));
+    setNewItem({ nome: "", desc: "", preco: "", foto: "" }); setAddingItemCat(null);
   };
-  const removeItem = (catId, itemId) => {
-    updateCats(cardapio.categorias.map(c =>
-      c.id === catId ? { ...c, itens: c.itens.filter(i => i.id !== itemId) } : c
-    ));
-  };
-
+  const removeItem = (catId, itemId) => updateCats(cardapio.categorias.map(c => c.id === catId ? { ...c, itens: c.itens.filter(i => i.id !== itemId) } : c));
   return (
     <div>
-      {/* Layout */}
       <div className="setup-box">
         <div className="setup-box-title">🖼️ Layout do Cardápio</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-          {CARDAPIO_LAYOUTS.map(l => (
-            <button key={l.id} onClick={() => update({ layout: l.id })}
-              style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${cardapio.layout === l.id ? "var(--ac)" : "var(--border)"}`, background: cardapio.layout === l.id ? "var(--ac)22" : "var(--d3)", color: cardapio.layout === l.id ? "var(--text)" : "var(--muted2)" }}>
-              {l.label}
-            </button>
-          ))}
+          {CARDAPIO_LAYOUTS.map(l => (<button key={l.id} onClick={() => update({ layout: l.id })} style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${cardapio.layout === l.id ? "var(--ac)" : "var(--border)"}`, background: cardapio.layout === l.id ? "var(--ac)22" : "var(--d3)", color: cardapio.layout === l.id ? "var(--text)" : "var(--muted2)" }}>{l.label}</button>))}
         </div>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
-          {CARDAPIO_LAYOUTS.find(l => l.id === cardapio.layout)?.desc}
-        </div>
+        <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>{CARDAPIO_LAYOUTS.find(l => l.id === cardapio.layout)?.desc}</div>
       </div>
-
-      {/* Paleta */}
       <div className="setup-box">
         <div className="setup-box-title">🎨 Paleta de Cores</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {CARDAPIO_PALETAS.map(p => (
-            <button key={p.id} onClick={() => update({ paleta: p.id })}
-              style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", background: p.bg, color: p.text, border: `2.5px solid ${cardapio.paleta === p.id ? "var(--ac)" : "transparent"}`, boxShadow: cardapio.paleta === p.id ? "0 0 0 2px var(--ac)44" : "none" }}>
-              {p.label}
-            </button>
-          ))}
+          {CARDAPIO_PALETAS.map(p => (<button key={p.id} onClick={() => update({ paleta: p.id })} style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", background: p.bg, color: p.text, border: `2.5px solid ${cardapio.paleta === p.id ? "var(--ac)" : "transparent"}`, boxShadow: cardapio.paleta === p.id ? "0 0 0 2px var(--ac)44" : "none" }}>{p.label}</button>))}
         </div>
       </div>
-
-      {/* Categorias e itens */}
       <div className="setup-box">
         <div className="setup-box-title">🍽️ Categorias e Itens</div>
-
         {cardapio.categorias?.map(cat => (
           <div key={cat.id} style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, marginBottom: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -860,8 +722,6 @@ function CardapioEditor({ est, onChange }) {
                 <button className="btn-sm btn-sm-danger" onClick={() => removeCat(cat.id)}>✕</button>
               </div>
             </div>
-
-            {/* Itens da categoria */}
             {(cat.itens || []).map(item => (
               <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -872,11 +732,7 @@ function CardapioEditor({ est, onChange }) {
                 <button className="btn-sm btn-sm-danger" onClick={() => removeItem(cat.id, item.id)}>✕</button>
               </div>
             ))}
-            {!cat.itens?.length && (
-              <div style={{ fontSize: 12, color: "var(--muted)", padding: "6px 0" }}>Nenhum item ainda.</div>
-            )}
-
-            {/* Formulário de novo item */}
+            {!cat.itens?.length && <div style={{ fontSize: 12, color: "var(--muted)", padding: "6px 0" }}>Nenhum item ainda.</div>}
             {addingItemCat === cat.id && (
               <div style={{ marginTop: 10, padding: 12, background: "var(--dark)", borderRadius: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Novo item</div>
@@ -892,8 +748,6 @@ function CardapioEditor({ est, onChange }) {
             )}
           </div>
         ))}
-
-        {/* Nova categoria */}
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <input className="field-inline" placeholder="Nome da categoria (ex: Bebidas)" value={newCat} onChange={e => setNewCat(e.target.value)} onKeyDown={e => e.key === "Enter" && addCat()} />
           <button className="btn-sm btn-sm-red" onClick={addCat}>+ Categoria</button>
@@ -903,25 +757,15 @@ function CardapioEditor({ est, onChange }) {
   );
 }
 
-// ============================================================
-// SUPABASE HELPERS
-// ============================================================
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
-  return data.map(e => ({
-    ...e,
-    questions: e.questions || makeDefaultQuestions(),
-    prizes: e.prizes || [],
-    feedbacks: [],
-    slug: e.slug || makeSlug(e.name),
-    cardapio: e.cardapio || null,
-  }));
+  return data.map(e => ({ ...e, questions: e.questions || makeDefaultQuestions(), prizes: e.prizes || [], feedbacks: [], slug: e.slug || makeSlug(e.name), cardapio: e.cardapio || null }));
 }
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
   if (error) return [];
-  return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio, brinde_entregue: f.brinde_entregue || false }));
+  return data.map(f => ({ id: f.id, nome: f.nome, data: new Date(f.created_at).toLocaleString("pt-BR"), answers: f.answers, premio: f.premio, brinde_entregue: f.brinde_entregue || false, whatsapp: f.whatsapp || "" }));
 }
 async function saveFeedbackToSupabase(estId, fb) {
   const { error } = await supabase.from("feedbacks").insert({ estabelecimento_id: estId, nome: fb.nome, answers: fb.answers, premio: fb.premio, whatsapp: fb.whatsapp || "" });
@@ -941,14 +785,7 @@ async function marcarBrindeEntregue(feedbackId) {
   await supabase.from("feedbacks").update({ brinde_entregue: true }).eq("id", feedbackId);
 }
 async function saveCupom(estId, codigo, premio, nomeCliente) {
-  const { error } = await supabase.from("cupons").insert({
-    id: uid(),
-    estabelecimento_id: estId,
-    codigo,
-    premio,
-    nome_cliente: nomeCliente,
-    usado: false,
-  });
+  const { error } = await supabase.from("cupons").insert({ id: uid(), estabelecimento_id: estId, codigo, premio, nome_cliente: nomeCliente, usado: false });
   return !error;
 }
 async function validarCupom(codigo, estId) {
@@ -967,9 +804,6 @@ async function createEstabelecimento(est) {
   return !error;
 }
 
-// ============================================================
-// WHEEL
-// ============================================================
 function Wheel({ prizes, onResult }) {
   const ref = useRef(null);
   const angRef = useRef(0);
@@ -1063,7 +897,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
       {q.type === "stars" && <Stars val={answer || 0} onChange={onChange} />}
       {q.type === "nps" && (
         <div>
-          <div className="nps-row">{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>)}</div>
+          <div className="nps-row">{[0,1,2,3,4,5,6,7,8,9,10].map(n => <button key={n} className={`nps-btn ${answer === n ? "sel" : ""}`} onClick={() => onChange(n)}>{n}</button>)}</div>
           <div className="nps-labels"><span className="nps-lbl">😞 Jamais indicaria</span><span className="nps-lbl">Indicaria com certeza 😍</span></div>
         </div>
       )}
@@ -1092,13 +926,7 @@ function QRCodeView({ est }) {
         <div className="qr-inst">{url}</div>
       </div>
       <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
-        <button className="btn btn-red" onClick={() => {
-          const link = document.createElement("a");
-          link.href = qrUrl;
-          link.download = `qrcode-${est.name}.png`;
-          link.target = "_blank";
-          link.click();
-        }}>⬇️ Baixar QR Code PNG</button>
+        <button className="btn btn-red" onClick={() => { const link = document.createElement("a"); link.href = qrUrl; link.download = `qrcode-${est.name}.png`; link.target = "_blank"; link.click(); }}>⬇️ Baixar QR Code PNG</button>
       </div>
       <div style={{ marginTop: 10, padding: 12, background: "var(--d2)", borderRadius: 10, fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
         💡 <strong style={{ color: "var(--text)" }}>Dica:</strong> Leve este QR code para uma gráfica e peça uma plaquinha acrílica personalizada.
@@ -1147,8 +975,9 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
   );
 }
 
+
 // ============================================================
-// CLIENT APP — fluxo do cliente
+// CLIENT APP — fluxo do cliente (novo fluxo: cadastro APÓS roleta)
 // ============================================================
 function ClientApp({ est, onSubmit, masterMode = false }) {
   const interval = est.feedbackInterval || 30;
@@ -1156,36 +985,34 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const blocked = !canLeaveFeedback(est.id, interval, masterMode);
   const daysLeft = daysUntilNext(est.id, interval);
 
-  // Se tem cardápio, começa no cardápio; senão vai direto para welcome
   const initialStep = temCardapio ? "cardapio" : "welcome";
   const [step, setStep] = useState(initialStep);
-  const [nome, setNome] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
   const [avgStars, setAvgStars] = useState(0);
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
-  const [savedNome, setSavedNome] = useState("");
+
+  // Campos de cadastro — agora coletados APÓS a roleta
+  const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [lgpd, setLgpd] = useState(false);
+
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
   const prog = (answered.length / required.length) * 100;
   const allDone = answered.length === required.length;
 
-  // Tela: bloqueado mas tem cardápio → mostra cardápio + aviso no rodapé
   if (blocked && step === "cardapio") return (
     <div>
       <CardapioView est={est} onAvaliar={() => {}} />
-      {/* Sobrepõe o botão do footer com aviso */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 16px", background: "var(--d1)", borderTop: "1px solid var(--border)", textAlign: "center", fontSize: 13 }}>
         ⏳ Você poderá avaliar novamente em <strong style={{ color: "var(--ac)" }}>{daysLeft} dia{daysLeft !== 1 ? "s" : ""}</strong>
       </div>
     </div>
   );
 
-  // Tela: bloqueado sem cardápio
   if (blocked && step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -1199,10 +1026,9 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
-  if (step === "cardapio") return (
-    <CardapioView est={est} onAvaliar={() => setStep("welcome")} />
-  );
+  if (step === "cardapio") return <CardapioView est={est} onAvaliar={() => setStep("welcome")} />;
 
+  // ── WELCOME: sem campos de cadastro ──
   if (step === "welcome") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -1213,23 +1039,13 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-tag">Sua opinião é muito importante para nós!<br />Responda e ganhe um brinde surpresa 🎁</div>
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
-        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <input className="field" placeholder="WhatsApp (opcional, ex: 41999990000)" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} />
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
-          <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
-            {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
-          </div>
-          <div style={{ fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
-            Concordo que minha avaliação seja usada para melhorar os serviços do <strong style={{ color: "var(--text)" }}>{est.name}</strong>. Nenhum dado pessoal será compartilhado com terceiros.
-          </div>
-        </div>
         {temCardapio && (
           <button className="btn btn-ghost" style={{ marginBottom: 8, fontSize: 13 }} onClick={() => setStep("cardapio")}>
             ← Ver cardápio
           </button>
         )}
-        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}>
-          {lgpd || masterMode ? "Começar pesquisa →" : "Aceite os termos para continuar"}
+        <button className="btn btn-red" onClick={() => setStep("survey")}>
+          Começar pesquisa →
         </button>
       </div>
     </div>
@@ -1252,7 +1068,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <button className="btn btn-red" onClick={() => {
             const sqs = est.questions.filter(q => q.type === "stars");
             setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
-            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm");
+            setSavedAnswers(answers);
+            setStep("confirm");
           }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
@@ -1261,6 +1078,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
+  // ── CONFIRM: roleta gira, prêmio sorteado, vai para resgate ──
   if (step === "confirm") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card">
@@ -1270,37 +1088,93 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
           <div className="confirm-sub">Sua resposta foi registrada!<br />Agora gire a roleta e descubra seu prêmio 🎁</div>
           <div className="div" />
-          <Wheel prizes={est.prizes} onResult={async (p) => {
-            setPrize(p); setSaving(true);
-            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label, whatsapp });
-            if (!masterMode) await saveCupom(est.id, coupon, p.label, savedNome);
-            markFeedbackDone(est.id, masterMode);
-            setSaving(false);
-            if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
-              const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
-              const comentario = savedAnswers?.q_sug || "";
-              const cliente = savedNome && savedNome !== "Anônimo" ? savedNome : "Anônimo";
-              try {
-                await fetch("https://api.resend.com/emails", {
-                  method: "POST",
-                  headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    from: "NotaCheia <notificacoes@notacheia.com.br>",
-                    to: [est.owner],
-                    subject: `⚠️ Avaliação negativa no ${est.name}`,
-                    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${cliente}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
-                  }),
-                });
-              } catch (e) { console.log("Erro ao enviar email:", e); }
-            }
-            setStep("prize");
+          <Wheel prizes={est.prizes} onResult={(p) => {
+            setPrize(p);
+            setStep("resgate");
           }} />
-          {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
         </div>
       </div>
     </div>
   );
 
+  // ── RESGATE: cadastro + LGPD obrigatório para pegar o prêmio ──
+  if (step === "resgate") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        {/* Prêmio ganho */}
+        <div style={{ fontSize: 52, marginBottom: 6 }}>{prize.emoji}</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 4 }}>Você ganhou!</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 4 }}>{prize.label}</div>
+        <div style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 20, lineHeight: 1.6 }}>
+          Para resgatar seu prêmio, preencha os dados abaixo 👇
+        </div>
+
+        <div style={{ textAlign: "left" }}>
+          <input
+            className="field"
+            placeholder="Seu nome (opcional)"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+          />
+          <input
+            className="field"
+            placeholder="WhatsApp (opcional, ex: 41999990000)"
+            value={whatsapp}
+            onChange={e => setWhatsapp(e.target.value)}
+          />
+
+          {/* LGPD obrigatório */}
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: `1px solid ${lgpd ? "var(--ac)66" : "var(--border)"}`, borderRadius: 12, padding: "12px 14px", marginBottom: 14, cursor: "pointer", transition: "border 0.2s" }}
+            onClick={() => setLgpd(l => !l)}
+          >
+            <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
+              {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
+              Concordo que minha avaliação seja usada para melhorar os serviços do <strong style={{ color: "var(--text)" }}>{est.name}</strong>. Nenhum dado pessoal será compartilhado com terceiros.
+            </div>
+          </div>
+
+          <button
+            className="btn btn-red"
+            disabled={!lgpd && !masterMode}
+            onClick={async () => {
+              const nomeFinal = nome.trim() || "Anônimo";
+              setSaving(true);
+              await onSubmit({ nome: nomeFinal, answers: savedAnswers, premio: prize.label, whatsapp });
+              if (!masterMode) await saveCupom(est.id, coupon, prize.label, nomeFinal);
+              markFeedbackDone(est.id, masterMode);
+              setSaving(false);
+              // Email de avaliação negativa
+              if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
+                const npsQ = est.questions.find(q => q.type === "nps");
+                const nps = npsQ && savedAnswers?.[npsQ.id] !== undefined ? savedAnswers[npsQ.id] : "-";
+                const comentario = savedAnswers?.q_sug || "";
+                try {
+                  await fetch("https://api.resend.com/emails", {
+                    method: "POST",
+                    headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      from: "NotaCheia <notificacoes@notacheia.com.br>",
+                      to: [est.owner],
+                      subject: `⚠️ Avaliação negativa no ${est.name}`,
+                      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${nomeFinal}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
+                    }),
+                  });
+                } catch (e) { console.log("Erro ao enviar email:", e); }
+              }
+              setStep("prize");
+            }}
+          >
+            {saving ? "Salvando..." : lgpd || masterMode ? "🎁 Resgatar meu prêmio!" : "Aceite os termos para resgatar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── PRIZE: exibe cupom ──
   if (step === "prize") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
       <div className="card prize-wrap">
@@ -1317,7 +1191,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           </div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-{est.googleUrl && (() => { const npsQ = est.questions.find(q => q.type === "nps"); return npsQ && savedAnswers?.[npsQ.id] >= 9; })() && (
+        {est.googleUrl && (() => { const npsQ = est.questions.find(q => q.type === "nps"); return npsQ && savedAnswers?.[npsQ.id] >= 9; })() && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
@@ -1387,15 +1261,15 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const starQs = est.questions.filter(q => q.type === "stars");
   const starAvg = (key) => { const v = est.feedbacks.map(f => f.answers?.[key]).filter(v => typeof v === "number" && v > 0); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
   const overall = () => { if (!starQs.length || !est.feedbacks.length) return "-"; const v = est.feedbacks.flatMap(f => starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0)); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
-  const npsAvg = () => { const v = est.feedbacks.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
+  const npsAvg = () => { const npsQ = est.questions.find(q => q.type === "nps"); if (!npsQ) return "-"; const v = est.feedbacks.map(f => f.answers?.[npsQ.id]).filter(v => v !== undefined); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
   const staffRanking = () => { const map = {}; est.feedbacks.forEach(f => { const atd = f.answers?.q_atend; if (!atd) return; if (!map[atd]) map[atd] = { total: 0, count: 0 }; const s = starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0); if (s.length) { map[atd].total += s.reduce((a, b) => a + b, 0) / s.length; map[atd].count++; } }); return Object.entries(map).map(([name, d]) => ({ name, avg: d.count ? (d.total / d.count).toFixed(1) : 0 })).sort((a, b) => b.avg - a.avg); };
   const howKnew = () => { const map = {}; est.feedbacks.forEach(f => { const v = f.answers?.q_como; if (v) map[v] = (map[v] || 0) + 1; }); return Object.entries(map).sort((a, b) => b[1] - a[1]); };
   const chartData = (() => { const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], result = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const lbl = days[d.getDay()], dateStr = d.toLocaleDateString("pt-BR"); result.push({ lbl, val: est.feedbacks.filter(f => f.data?.includes(dateStr)).length }); } return result; })();
   const insights = () => { const list = [], ov = parseFloat(overall()), nps = parseFloat(npsAvg()); if (ov >= 4.5) list.push({ icon: "🏆", text: <><strong>Excelente!</strong> Nota acima de 4.5.</> }); if (nps >= 8) list.push({ icon: "📈", text: <><strong>NPS alto!</strong> Clientes vão indicar seu negócio.</> }); const esp = parseFloat(starAvg("q_esp")); if (esp && esp < 3.5) list.push({ icon: "⚠️", text: <><strong>Tempo de espera!</strong> Nota {esp}.</> }); const pv = est.feedbacks.map(f => f.answers?.q_preco).filter(Boolean); const caro = pv.filter(v => v === "Caro pelo que oferece").length; if (caro > pv.length * 0.3) list.push({ icon: "💰", text: <><strong>{Math.round(caro / pv.length * 100)}% acham caro.</strong></> }); const prim = est.feedbacks.filter(f => f.answers?.q_first === "Sim").length; if (prim > 0) list.push({ icon: "🆕", text: <><strong>{prim} cliente{prim > 1 ? "s" : ""} novo{prim > 1 ? "s" : ""}</strong> recentemente!</> }); if (list.length === 0) list.push({ icon: "📊", text: <>Continue coletando feedbacks para receber insights.</> }); return list; };
-  // Auto-envio segunda-feira
+
   React.useEffect(() => {
     const hoje = new Date();
-    if (hoje.getDay() !== 1) return; // só segunda-feira
+    if (hoje.getDay() !== 1) return;
     const chave = `relatorio_${est.id}_${hoje.toLocaleDateString("pt-BR")}`;
     try {
       if (localStorage.getItem(chave)) return;
@@ -1404,7 +1278,14 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     } catch {}
   }, []);
 
-  const filteredFeedbacks = () => { if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9); if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6); if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }); return est.feedbacks; };
+  const npsQ = est.questions.find(q => q.type === "nps");
+  const getNpsValue = (f) => npsQ ? f.answers?.[npsQ.id] : f.answers?.q_nps;
+  const filteredFeedbacks = () => {
+    if (filter === "positivos") return est.feedbacks.filter(f => (getNpsValue(f) || 0) >= 9);
+    if (filter === "negativos") return est.feedbacks.filter(f => (getNpsValue(f) || 0) <= 6);
+    if (filter === "neutros") return est.feedbacks.filter(f => { const n = getNpsValue(f); return n === 7 || n === 8; });
+    return est.feedbacks;
+  };
   const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
   const addQ = () => { if (!newQ.label) return; const opts = newQ.options.split(",").map(s => s.trim()).filter(Boolean); setEd(e => ({ ...e, questions: [...e.questions, { id: uid(), ...newQ, options: opts, required: true }] })); setNewQ({ label: "", type: "stars", options: "" }); };
   const removeQ = id => setEd(e => ({ ...e, questions: e.questions.filter(q => q.id !== id) }));
@@ -1416,11 +1297,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     if (!newEmail.novo.includes("@")) { setEmailMsg("❌ E-mail inválido."); setTimeout(() => setEmailMsg(""), 3000); return; }
     if (newEmail.novo !== newEmail.confirma) { setEmailMsg("❌ E-mails não coincidem."); setTimeout(() => setEmailMsg(""), 3000); return; }
     const u = { ...est, owner: newEmail.novo };
-    await saveEstabelecimento(u);
-    onUpdate(u);
-    setEmailMsg("✅ E-mail alterado com sucesso!");
-    setNewEmail({ atual: "", novo: "", confirma: "" });
-    setTimeout(() => setEmailMsg(""), 3000);
+    await saveEstabelecimento(u); onUpdate(u);
+    setEmailMsg("✅ E-mail alterado com sucesso!"); setNewEmail({ atual: "", novo: "", confirma: "" }); setTimeout(() => setEmailMsg(""), 3000);
   };
 
   const getFeedbacksSemana = (semanaAtras = 0) => {
@@ -1443,112 +1321,32 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     const totalAnterior = fbSemanaAnterior.length;
     const diffTotal = totalAtual - totalAnterior;
     const sqs = est.questions.filter(q => q.type === "stars");
-    const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+    const npsQR = est.questions.find(q => q.type === "nps");
+    const calcNps = (fbs) => { const v = fbs.map(f => npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
     const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
-    const npsAtual = calcNps(fbSemana);
-    const npsAnterior = calcNps(fbSemanaAnterior);
-    const notaAtual = calcNota(fbSemana);
-    const notaAnterior = calcNota(fbSemanaAnterior);
-    const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
-    const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
+    const npsAtual = calcNps(fbSemana); const npsAnterior = calcNps(fbSemanaAnterior);
+    const notaAtual = calcNota(fbSemana); const notaAnterior = calcNota(fbSemanaAnterior);
+    const negativos = fbSemana.filter(f => { const n = npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps; return n !== undefined && n <= 6; });
+    const promotores = fbSemana.filter(f => { const n = npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps; return n !== undefined && n >= 9; });
     const staffQ = est.questions.find(q => q.type === "staff");
     const staffMap = {};
-    if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n] = {t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
+    if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n]={t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
     const ranking = Object.entries(staffMap).map(([n,d])=>({n,avg:d.c?(d.t/d.c).toFixed(1):0})).sort((a,b)=>b.avg-a.avg).slice(0,3);
-    const comoMap = {};
-    fbSemana.forEach(f => { const v = f.answers?.q_como; if (v) comoMap[v] = (comoMap[v]||0)+1; });
+    const comoMap = {}; fbSemana.forEach(f => { const v = f.answers?.q_como; if (v) comoMap[v] = (comoMap[v]||0)+1; });
     const comoList = Object.entries(comoMap).sort((a,b)=>b[1]-a[1]).slice(0,4);
     const comentarios = fbSemana.filter(f => f.answers?.q_sug && f.answers.q_sug.trim().length > 5).slice(0,3);
-    const precoMap = {};
-    fbSemana.forEach(f => { const v = f.answers?.q_preco; if (v) precoMap[v] = (precoMap[v]||0)+1; });
+    const precoMap = {}; fbSemana.forEach(f => { const v = f.answers?.q_preco; if (v) precoMap[v] = (precoMap[v]||0)+1; });
     const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
     const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
     const fmt = (d) => d.toLocaleDateString("pt-BR");
-    const seta = (atual, ant) => { if (ant === "-" || atual === "-") return ""; const d = parseFloat(atual) - parseFloat(ant); if (d > 0) return `<span style="color:#4ade80;font-size:12px;">▲ +${d.toFixed(1)}</span>`; if (d < 0) return `<span style="color:#f87171;font-size:12px;">▼ ${d.toFixed(1)}</span>`; return `<span style="color:#888;font-size:12px;">= igual</span>`; };
-
-    return `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:0;background:#0d0d0d;color:#f0ede8;border-radius:18px;overflow:hidden;">
-      <div style="background:${ac};padding:24px 28px;">
-        <div style="font-size:28px;margin-bottom:6px;">${est.emoji}</div>
-        <div style="font-size:22px;font-weight:900;letter-spacing:1px;">${est.name}</div>
-        <div style="font-size:13px;opacity:0.85;margin-top:4px;">📋 Relatório semanal · ${fmt(dataInicio)} a ${fmt(dataFim)}</div>
-      </div>
-
-      <div style="padding:24px 28px;">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
-          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:28px;font-weight:900;color:${ac};">${totalAtual}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Feedbacks</div>
-            <div style="margin-top:4px;">${diffTotal > 0 ? `<span style="color:#4ade80;font-size:11px;">▲ +${diffTotal} vs semana ant.</span>` : diffTotal < 0 ? `<span style="color:#f87171;font-size:11px;">▼ ${diffTotal} vs semana ant.</span>` : `<span style="color:#888;font-size:11px;">= igual à semana ant.</span>`}</div>
-          </div>
-          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:28px;font-weight:900;color:${notaAtual >= 4 ? "#4ade80" : notaAtual >= 3 ? "#f0c96e" : "#f87171"};">⭐ ${notaAtual}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Nota média</div>
-            <div style="margin-top:4px;">${seta(notaAtual, notaAnterior)}</div>
-          </div>
-          <div style="background:#181818;border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:28px;font-weight:900;color:${parseFloat(npsAtual) >= 8 ? "#4ade80" : parseFloat(npsAtual) >= 6 ? "#f0c96e" : "#f87171"};">📊 ${npsAtual}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">NPS médio</div>
-            <div style="margin-top:4px;">${seta(npsAtual, npsAnterior)}</div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
-          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:#4ade80;">${promotores.length}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😍 Promotores</div>
-          </div>
-          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:#f0c96e;">${fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😐 Neutros</div>
-          </div>
-          <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:#f87171;">${negativos.length}</div>
-            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😞 Detratores</div>
-          </div>
-        </div>
-
-        ${negativos.length > 0 ? `<div style="background:#1a0505;border:1px solid #f8717133;border-radius:12px;padding:16px;margin-bottom:20px;">
-          <div style="font-size:13px;font-weight:800;color:#f87171;margin-bottom:8px;">⚠️ ${negativos.length} feedback${negativos.length>1?"s negativos":"negativo"} esta semana</div>
-          ${negativos.slice(0,2).map(f=>`<div style="background:#111;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;"><strong>${f.nome||"Anônimo"}</strong> · NPS ${f.answers?.q_nps??"-"}${f.answers?.q_sug?`<br/><span style="color:#aaa;font-style:italic;">"${f.answers.q_sug}"</span>`:""}</div>`).join("")}
-        </div>` : `<div style="background:#0a1f0a;border:1px solid #4ade8033;border-radius:12px;padding:14px;margin-bottom:20px;text-align:center;">
-          <div style="font-size:13px;font-weight:800;color:#4ade80;">✅ Nenhum feedback negativo esta semana!</div>
-        </div>`}
-
-        ${ranking.length > 0 ? `<div style="margin-bottom:20px;">
-          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🏆 Ranking de colaboradores</div>
-          ${ranking.map((r,i)=>`<div style="display:flex;align-items:center;gap:10px;background:#181818;border-radius:10px;padding:10px 14px;margin-bottom:6px;"><span style="font-size:16px;font-weight:900;color:#888;width:20px;">${i+1}</span><span style="flex:1;font-weight:700;font-size:13px;">${r.n}</span><span style="font-size:16px;font-weight:900;color:${ac};">⭐ ${r.avg}</span></div>`).join("")}
-        </div>` : ""}
-
-        ${comoList.length > 0 ? `<div style="margin-bottom:20px;">
-          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📍 Como chegaram</div>
-          ${comoList.map(([k,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px;"><span style="color:#ccc;">${k.replace("Outro:","")}</span><span style="font-weight:800;color:${ac};">${v}</span></div>`).join("")}
-        </div>` : ""}
-
-        ${Object.keys(precoMap).length > 0 ? `<div style="margin-bottom:20px;">
-          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💰 Percepção de preço</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            ${Object.entries(precoMap).map(([k,v])=>`<div style="background:#181818;border-radius:20px;padding:6px 12px;font-size:12px;"><span style="color:#888;">${k.replace(" pelo que oferece","")}</span> <strong style="color:${ac};">${v}</strong></div>`).join("")}
-          </div>
-        </div>` : ""}
-
-        ${comentarios.length > 0 ? `<div style="margin-bottom:20px;">
-          <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💬 Comentários da semana</div>
-          ${comentarios.map(f=>`<div style="background:#181818;border-left:3px solid ${ac};border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;font-style:italic;color:#ccc;">"${f.answers.q_sug}"<div style="font-size:11px;color:#555;margin-top:4px;font-style:normal;">${f.nome||"Anônimo"}</div></div>`).join("")}
-        </div>` : ""}
-
-        <div style="text-align:center;padding-top:16px;border-top:1px solid #222;">
-          <a href="https://nota-cheia.vercel.app" style="display:inline-block;background:${ac};color:#fff;padding:12px 28px;border-radius:12px;font-weight:800;font-size:14px;text-decoration:none;">Ver painel completo →</a>
-          <p style="font-size:11px;color:#444;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p>
-        </div>
-      </div>
-    </div>`;
+    const seta = (atual, ant) => { if (ant==="-"||atual==="-") return ""; const d=parseFloat(atual)-parseFloat(ant); if(d>0) return `<span style="color:#4ade80;font-size:12px;">▲ +${d.toFixed(1)}</span>`; if(d<0) return `<span style="color:#f87171;font-size:12px;">▼ ${d.toFixed(1)}</span>`; return `<span style="color:#888;font-size:12px;">= igual</span>`; };
+    return `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:0;background:#0d0d0d;color:#f0ede8;border-radius:18px;overflow:hidden;"><div style="background:${ac};padding:24px 28px;"><div style="font-size:28px;margin-bottom:6px;">${est.emoji}</div><div style="font-size:22px;font-weight:900;letter-spacing:1px;">${est.name}</div><div style="font-size:13px;opacity:0.85;margin-top:4px;">📋 Relatório semanal · ${fmt(dataInicio)} a ${fmt(dataFim)}</div></div><div style="padding:24px 28px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;"><div style="background:#181818;border-radius:12px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:900;color:${ac};">${totalAtual}</div><div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Feedbacks</div><div style="margin-top:4px;">${diffTotal>0?`<span style="color:#4ade80;font-size:11px;">▲ +${diffTotal} vs semana ant.</span>`:diffTotal<0?`<span style="color:#f87171;font-size:11px;">▼ ${diffTotal} vs semana ant.</span>`:`<span style="color:#888;font-size:11px;">= igual à semana ant.</span>`}</div></div><div style="background:#181818;border-radius:12px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:900;color:${notaAtual>=4?"#4ade80":notaAtual>=3?"#f0c96e":"#f87171"};">⭐ ${notaAtual}</div><div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Nota média</div><div style="margin-top:4px;">${seta(notaAtual,notaAnterior)}</div></div><div style="background:#181818;border-radius:12px;padding:16px;text-align:center;"><div style="font-size:28px;font-weight:900;color:${parseFloat(npsAtual)>=8?"#4ade80":parseFloat(npsAtual)>=6?"#f0c96e":"#f87171"};">📊 ${npsAtual}</div><div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">NPS médio</div><div style="margin-top:4px;">${seta(npsAtual,npsAnterior)}</div></div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;"><div style="background:#181818;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#4ade80;">${promotores.length}</div><div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😍 Promotores</div></div><div style="background:#181818;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#f0c96e;">${fbSemana.filter(f=>{const n=npsQR?f.answers?.[npsQR.id]:f.answers?.q_nps;return n===7||n===8;}).length}</div><div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😐 Neutros</div></div><div style="background:#181818;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#f87171;">${negativos.length}</div><div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😞 Detratores</div></div></div>${negativos.length>0?`<div style="background:#1a0505;border:1px solid #f8717133;border-radius:12px;padding:16px;margin-bottom:20px;"><div style="font-size:13px;font-weight:800;color:#f87171;margin-bottom:8px;">⚠️ ${negativos.length} feedback${negativos.length>1?"s negativos":"negativo"} esta semana</div>${negativos.slice(0,2).map(f=>`<div style="background:#111;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;"><strong>${f.nome||"Anônimo"}</strong> · NPS ${(npsQR?f.answers?.[npsQR.id]:f.answers?.q_nps)??"-"}${f.answers?.q_sug?`<br/><span style="color:#aaa;font-style:italic;">"${f.answers.q_sug}"</span>`:""}</div>`).join("")}</div>`:`<div style="background:#0a1f0a;border:1px solid #4ade8033;border-radius:12px;padding:14px;margin-bottom:20px;text-align:center;"><div style="font-size:13px;font-weight:800;color:#4ade80;">✅ Nenhum feedback negativo esta semana!</div></div>`}${ranking.length>0?`<div style="margin-bottom:20px;"><div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🏆 Ranking de colaboradores</div>${ranking.map((r,i)=>`<div style="display:flex;align-items:center;gap:10px;background:#181818;border-radius:10px;padding:10px 14px;margin-bottom:6px;"><span style="font-size:16px;font-weight:900;color:#888;width:20px;">${i+1}</span><span style="flex:1;font-weight:700;font-size:13px;">${r.n}</span><span style="font-size:16px;font-weight:900;color:${ac};">⭐ ${r.avg}</span></div>`).join("")}</div>`:""} ${comoList.length>0?`<div style="margin-bottom:20px;"><div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📍 Como chegaram</div>${comoList.map(([k,v])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px;"><span style="color:#ccc;">${k.replace("Outro:","")}</span><span style="font-weight:800;color:${ac};">${v}</span></div>`).join("")}</div>`:""} ${Object.keys(precoMap).length>0?`<div style="margin-bottom:20px;"><div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💰 Percepção de preço</div><div style="display:flex;gap:8px;flex-wrap:wrap;">${Object.entries(precoMap).map(([k,v])=>`<div style="background:#181818;border-radius:20px;padding:6px 12px;font-size:12px;"><span style="color:#888;">${k.replace(" pelo que oferece","")}</span> <strong style="color:${ac};">${v}</strong></div>`).join("")}</div></div>`:""} ${comentarios.length>0?`<div style="margin-bottom:20px;"><div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💬 Comentários da semana</div>${comentarios.map(f=>`<div style="background:#181818;border-left:3px solid ${ac};border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;font-style:italic;color:#ccc;">"${f.answers.q_sug}"<div style="font-size:11px;color:#555;margin-top:4px;font-style:normal;">${f.nome||"Anônimo"}</div></div>`).join("")}</div>`:""}<div style="text-align:center;padding-top:16px;border-top:1px solid #222;"><a href="https://nota-cheia.vercel.app" style="display:inline-block;background:${ac};color:#fff;padding:12px 28px;border-radius:12px;font-weight:800;font-size:14px;text-decoration:none;">Ver painel completo →</a><p style="font-size:11px;color:#444;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p></div></div></div>`;
   };
 
   const enviarRelatorio = async () => {
     if (!est.owner) { alert("E-mail do dono não cadastrado."); return; }
     setRelatorioEnviando(true);
-    const fbSemana = getFeedbacksSemana(0);
-    const fbAnterior = getFeedbacksSemana(1);
+    const fbSemana = getFeedbacksSemana(0); const fbAnterior = getFeedbacksSemana(1);
     const html = gerarHTMLRelatorio(fbSemana, fbAnterior);
     const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
     const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
@@ -1557,12 +1355,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: "NotaCheia <notificacoes@notacheia.com.br>",
-          to: [est.owner],
-          subject: `📋 Relatório semanal — ${est.name} · ${fmt(dataInicio)} a ${fmt(dataFim)}`,
-          html,
-        }),
+        body: JSON.stringify({ from: "NotaCheia <notificacoes@notacheia.com.br>", to: [est.owner], subject: `📋 Relatório semanal — ${est.name} · ${fmt(dataInicio)} a ${fmt(dataFim)}`, html }),
       });
       if (res.ok) { setRelatorioEnviado(true); setTimeout(() => setRelatorioEnviado(false), 4000); }
       else { alert("Erro ao enviar. Verifique o e-mail cadastrado."); }
@@ -1575,11 +1368,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const saveCardapio = async () => {
     setCardapioSaving(true);
     const updated = { ...est, cardapio: ed.cardapio };
-    await saveEstabelecimento(updated);
-    onUpdate(updated);
-    setCardapioSaving(false);
-    setCardapioSaved(true);
-    setTimeout(() => setCardapioSaved(false), 2000);
+    await saveEstabelecimento(updated); onUpdate(updated);
+    setCardapioSaving(false); setCardapioSaved(true); setTimeout(() => setCardapioSaved(false), 2000);
   };
 
   return (
@@ -1592,7 +1382,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div></div>
             <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
             <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
-            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length}</div><div className="metric-lbl">Promotores</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => { const n = getNpsValue(f); return n !== undefined && n >= 9; }).length}</div><div className="metric-lbl">Promotores</div></div>
             <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => f.answers?.q_first === "Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
             <div className="metric"><div className="metric-val" style={{ fontSize: 20 }}>{est.googleUrl ? "✅" : "❌"}</div><div className="metric-lbl">Google Reviews</div></div>
           </div>
@@ -1607,21 +1397,19 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="main-title">💬 Feedbacks</div>
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
+          {filteredFeedbacks().map((f, i) => { const nps = getNpsValue(f); const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
           {insights().map((ins, i) => (<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
-          <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6 && f.answers?.q_nps !== undefined).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
+          <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => { const n = getNpsValue(f); return n !== undefined && n >= 9; }).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = getNpsValue(f); return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => { const n = getNpsValue(f); return n !== undefined && n <= 6; }).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
           <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
         {tab === "clientes" && (() => {
           const mapa = {};
           est.feedbacks.forEach(f => {
             const chave = (f.nome || "Anônimo").trim().toLowerCase();
-            if (!mapa[chave]) {
-              mapa[chave] = { nome: f.nome || "Anônimo", whatsapp: f.whatsapp || "", ultima: f.data, visitas: 0 };
-            }
+            if (!mapa[chave]) mapa[chave] = { nome: f.nome || "Anônimo", whatsapp: f.whatsapp || "", ultima: f.data, visitas: 0 };
             mapa[chave].visitas++;
             if (f.data > mapa[chave].ultima) mapa[chave].ultima = f.data;
             if (!mapa[chave].whatsapp && f.whatsapp) mapa[chave].whatsapp = f.whatsapp;
@@ -1634,12 +1422,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
               <div className="metric"><div className="metric-val">{clientes.filter(c => c.visitas > 1).length}</div><div className="metric-lbl">Retornaram</div></div>
               <div className="metric"><div className="metric-val">{clientes.filter(c => c.whatsapp).length}</div><div className="metric-lbl">Com WhatsApp</div></div>
             </div>
-            {clientes.length === 0 && (
-              <div style={{ textAlign: "center", color: "var(--muted)", padding: 40, fontSize: 14 }}>
-                Nenhum cliente ainda.<br />
-                <span style={{ fontSize: 12 }}>Os clientes aparecem aqui conforme respondem a pesquisa.</span>
-              </div>
-            )}
+            {clientes.length === 0 && <div style={{ textAlign: "center", color: "var(--muted)", padding: 40, fontSize: 14 }}>Nenhum cliente ainda.<br /><span style={{ fontSize: 12 }}>Os clientes aparecem aqui conforme respondem a pesquisa.</span></div>}
             {clientes.map((c, i) => (
               <div key={i} style={{ background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>👤</div>
@@ -1652,31 +1435,25 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                   <div style={{ background: c.visitas > 1 ? "var(--ac)22" : "var(--d3)", border: `1px solid ${c.visitas > 1 ? "var(--ac)44" : "var(--border)"}`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, color: c.visitas > 1 ? "var(--ac)" : "var(--muted)" }}>
                     {c.visitas}x {c.visitas > 1 ? "visitas" : "visita"}
                   </div>
-                  {c.whatsapp && (
-                    <a href={`https://wa.me/55${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
-                      style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "4px 10px", fontSize: 11, fontWeight: 700, textDecoration: "none" }}>
-                      💬 WA
-                    </a>
-                  )}
+                  {c.whatsapp && <a href={`https://wa.me/55${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "4px 10px", fontSize: 11, fontWeight: 700, textDecoration: "none" }}>💬 WA</a>}
                 </div>
               </div>
             ))}
           </>);
         })()}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
-
         {tab === "relatorio" && (() => {
-          const fbSemana = getFeedbacksSemana(0);
-          const fbAnterior = getFeedbacksSemana(1);
+          const fbSemana = getFeedbacksSemana(0); const fbAnterior = getFeedbacksSemana(1);
           const sqs = est.questions.filter(q => q.type === "stars");
+          const npsQR = est.questions.find(q => q.type === "nps");
           const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
-          const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+          const calcNps = (fbs) => { const v = fbs.map(f => npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
           const notaAtual = calcNota(fbSemana); const notaAnterior = calcNota(fbAnterior);
           const npsAtual = calcNps(fbSemana); const npsAnterior = calcNps(fbAnterior);
           const diff = fbSemana.length - fbAnterior.length;
-          const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
-          const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
-          const seta = (a, b) => { if (a==="-"||b==="-") return null; const d = parseFloat(a)-parseFloat(b); return d > 0 ? <span style={{color:"var(--green)",fontSize:11}}>▲ +{d.toFixed(1)}</span> : d < 0 ? <span style={{color:"var(--red)",fontSize:11}}>▼ {d.toFixed(1)}</span> : <span style={{color:"var(--muted)",fontSize:11}}>= igual</span>; };
+          const negativos = fbSemana.filter(f => { const n = npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps; return n !== undefined && n <= 6; });
+          const promotores = fbSemana.filter(f => { const n = npsQR ? f.answers?.[npsQR.id] : f.answers?.q_nps; return n !== undefined && n >= 9; });
+          const seta = (a, b) => { if (a==="-"||b==="-") return null; const d=parseFloat(a)-parseFloat(b); return d>0?<span style={{color:"var(--green)",fontSize:11}}>▲ +{d.toFixed(1)}</span>:d<0?<span style={{color:"var(--red)",fontSize:11}}>▼ {d.toFixed(1)}</span>:<span style={{color:"var(--muted)",fontSize:11}}>= igual</span>; };
           const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
           const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
           const fmt = (d) => d.toLocaleDateString("pt-BR");
@@ -1688,65 +1465,36 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           return (<>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
               <div className="main-title" style={{marginBottom:0}}>📋 Relatório Semanal</div>
-              <button className="btn-sm btn-sm-red" onClick={enviarRelatorio} disabled={relatorioEnviando}>
-                {relatorioEnviando ? "⏳ Enviando..." : relatorioEnviado ? "✅ Enviado!" : "📧 Enviar por e-mail"}
-              </button>
+              <button className="btn-sm btn-sm-red" onClick={enviarRelatorio} disabled={relatorioEnviando}>{relatorioEnviando?"⏳ Enviando...":relatorioEnviado?"✅ Enviado!":"📧 Enviar por e-mail"}</button>
             </div>
             <div style={{fontSize:12,color:"var(--muted)",marginBottom:16}}>📅 Semana: {fmt(dataInicio)} a {fmt(dataFim)}</div>
-
             <div className="metrics" style={{marginBottom:16}}>
-              <div className="metric"><div className="metric-val" style={{color:"var(--ac)"}}>{fbSemana.length}</div><div className="metric-lbl">Feedbacks</div><div style={{marginTop:4}}>{diff > 0 ? <span style={{color:"var(--green)",fontSize:11}}>▲ +{diff} vs ant.</span> : diff < 0 ? <span style={{color:"var(--red)",fontSize:11}}>▼ {diff} vs ant.</span> : <span style={{color:"var(--muted)",fontSize:11}}>= igual</span>}</div></div>
-              <div className="metric"><div className="metric-val">⭐ {notaAtual}</div><div className="metric-lbl">Nota média</div><div style={{marginTop:4}}>{seta(notaAtual, notaAnterior)}</div></div>
-              <div className="metric"><div className="metric-val">📊 {npsAtual}</div><div className="metric-lbl">NPS médio</div><div style={{marginTop:4}}>{seta(npsAtual, npsAnterior)}</div></div>
+              <div className="metric"><div className="metric-val" style={{color:"var(--ac)"}}>{fbSemana.length}</div><div className="metric-lbl">Feedbacks</div><div style={{marginTop:4}}>{diff>0?<span style={{color:"var(--green)",fontSize:11}}>▲ +{diff} vs ant.</span>:diff<0?<span style={{color:"var(--red)",fontSize:11}}>▼ {diff} vs ant.</span>:<span style={{color:"var(--muted)",fontSize:11}}>= igual</span>}</div></div>
+              <div className="metric"><div className="metric-val">⭐ {notaAtual}</div><div className="metric-lbl">Nota média</div><div style={{marginTop:4}}>{seta(notaAtual,notaAnterior)}</div></div>
+              <div className="metric"><div className="metric-val">📊 {npsAtual}</div><div className="metric-lbl">NPS médio</div><div style={{marginTop:4}}>{seta(npsAtual,npsAnterior)}</div></div>
             </div>
-
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
               <div style={{background:"var(--d1)",border:"1px solid var(--green)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--green)"}}>{promotores.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😍 Promotores</div></div>
-              <div style={{background:"var(--d1)",border:"1px solid var(--yellow)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--yellow)"}}>{fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😐 Neutros</div></div>
+              <div style={{background:"var(--d1)",border:"1px solid var(--yellow)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--yellow)"}}>{fbSemana.filter(f=>{const n=npsQR?f.answers?.[npsQR.id]:f.answers?.q_nps;return n===7||n===8;}).length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😐 Neutros</div></div>
               <div style={{background:"var(--d1)",border:"1px solid var(--red)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--red)"}}>{negativos.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😞 Detratores</div></div>
             </div>
-
-            {negativos.length > 0 && (<div style={{background:"#1a0505",border:"1px solid var(--red)33",borderRadius:12,padding:16,marginBottom:14}}>
-              <div style={{fontSize:13,fontWeight:800,color:"var(--red)",marginBottom:8}}>⚠️ {negativos.length} feedback{negativos.length>1?"s negativos":"negativo"} esta semana</div>
-              {negativos.slice(0,2).map((f,i)=>(<div key={i} style={{background:"var(--dark)",borderRadius:8,padding:10,marginBottom:6,fontSize:12}}><strong>{f.nome||"Anônimo"}</strong> · NPS {f.answers?.q_nps??"-"}{f.answers?.q_sug&&<div style={{color:"var(--muted2)",fontStyle:"italic",marginTop:3}}>"{f.answers.q_sug}"</div>}</div>))}
-            </div>)}
-            {negativos.length === 0 && fbSemana.length > 0 && (<div style={{background:"#0a1f0a",border:"1px solid var(--green)33",borderRadius:12,padding:14,marginBottom:14,textAlign:"center",fontSize:13,fontWeight:800,color:"var(--green)"}}>✅ Nenhum feedback negativo esta semana!</div>)}
-
-            {ranking.length > 0 && (<div className="chart-wrap"><div className="chart-title">🏆 Ranking de colaboradores</div>{ranking.map((r,i)=>(<div className="rank-row" key={r.n}><div className="rank-num">{i+1}</div><div className="rank-name">{r.n}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(r.avg/5)*100}%`}}/></div><div className="rank-score">{r.avg}</div></div>))}</div>)}
-
-            {comentarios.length > 0 && (<div className="chart-wrap"><div className="chart-title">💬 Comentários da semana</div>{comentarios.map((f,i)=>(<div key={i} style={{borderLeft:"3px solid var(--ac)",padding:"8px 12px",background:"var(--dark)",borderRadius:"0 8px 8px 0",marginBottom:8,fontSize:13,fontStyle:"italic",color:"#bbb"}}>"{f.answers.q_sug}"<div style={{fontSize:11,color:"var(--muted)",marginTop:3,fontStyle:"normal"}}>{f.nome||"Anônimo"}</div></div>))}</div>)}
-
-            {fbSemana.length === 0 && (<div style={{textAlign:"center",padding:40,color:"var(--muted)",fontSize:14}}>Nenhum feedback recebido esta semana.<br/><span style={{fontSize:12}}>O relatório mostra os dados dos últimos 7 dias.</span></div>)}
-
-            <div style={{padding:"12px 14px",background:"var(--d2)",borderRadius:10,fontSize:12,color:"var(--muted2)",lineHeight:1.7,marginTop:8}}>
-              💡 <strong style={{color:"var(--text)"}}>Envio automático:</strong> o e-mail é disparado toda segunda-feira quando você abre o painel. Ou clique em "📧 Enviar por e-mail" para enviar agora.
-            </div>
+            {negativos.length>0&&(<div style={{background:"#1a0505",border:"1px solid var(--red)33",borderRadius:12,padding:16,marginBottom:14}}><div style={{fontSize:13,fontWeight:800,color:"var(--red)",marginBottom:8}}>⚠️ {negativos.length} feedback{negativos.length>1?"s negativos":"negativo"} esta semana</div>{negativos.slice(0,2).map((f,i)=>(<div key={i} style={{background:"var(--dark)",borderRadius:8,padding:10,marginBottom:6,fontSize:12}}><strong>{f.nome||"Anônimo"}</strong> · NPS {(npsQR?f.answers?.[npsQR.id]:f.answers?.q_nps)??"-"}{f.answers?.q_sug&&<div style={{color:"var(--muted2)",fontStyle:"italic",marginTop:3}}>"{f.answers.q_sug}"</div>}</div>))}</div>)}
+            {negativos.length===0&&fbSemana.length>0&&(<div style={{background:"#0a1f0a",border:"1px solid var(--green)33",borderRadius:12,padding:14,marginBottom:14,textAlign:"center",fontSize:13,fontWeight:800,color:"var(--green)"}}>✅ Nenhum feedback negativo esta semana!</div>)}
+            {ranking.length>0&&(<div className="chart-wrap"><div className="chart-title">🏆 Ranking de colaboradores</div>{ranking.map((r,i)=>(<div className="rank-row" key={r.n}><div className="rank-num">{i+1}</div><div className="rank-name">{r.n}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(r.avg/5)*100}%`}}/></div><div className="rank-score">{r.avg}</div></div>))}</div>)}
+            {comentarios.length>0&&(<div className="chart-wrap"><div className="chart-title">💬 Comentários da semana</div>{comentarios.map((f,i)=>(<div key={i} style={{borderLeft:"3px solid var(--ac)",padding:"8px 12px",background:"var(--dark)",borderRadius:"0 8px 8px 0",marginBottom:8,fontSize:13,fontStyle:"italic",color:"#bbb"}}>"{f.answers.q_sug}"<div style={{fontSize:11,color:"var(--muted)",marginTop:3,fontStyle:"normal"}}>{f.nome||"Anônimo"}</div></div>))}</div>)}
+            {fbSemana.length===0&&(<div style={{textAlign:"center",padding:40,color:"var(--muted)",fontSize:14}}>Nenhum feedback recebido esta semana.<br/><span style={{fontSize:12}}>O relatório mostra os dados dos últimos 7 dias.</span></div>)}
+            <div style={{padding:"12px 14px",background:"var(--d2)",borderRadius:10,fontSize:12,color:"var(--muted2)",lineHeight:1.7,marginTop:8}}>💡 <strong style={{color:"var(--text)"}}>Envio automático:</strong> o e-mail é disparado toda segunda-feira quando você abre o painel.</div>
           </>);
         })()}
-
         {tab === "cardapio" && (<>
           <div className="main-title">🍽️ Cardápio Digital</div>
-          {!temCardapioPorPlano(est.plano) && (
-            <div style={{ padding: 20, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 14, color: "var(--muted2)", fontSize: 13 }}>
-              O cardápio digital está disponível no <strong style={{color:"var(--text)"}}>Plano Pro R$ 129/mês</strong>. Solicite ao administrador a mudança de plano.
-            </div>
-          )}
-          {temCardapioPorPlano(est.plano) && (
-            <>
-              <div style={{ padding: "10px 14px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 10, fontSize: 12, color: "var(--muted2)", marginBottom: 16 }}>
-                🍽️ <strong style={{ color: "var(--text)" }}>Plano Pro R$ 129,90/mês</strong> — Cardápio digital integrado. Seus clientes veem o cardápio antes de avaliar.
-              </div>
-              <CardapioEditor
-                est={{ ...est, cardapio: ed.cardapio || makeDefaultCardapio() }}
-                onChange={(novoCardapio) => setEd(e => ({ ...e, cardapio: novoCardapio }))}
-              />
-              <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={saveCardapio} disabled={cardapioSaving}>
-                {cardapioSaving ? "Salvando..." : cardapioSaved ? "✅ Salvo!" : "Salvar cardápio"}
-              </button>
-            </>
-          )}
+          {!temCardapioPorPlano(est.plano) && <div style={{ padding: 20, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 14, color: "var(--muted2)", fontSize: 13 }}>O cardápio digital está disponível no <strong style={{color:"var(--text)"}}>Plano Pro R$ 129/mês</strong>.</div>}
+          {temCardapioPorPlano(est.plano) && (<>
+            <div style={{ padding: "10px 14px", background: "var(--ac)11", border: "1px solid var(--ac)33", borderRadius: 10, fontSize: 12, color: "var(--muted2)", marginBottom: 16 }}>🍽️ <strong style={{ color: "var(--text)" }}>Plano Pro R$ 129,90/mês</strong> — Cardápio digital integrado.</div>
+            <CardapioEditor est={{ ...est, cardapio: ed.cardapio || makeDefaultCardapio() }} onChange={(novoCardapio) => setEd(e => ({ ...e, cardapio: novoCardapio }))} />
+            <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={saveCardapio} disabled={cardapioSaving}>{cardapioSaving?"Salvando...":cardapioSaved?"✅ Salvo!":"Salvar cardápio"}</button>
+          </>)}
         </>)}
-
         {tab === "setup" && (<>
           <div className="main-title">⚙️ Configurar</div>
           <div className="setup-box">
@@ -1779,26 +1527,16 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div className="setup-box-title">❓ Perguntas</div>
             {ed.questions.map(q => (
               <div className="pill-row" key={q.id} style={{ position: "relative" }}>
-                <button
-                  onClick={() => setQEmojiOpen(qEmojiOpen === q.id ? null : q.id)}
-                  style={{ width: 32, height: 32, fontSize: 18, border: "1.5px solid var(--border)", borderRadius: 8, background: "var(--d3)", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
-                  title={q.emoji ? "Trocar emoji" : "Adicionar emoji"}>
+                <button onClick={() => setQEmojiOpen(qEmojiOpen === q.id ? null : q.id)} style={{ width: 32, height: 32, fontSize: 18, border: "1.5px solid var(--border)", borderRadius: 8, background: "var(--d3)", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }} title={q.emoji ? "Trocar emoji" : "Adicionar emoji"}>
                   {q.emoji || <span style={{fontSize:12,color:"var(--muted)"}}>😊</span>}
                 </button>
                 {qEmojiOpen === q.id && (
                   <div style={{ position: "absolute", top: 40, left: 0, zIndex: 999, background: "var(--d1)", border: "1px solid var(--border)", borderRadius: 12, padding: 10, width: 260, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
                     <div style={{ display: "flex", gap: 3, overflowX: "auto", marginBottom: 8 }}>
-                      {Object.keys(WA_CATS).map(k => (
-                        <button key={k} onClick={() => setQEmojiCat(k)} style={{ padding: "3px 7px", fontSize: 11, border: `1px solid ${qEmojiCat===k?"var(--ac)":"var(--border)"}`, borderRadius: 20, cursor: "pointer", background: qEmojiCat===k?"var(--ac)22":"none", color: qEmojiCat===k?"var(--text)":"var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k.split(" ")[0]}</button>
-                      ))}
+                      {Object.keys(WA_CATS).map(k => (<button key={k} onClick={() => setQEmojiCat(k)} style={{ padding: "3px 7px", fontSize: 11, border: `1px solid ${qEmojiCat===k?"var(--ac)":"var(--border)"}`, borderRadius: 20, cursor: "pointer", background: qEmojiCat===k?"var(--ac)22":"none", color: qEmojiCat===k?"var(--text)":"var(--muted)", whiteSpace: "nowrap", flexShrink: 0, fontFamily: "var(--ff-body)" }}>{k.split(" ")[0]}</button>))}
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, maxHeight: 160, overflowY: "auto" }}>
-                      {(WA_CATS[qEmojiCat]||[]).map(e => (
-                        <button key={e} onClick={() => { setEd(ed => ({ ...ed, questions: ed.questions.map(x => x.id === q.id ? { ...x, emoji: e } : x) })); setQEmojiOpen(null); }}
-                          style={{ width: 30, height: 30, fontSize: 17, border: "none", background: q.emoji===e?"var(--ac)22":"none", borderRadius: 6, cursor: "pointer" }}>
-                          {e}
-                        </button>
-                      ))}
+                      {(WA_CATS[qEmojiCat]||[]).map(e => (<button key={e} onClick={() => { setEd(ed => ({ ...ed, questions: ed.questions.map(x => x.id === q.id ? { ...x, emoji: e } : x) })); setQEmojiOpen(null); }} style={{ width: 30, height: 30, fontSize: 17, border: "none", background: q.emoji===e?"var(--ac)22":"none", borderRadius: 6, cursor: "pointer" }}>{e}</button>))}
                     </div>
                     <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
                       {q.emoji && <button className="btn-sm btn-sm-danger" style={{fontSize:11}} onClick={() => { setEd(ed => ({ ...ed, questions: ed.questions.map(x => x.id === q.id ? { ...x, emoji: "" } : x) })); setQEmojiOpen(null); }}>✕ Remover</button>}
@@ -1834,31 +1572,21 @@ function OwnerDash({ est, onUpdate, onLogout }) {
         </>)}
         {tab === "senha" && (<>
           <div className="main-title">🔑 Acesso</div>
-
           <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">📧 Alterar e-mail de acesso</div>
-            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>
-              E-mail atual: <strong style={{ color: "var(--text)" }}>{est.owner}</strong>
-            </div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>E-mail atual: <strong style={{ color: "var(--text)" }}>{est.owner}</strong></div>
             {emailMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: emailMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: emailMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${emailMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{emailMsg}</div>}
-            <label className="lbl">E-mail atual</label>
-            <input className="field" type="email" placeholder="seu@email.com" value={newEmail.atual} onChange={e => setNewEmail(s => ({ ...s, atual: e.target.value }))} />
-            <label className="lbl">Novo e-mail</label>
-            <input className="field" type="email" placeholder="novo@email.com" value={newEmail.novo} onChange={e => setNewEmail(s => ({ ...s, novo: e.target.value }))} />
-            <label className="lbl">Confirmar novo e-mail</label>
-            <input className="field" type="email" placeholder="novo@email.com" value={newEmail.confirma} onChange={e => setNewEmail(s => ({ ...s, confirma: e.target.value }))} />
+            <label className="lbl">E-mail atual</label><input className="field" type="email" placeholder="seu@email.com" value={newEmail.atual} onChange={e => setNewEmail(s => ({ ...s, atual: e.target.value }))} />
+            <label className="lbl">Novo e-mail</label><input className="field" type="email" placeholder="novo@email.com" value={newEmail.novo} onChange={e => setNewEmail(s => ({ ...s, novo: e.target.value }))} />
+            <label className="lbl">Confirmar novo e-mail</label><input className="field" type="email" placeholder="novo@email.com" value={newEmail.confirma} onChange={e => setNewEmail(s => ({ ...s, confirma: e.target.value }))} />
             <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarEmail}>Alterar e-mail</button>
           </div>
-
           <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">🔑 Alterar senha de acesso</div>
             {passMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: passMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: passMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${passMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{passMsg}</div>}
-            <label className="lbl">Senha atual</label>
-            <input className="field" type="password" value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
-            <label className="lbl">Nova senha</label>
-            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e => setNewPass(s => ({ ...s, nova: e.target.value }))} />
-            <label className="lbl">Confirmar nova senha</label>
-            <input className="field" type="password" value={newPass.confirma} onChange={e => setNewPass(s => ({ ...s, confirma: e.target.value }))} />
+            <label className="lbl">Senha atual</label><input className="field" type="password" value={newPass.atual} onChange={e => setNewPass(s => ({ ...s, atual: e.target.value }))} />
+            <label className="lbl">Nova senha</label><input className="field" type="password" placeholder="Mínimo 6 caracteres" value={newPass.nova} onChange={e => setNewPass(s => ({ ...s, nova: e.target.value }))} />
+            <label className="lbl">Confirmar nova senha</label><input className="field" type="password" value={newPass.confirma} onChange={e => setNewPass(s => ({ ...s, confirma: e.target.value }))} />
             <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarSenha}>Alterar senha</button>
           </div>
         </>)}
@@ -1866,6 +1594,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     </div>
   );
 }
+
 
 const RAMOS = ["Hamburgueria", "Pizzaria", "Restaurante", "Cafeteria", "Lanchonete", "Bar", "Sorveteria", "Padaria", "Sushi/Japonês", "Churrascaria", "Clínica Odontológica", "Clínica Médica", "Barbearia", "Salão de Beleza", "Academia", "Pet Shop", "Farmácia", "Outro"];
 const PLANOS = ["R$ 99/mês", "R$ 129/mês", "Personalizado"];
@@ -1884,6 +1613,33 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [copied, setCopied] = useState(null);
   const [enviando, setEnviando] = useState(null);
   const [enviado, setEnviado] = useState(null);
+  const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
+  const [masterPassMsg, setMasterPassMsg] = useState("");
+  const [contrato, setContrato] = useState({ estId: "", plano: "R$ 99/mês", setup: "200,00", aviso: "15", dataContrato: new Date().toLocaleDateString("pt-BR") });
+  const [prospects, setProspects] = useState(() => { try { return JSON.parse(localStorage.getItem("nc_prospects") || "[]"); } catch { return []; } });
+  const [showAddProspect, setShowAddProspect] = useState(false);
+  const [prospectFiltro, setProspectFiltro] = useState("todos");
+  const EMPTY_PROSPECT = { nome: "", ramo: "Hamburgueria", endereco: "", telefone: "", responsavel: "", status: "prospectar", falou: "", interesse: "", obs: "", dataVisita: "" };
+  const [newProspect, setNewProspect] = useState(EMPTY_PROSPECT);
+  const [editProspect, setEditProspect] = useState(null);
+  const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
+
+  const saveProspects = (list) => { setProspects(list); try { localStorage.setItem("nc_prospects", JSON.stringify(list)); } catch {} };
+  const addProspect = () => {
+    if (!newProspect.nome) return;
+    saveProspects([...prospects, { ...newProspect, id: uid(), dataVisita: new Date().toLocaleDateString("pt-BR") }]);
+    setNewProspect(EMPTY_PROSPECT); setShowAddProspect(false);
+  };
+  const updateProspectStatus = (id, status) => saveProspects(prospects.map(p => p.id === id ? { ...p, status, dataVisita: new Date().toLocaleDateString("pt-BR") } : p));
+  const deleteProspect = (id) => { if (!window.confirm("Remover este prospect?")) return; saveProspects(prospects.filter(p => p.id !== id)); };
+  const saveEditProspect = () => { saveProspects(prospects.map(p => p.id === editProspect.id ? editProspect : p)); setEditProspect(null); };
+
+  const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
+  const mrr = establishments.filter(e => e.ativo).length * 99;
+  const ativos = establishments.filter(e => e.ativo).length;
+
+  const toggleAtivo = async (id) => { const est = establishments.find(e => e.id === id); const u = { ...est, ativo: !est.ativo }; await saveEstabelecimento(u); setEstablishments(prev => prev.map(e => e.id === id ? { ...e, ativo: !e.ativo } : e)); };
+  const deleteEst = async (id) => { if (!window.confirm("Excluir este estabelecimento?")) return; await deleteEstabelecimentoFromDB(id); setEstablishments(prev => prev.filter(e => e.id !== id)); };
 
   const enviarCredenciais = async (e) => {
     if (!e.owner) { alert("Este estabelecimento não tem e-mail cadastrado."); return; }
@@ -1899,72 +1655,15 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           from: "NotaCheia <notificacoes@notacheia.com.br>",
           to: [e.owner],
           subject: `🎉 Bem-vindo ao NotaCheia — ${e.name}`,
-          html: `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:28px;background:#0d0d0d;color:#f0ede8;border-radius:18px;">
-            <div style="text-align:center;margin-bottom:24px;">
-              <div style="font-size:36px;margin-bottom:6px;">${e.emoji}</div>
-              <h1 style="font-size:22px;margin:0;color:#e63946;">Bem-vindo ao NotaCheia!</h1>
-              <p style="color:#888;font-size:13px;margin-top:6px;">Seu painel de feedbacks está pronto 🚀</p>
-            </div>
-            <div style="background:#181818;border-radius:12px;padding:20px;margin-bottom:16px;">
-              <p style="margin:0 0 14px;font-size:13px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:1px;">📋 Dados de acesso</p>
-              <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">Estabelecimento</span><strong>${e.name}</strong></div>
-              <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">E-mail</span><strong>${e.owner}</strong></div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:#888;">Senha</span><strong style="background:#222;padding:2px 10px;border-radius:6px;letter-spacing:2px;">${e.pass}</strong></div>
-            </div>
-            <div style="margin-bottom:12px;">
-              <a href="${linkPainel}" style="display:block;text-align:center;background:#e63946;color:#fff;padding:14px;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;margin-bottom:10px;">Acessar meu painel →</a>
-              <a href="${linkQR}" style="display:block;text-align:center;background:#181818;color:#e63946;padding:12px;border-radius:12px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid #e6394633;">🔗 Link do meu QR Code</a>
-            </div>
-            <div style="background:#181818;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#888;line-height:1.7;">
-              <strong style="color:#f0ede8;">💡 Primeiros passos:</strong><br/>
-              1. Acesse o painel com seu e-mail e senha<br/>
-              2. Baixe o QR Code em <strong style="color:#f0ede8;">📱 Meu QR Code</strong><br/>
-              3. Imprima e coloque nas mesas ou balcão<br/>
-              4. Seus clientes já podem avaliar e ganhar brindes!
-            </div>
-            <p style="text-align:center;font-size:12px;color:#444;margin:0;">Qualquer dúvida, fale com a gente 💬<br/>WhatsApp: (41) 99675-6776</p>
-            <p style="text-align:center;font-size:11px;color:#333;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p>
-          </div>`,
+          html: `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:28px;background:#0d0d0d;color:#f0ede8;border-radius:18px;"><div style="text-align:center;margin-bottom:24px;"><div style="font-size:36px;margin-bottom:6px;">${e.emoji}</div><h1 style="font-size:22px;margin:0;color:#e63946;">Bem-vindo ao NotaCheia!</h1><p style="color:#888;font-size:13px;margin-top:6px;">Seu painel de feedbacks está pronto 🚀</p></div><div style="background:#181818;border-radius:12px;padding:20px;margin-bottom:16px;"><p style="margin:0 0 14px;font-size:13px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:1px;">📋 Dados de acesso</p><div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">Estabelecimento</span><strong>${e.name}</strong></div><div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;"><span style="color:#888;">E-mail</span><strong>${e.owner}</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:#888;">Senha</span><strong style="background:#222;padding:2px 10px;border-radius:6px;letter-spacing:2px;">${e.pass}</strong></div></div><div style="margin-bottom:12px;"><a href="${linkPainel}" style="display:block;text-align:center;background:#e63946;color:#fff;padding:14px;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;margin-bottom:10px;">Acessar meu painel →</a><a href="${linkQR}" style="display:block;text-align:center;background:#181818;color:#e63946;padding:12px;border-radius:12px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid #e6394633;">🔗 Link do meu QR Code</a></div><p style="text-align:center;font-size:12px;color:#444;margin:0;">Qualquer dúvida, fale com a gente 💬<br/>WhatsApp: (41) 99675-6776</p><p style="text-align:center;font-size:11px;color:#333;margin-top:14px;">NotaCheia ⭐ · notacheia.com.br</p></div>`,
         }),
       });
-      if (res.ok) {
-        setEnviado(e.id);
-        setTimeout(() => setEnviado(null), 4000);
-      } else {
-        alert("Erro ao enviar e-mail. Verifique o e-mail cadastrado.");
-      }
-    } catch (err) {
-      alert("Erro de conexão ao enviar e-mail.");
-    }
+      if (res.ok) { setEnviado(e.id); setTimeout(() => setEnviado(null), 4000); }
+      else { alert("Erro ao enviar e-mail."); }
+    } catch { alert("Erro de conexão."); }
     setEnviando(null);
   };
-  const [masterPass, setMasterPass] = useState({ atual: "", nova: "", confirma: "" });
-  const [masterPassMsg, setMasterPassMsg] = useState("");
-  const [contrato, setContrato] = useState({ estId: "", plano: "R$ 99/mês", setup: "200,00", aviso: "15", dataContrato: new Date().toLocaleDateString("pt-BR") });
-  const [prospects, setProspects] = useState(() => { try { return JSON.parse(localStorage.getItem("nc_prospects") || "[]"); } catch { return []; } });
-  const [showAddProspect, setShowAddProspect] = useState(false);
-  const [prospectFiltro, setProspectFiltro] = useState("todos");
-  const EMPTY_PROSPECT = { nome: "", ramo: "Hamburgueria", endereco: "", telefone: "", responsavel: "", status: "prospectar", falou: "", interesse: "", obs: "", dataVisita: "" };
-  const [newProspect, setNewProspect] = useState(EMPTY_PROSPECT);
-  const [editProspect, setEditProspect] = useState(null);
 
-  const saveProspects = (list) => { setProspects(list); try { localStorage.setItem("nc_prospects", JSON.stringify(list)); } catch {} };
-  const addProspect = () => {
-    if (!newProspect.nome) return;
-    const novo = { ...newProspect, id: uid(), dataVisita: new Date().toLocaleDateString("pt-BR") };
-    saveProspects([...prospects, novo]);
-    setNewProspect(EMPTY_PROSPECT);
-    setShowAddProspect(false);
-  };
-  const updateProspectStatus = (id, status) => saveProspects(prospects.map(p => p.id === id ? { ...p, status, dataVisita: new Date().toLocaleDateString("pt-BR") } : p));
-  const deleteProspect = (id) => { if (!window.confirm("Remover este prospect?")) return; saveProspects(prospects.filter(p => p.id !== id)); };
-  const saveEditProspect = () => { saveProspects(prospects.map(p => p.id === editProspect.id ? editProspect : p)); setEditProspect(null); };
-  const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a"];
-  const total = establishments.reduce((a, e) => a + e.feedbacks.length, 0);
-  const mrr = establishments.filter(e => e.ativo).length * 99;
-  const ativos = establishments.filter(e => e.ativo).length;
-  const toggleAtivo = async (id) => { const est = establishments.find(e => e.id === id); const u = { ...est, ativo: !est.ativo }; await saveEstabelecimento(u); setEstablishments(prev => prev.map(e => e.id === id ? { ...e, ativo: !e.ativo } : e)); };
-  const deleteEst = async (id) => { if (!window.confirm("Excluir este estabelecimento?")) return; await deleteEstabelecimentoFromDB(id); setEstablishments(prev => prev.filter(e => e.id !== id)); };
   const addEst = async () => {
     if (!newEst.name || !newEst.owner || !newEst.pass) return;
     setActionLoading(true);
@@ -1978,22 +1677,16 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
       feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
     };
     const ok = await createEstabelecimento(novo);
-    if (!ok) {
-      alert("❌ Erro ao salvar. Verifique sua conexão e tente novamente.");
-      setActionLoading(false);
-      return;
-    }
+    if (!ok) { alert("❌ Erro ao salvar."); setActionLoading(false); return; }
     setEstablishments(prev => [...prev, novo]);
-    setNewEst(EMPTY_EST);
-    setShowAdd(false); setActionLoading(false);
+    setNewEst(EMPTY_EST); setShowAdd(false); setActionLoading(false);
   };
 
   const saveEditEst = async () => {
     setEditSaving(true);
     await saveEstabelecimento(editEst);
     setEstablishments(prev => prev.map(e => e.id === editEst.id ? { ...e, ...editEst } : e));
-    setEditSaving(false); setEditSaved(true);
-    setTimeout(() => setEditSaved(false), 2000);
+    setEditSaving(false); setEditSaved(true); setTimeout(() => setEditSaved(false), 2000);
   };
 
   const trocarSenhaMaster = async () => {
@@ -2002,24 +1695,16 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     if (masterPass.nova !== masterPass.confirma) { setMasterPassMsg("❌ Senhas não coincidem."); setTimeout(() => setMasterPassMsg(""), 3000); return; }
     await saveMasterPass(masterPass.nova);
     setMasterPass({ atual: "", nova: "", confirma: "" });
-    setMasterPassMsg("✅ Senha salva no banco! Vai persistir mesmo após recarregar.");
-    setTimeout(() => setMasterPassMsg(""), 5000);
+    setMasterPassMsg("✅ Senha salva no banco!"); setTimeout(() => setMasterPassMsg(""), 5000);
   };
 
-  const copyLink = (e) => {
-    const slug = e.slug || makeSlug(e.name);
-    navigator.clipboard.writeText(`https://notacheia.com.br/${slug}`);
-    setCopied(e.id);
-    setTimeout(() => setCopied(null), 2000);
-  };
+  const copyLink = (e) => { const slug = e.slug || makeSlug(e.name); navigator.clipboard.writeText(`https://notacheia.com.br/${slug}`); setCopied(e.id); setTimeout(() => setCopied(null), 2000); };
 
   if (demoEst) return (
     <>
       <style>{CSS(demoEst.color)}</style>
-      <div className="top-bar">
-        <button className="top-btn top-btn-ghost" onClick={() => setDemoEst(null)}>← Voltar ao Master</button>
-      </div>
-      <ClientApp est={demoEst} onSubmit={async () => { }} masterMode={true} key={demoEst.id + "_demo"} />
+      <div className="top-bar"><button className="top-btn top-btn-ghost" onClick={() => setDemoEst(null)}>← Voltar ao Master</button></div>
+      <ClientApp est={demoEst} onSubmit={async () => {}} masterMode={true} key={demoEst.id + "_demo"} />
     </>
   );
 
@@ -2044,31 +1729,21 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           {e.cidade && <span style={{ background: "var(--d3)", border: "1px solid var(--border)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted2)" }}>📍 {e.cidade}</span>}
           {e.ramo && <span style={{ background: "var(--d3)", border: "1px solid var(--border)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted2)" }}>🏷️ {e.ramo}</span>}
           <span style={{ background: "var(--ac)22", border: "1px solid var(--ac)44", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--ac)", fontWeight: 700 }}>💳 {e.plano || "R$ 99/mês"}</span>
-          {e.cardapio && <span style={{ background: "#0a1f0a", border: "1px solid var(--green)33", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--green)", fontWeight: 700 }}>🍽️ Pro</span>}
         </div>
         <div className="slug-box" style={{ marginBottom: 10 }}>
           <span className="slug-text">notacheia.com.br/{slug}</span>
           <button className="btn-sm btn-sm-ghost" onClick={() => copyLink(e)}>{copied === e.id ? "✅" : "📋"}</button>
         </div>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
-            <div style={{ fontFamily: "var(--ff-head)", fontSize: 18 }}>{e.feedbacks.length}</div>
-            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Feedbacks</div>
-          </div>
-          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
-            <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, color: "var(--ac)" }}>⭐ {avg}</div>
-            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Nota</div>
-          </div>
-          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}>
-            <div style={{ fontSize: 12, fontWeight: 800, color: "var(--muted2)" }}>{e.desde || "—"}</div>
-            <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Desde</div>
-          </div>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}><div style={{ fontFamily: "var(--ff-head)", fontSize: 18 }}>{e.feedbacks.length}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Feedbacks</div></div>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}><div style={{ fontFamily: "var(--ff-head)", fontSize: 18, color: "var(--ac)" }}>⭐ {avg}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Nota</div></div>
+          <div style={{ flex: 1, background: "var(--d2)", borderRadius: 10, padding: "8px 10px", textAlign: "center" }}><div style={{ fontSize: 12, fontWeight: 800, color: "var(--muted2)" }}>{e.desde || "—"}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Desde</div></div>
         </div>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           <button className="btn-sm btn-sm-ghost" onClick={() => setViewEst(e)}>👁️ Ver</button>
           <button className="btn-sm btn-sm-ghost" onClick={() => setEditEst({ ...e })}>✏️ Editar</button>
           <button className="btn-sm btn-sm-ghost" onClick={() => setDemoEst(e)}>🎯 Demo</button>
-          <button className="btn-sm btn-sm-green" onClick={() => enviarCredenciais(e)} disabled={enviando === e.id} title="Enviar e-mail com login e senha para o dono">{enviando === e.id ? "⏳..." : enviado === e.id ? "✅ Enviado!" : "📧 Credenciais"}</button>
+          <button className="btn-sm btn-sm-green" onClick={() => enviarCredenciais(e)} disabled={enviando === e.id}>{enviando === e.id ? "⏳..." : enviado === e.id ? "✅ Enviado!" : "📧 Credenciais"}</button>
           <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒 Bloquear" : "✅ Ativar"}</button>
           <button className="btn-sm btn-sm-danger" onClick={() => deleteEst(e.id)}>🗑️</button>
         </div>
@@ -2101,22 +1776,17 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "-";
               return (
                 <div className="tbl-row" key={e.id} style={{ gridTemplateColumns: "1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px", minWidth: 650 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 700, minWidth: 0 }}>
-                    <span>{e.emoji}</span>
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.name}</span>
-                    <span style={{ fontSize: 10, color: "var(--muted)", fontWeight: 400, flexShrink: 0 }}>⭐{avg}</span>
-                    {e.cardapio && <span style={{ fontSize: 9, color: "var(--green)", fontWeight: 800, flexShrink: 0 }}>🍽️Pro</span>}
-                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 700, minWidth: 0 }}><span>{e.emoji}</span><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.name}</span><span style={{ fontSize: 10, color: "var(--muted)", fontWeight: 400, flexShrink: 0 }}>⭐{avg}</span></div>
                   <div style={{ minWidth: 0 }}><div style={{ color: "var(--muted2)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.responsavel || "—"}</div><div style={{ fontSize: 10, color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.owner}</div></div>
-                  <div style={{ color: "var(--muted2)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.cidade || "—"}</div>
-                  <div style={{ color: "var(--ac)", fontSize: 12, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.plano || "R$ 99/mês"}</div>
+                  <div style={{ color: "var(--muted2)", fontSize: 12 }}>{e.cidade || "—"}</div>
+                  <div style={{ color: "var(--ac)", fontSize: 12, fontWeight: 700 }}>{e.plano || "R$ 99/mês"}</div>
                   <div style={{ fontWeight: 700, textAlign: "center" }}>{e.feedbacks.length}</div>
                   <div>{e.ativo ? <span className="badge badge-green"><span className="live-dot" style={{ marginRight: 4 }} />Ativo</span> : <span className="badge badge-red">Bloqueado</span>}</div>
-                  <div style={{ display: "flex", gap: 3, flexWrap: "nowrap" }}>
-                    <button className="btn-sm btn-sm-ghost" title="Ver feedbacks" style={{ padding: "5px 7px" }} onClick={() => setViewEst(e)}>👁️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Editar" style={{ padding: "5px 7px" }} onClick={() => setEditEst({ ...e })}>✏️</button>
-                    <button className="btn-sm btn-sm-ghost" title="Demo" style={{ padding: "5px 7px" }} onClick={() => setDemoEst(e)}>🎯</button>
-                    <button className="btn-sm btn-sm-green" title="Enviar credenciais por e-mail" style={{ padding: "5px 7px" }} onClick={() => enviarCredenciais(e)} disabled={enviando === e.id}>{enviando === e.id ? "⏳" : enviado === e.id ? "✅" : "📧"}</button>
+                  <div style={{ display: "flex", gap: 3 }}>
+                    <button className="btn-sm btn-sm-ghost" style={{ padding: "5px 7px" }} onClick={() => setViewEst(e)}>👁️</button>
+                    <button className="btn-sm btn-sm-ghost" style={{ padding: "5px 7px" }} onClick={() => setEditEst({ ...e })}>✏️</button>
+                    <button className="btn-sm btn-sm-ghost" style={{ padding: "5px 7px" }} onClick={() => setDemoEst(e)}>🎯</button>
+                    <button className="btn-sm btn-sm-green" style={{ padding: "5px 7px" }} onClick={() => enviarCredenciais(e)} disabled={enviando === e.id}>{enviando === e.id ? "⏳" : enviado === e.id ? "✅" : "📧"}</button>
                     <button className={`btn-sm ${e.ativo ? "btn-sm-danger" : "btn-sm-green"}`} style={{ padding: "5px 7px" }} onClick={() => toggleAtivo(e.id)}>{e.ativo ? "🔒" : "✅"}</button>
                     <button className="btn-sm btn-sm-danger" style={{ padding: "5px 7px" }} onClick={() => deleteEst(e.id)}>🗑️</button>
                   </div>
@@ -2124,11 +1794,10 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
               );
             })}
           </div>
-          <div id="master-cards">
-            {establishments.map(e => <EstCard key={e.id} e={e} />)}
-          </div>
+          <div id="master-cards">{establishments.map(e => <EstCard key={e.id} e={e} />)}</div>
           <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
         </>)}
+
         {tab === "metricas" && (<>
           <div className="main-title">📊 Métricas Gerais</div>
           <div className="metrics">
@@ -2139,45 +1808,22 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {(mrr - 150).toLocaleString("pt-BR")}</div><div className="metric-lbl">Lucro líquido</div></div>
           </div>
         </>)}
-        {tab === "prospeccao" && (() => {
-          const STATUS = {
-            prospectar: { icon: "🎯", label: "A visitar",   color: "#457b9d" },
-            contatado:  { icon: "📞", label: "Contatado",   color: "#f4a261" },
-            demo:       { icon: "🎪", label: "Demo feita",  color: "#6d597a" },
-            fechou:     { icon: "✅", label: "Fechou!",     color: "#2a9d8f" },
-            descartado: { icon: "❌", label: "Descartado",  color: "#555" },
-          };
-          const INTERESSE = { alto: { label: "Alto 🔥", color: "var(--green)" }, medio: { label: "Médio ⚡", color: "var(--yellow)" }, baixo: { label: "Baixo 🧊", color: "var(--muted)" } };
-          const filtrados = prospectFiltro === "todos"
-            ? prospects.filter(p => p.status !== "descartado")
-            : prospectFiltro === "descartados"
-            ? prospects.filter(p => p.status === "descartado")
-            : prospects.filter(p => p.status === prospectFiltro);
 
+        {tab === "prospeccao" && (() => {
+          const STATUS = { prospectar: { icon: "🎯", label: "A visitar", color: "#457b9d" }, contatado: { icon: "📞", label: "Contatado", color: "#f4a261" }, demo: { icon: "🎪", label: "Demo feita", color: "#6d597a" }, fechou: { icon: "✅", label: "Fechou!", color: "#2a9d8f" }, descartado: { icon: "❌", label: "Descartado", color: "#555" } };
+          const INTERESSE = { alto: { label: "Alto 🔥", color: "var(--green)" }, medio: { label: "Médio ⚡", color: "var(--yellow)" }, baixo: { label: "Baixo 🧊", color: "var(--muted)" } };
+          const filtrados = prospectFiltro === "todos" ? prospects.filter(p => p.status !== "descartado") : prospectFiltro === "descartados" ? prospects.filter(p => p.status === "descartado") : prospects.filter(p => p.status === prospectFiltro);
           return (<>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
               <div className="main-title" style={{ marginBottom: 0 }}>🗺️ Prospecção</div>
               <button className="btn-sm btn-sm-red" onClick={() => setShowAddProspect(true)}>+ Novo prospect</button>
             </div>
-
-            {/* Métricas rápidas */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(90px,1fr))", gap: 8, marginBottom: 16 }}>
-              {Object.entries(STATUS).map(([k,v]) => (
-                <div key={k} style={{ background: "var(--d1)", border: `1px solid ${v.color}44`, borderRadius: 12, padding: "10px 8px", textAlign: "center", cursor: "pointer" }} onClick={() => setProspectFiltro(k)}>
-                  <div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color: v.color }}>{prospects.filter(p => p.status === k).length}</div>
-                  <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", marginTop: 3, fontWeight: 700 }}>{v.icon} {v.label}</div>
-                </div>
-              ))}
+              {Object.entries(STATUS).map(([k,v]) => (<div key={k} style={{ background: "var(--d1)", border: `1px solid ${v.color}44`, borderRadius: 12, padding: "10px 8px", textAlign: "center", cursor: "pointer" }} onClick={() => setProspectFiltro(k)}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color: v.color }}>{prospects.filter(p => p.status === k).length}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase", marginTop: 3, fontWeight: 700 }}>{v.icon} {v.label}</div></div>))}
             </div>
-
-            {/* Filtros */}
             <div className="filter-row">
-              {[["todos","Ativos"],["prospectar","🎯 A visitar"],["contatado","📞 Contatados"],["demo","🎪 Demo feita"],["fechou","✅ Fecharam"],["descartados","❌ Descartados"]].map(([k,l]) => (
-                <button key={k} className={`filter-btn ${prospectFiltro === k ? "on" : ""}`} onClick={() => setProspectFiltro(k)}>{l}</button>
-              ))}
+              {[["todos","Ativos"],["prospectar","🎯 A visitar"],["contatado","📞 Contatados"],["demo","🎪 Demo feita"],["fechou","✅ Fecharam"],["descartados","❌ Descartados"]].map(([k,l]) => (<button key={k} className={`filter-btn ${prospectFiltro === k ? "on" : ""}`} onClick={() => setProspectFiltro(k)}>{l}</button>))}
             </div>
-
-            {/* Lista */}
             {filtrados.length === 0 && <div style={{ textAlign: "center", color: "var(--muted)", padding: 40, fontSize: 14 }}>Nenhum prospect aqui ainda.</div>}
             {filtrados.map(p => (
               <div key={p.id} style={{ background: "var(--d1)", border: `1px solid ${STATUS[p.status]?.color || "var(--border)"}44`, borderRadius: 14, padding: 16, marginBottom: 10 }}>
@@ -2189,32 +1835,20 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
                     {p.telefone && <div style={{ fontSize: 12, color: "var(--muted2)" }}>📱 {p.telefone}</div>}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
-                    <span style={{ background: `${STATUS[p.status]?.color}22`, border: `1px solid ${STATUS[p.status]?.color}66`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, color: STATUS[p.status]?.color, whiteSpace: "nowrap" }}>
-                      {STATUS[p.status]?.icon} {STATUS[p.status]?.label}
-                    </span>
+                    <span style={{ background: `${STATUS[p.status]?.color}22`, border: `1px solid ${STATUS[p.status]?.color}66`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: 700, color: STATUS[p.status]?.color, whiteSpace: "nowrap" }}>{STATUS[p.status]?.icon} {STATUS[p.status]?.label}</span>
                     {p.interesse && <span style={{ fontSize: 11, color: INTERESSE[p.interesse]?.color, fontWeight: 700 }}>{INTERESSE[p.interesse]?.label}</span>}
                   </div>
                 </div>
-
-                {/* Tags rápidas */}
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
                   {p.falou === "sim" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--green)" }}>✓ Falou c/ responsável</span>}
                   {p.falou === "funcionario" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--yellow)" }}>⚠️ Só c/ funcionário</span>}
                   {p.falou === "nao" && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted)" }}>✗ Não encontrou</span>}
                   {p.dataVisita && <span style={{ background: "var(--d3)", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "var(--muted)" }}>🗓️ {p.dataVisita}</span>}
                 </div>
-
                 {p.obs && <div style={{ background: "var(--dark)", borderLeft: "3px solid var(--ac)44", borderRadius: "0 8px 8px 0", padding: "8px 12px", fontSize: 12, color: "var(--muted2)", fontStyle: "italic", marginBottom: 10 }}>💬 {p.obs}</div>}
-
-                {/* Botões de status rápido */}
                 <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
-                  {Object.entries(STATUS).filter(([k]) => k !== p.status).map(([k,v]) => (
-                    <button key={k} className="btn-sm btn-sm-ghost" style={{ fontSize: 11, padding: "4px 10px" }} onClick={() => updateProspectStatus(p.id, k)}>
-                      {v.icon} {v.label}
-                    </button>
-                  ))}
+                  {Object.entries(STATUS).filter(([k]) => k !== p.status).map(([k,v]) => (<button key={k} className="btn-sm btn-sm-ghost" style={{ fontSize: 11, padding: "4px 10px" }} onClick={() => updateProspectStatus(p.id, k)}>{v.icon} {v.label}</button>))}
                 </div>
-
                 <div style={{ display: "flex", gap: 6 }}>
                   <button className="btn-sm btn-sm-ghost" onClick={() => setEditProspect({ ...p })}>✏️ Editar</button>
                   {p.telefone && <a href={`https://wa.me/55${p.telefone.replace(/\D/g,"")}`} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "#fff", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer", textDecoration: "none" }}>💬 WhatsApp</a>}
@@ -2222,74 +1856,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
                 </div>
               </div>
             ))}
-
-            {/* Modal novo prospect */}
-            {showAddProspect && (
-              <div className="modal-bg" onClick={() => setShowAddProspect(false)}>
-                <div className="modal" onClick={e => e.stopPropagation()}>
-                  <div className="modal-title">🎯 Novo Prospect</div>
-                  <label className="lbl">Nome do estabelecimento *</label>
-                  <input className="field" placeholder="Ex: Pizzaria Bella" value={newProspect.nome} onChange={e => setNewProspect(s => ({ ...s, nome: e.target.value }))} />
-                  <label className="lbl">Ramo</label>
-                  <select className="field" value={newProspect.ramo} onChange={e => setNewProspect(s => ({ ...s, ramo: e.target.value }))}>
-                    {RAMOS.map(r => <option key={r}>{r}</option>)}
-                  </select>
-                  <label className="lbl">Endereço / Bairro</label>
-                  <input className="field" placeholder="Ex: Rua das Flores, 123 — Centro" value={newProspect.endereco} onChange={e => setNewProspect(s => ({ ...s, endereco: e.target.value }))} />
-                  <label className="lbl">Nome do responsável</label>
-                  <input className="field" placeholder="Ex: João" value={newProspect.responsavel} onChange={e => setNewProspect(s => ({ ...s, responsavel: e.target.value }))} />
-                  <label className="lbl">Telefone / WhatsApp</label>
-                  <input className="field" placeholder="(41) 99999-0000" value={newProspect.telefone} onChange={e => setNewProspect(s => ({ ...s, telefone: e.target.value }))} />
-                  <label className="lbl">Observação</label>
-                  <textarea className="textarea" placeholder="Ex: Voltar sexta de manhã, falar com a Ana..." value={newProspect.obs} onChange={e => setNewProspect(s => ({ ...s, obs: e.target.value }))} />
-                  <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-                    <button className="btn btn-red" onClick={addProspect} disabled={!newProspect.nome}>Adicionar</button>
-                    <button className="btn btn-ghost" onClick={() => setShowAddProspect(false)}>Cancelar</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Modal editar prospect */}
-            {editProspect && (
-              <div className="modal-bg" onClick={() => setEditProspect(null)}>
-                <div className="modal" onClick={e => e.stopPropagation()}>
-                  <div className="modal-title">✏️ Editar Prospect</div>
-                  <label className="lbl">Nome</label>
-                  <input className="field" value={editProspect.nome} onChange={e => setEditProspect(s => ({ ...s, nome: e.target.value }))} />
-                  <label className="lbl">Ramo</label>
-                  <select className="field" value={editProspect.ramo} onChange={e => setEditProspect(s => ({ ...s, ramo: e.target.value }))}>
-                    {RAMOS.map(r => <option key={r}>{r}</option>)}
-                  </select>
-                  <label className="lbl">Endereço / Bairro</label>
-                  <input className="field" value={editProspect.endereco || ""} onChange={e => setEditProspect(s => ({ ...s, endereco: e.target.value }))} />
-                  <label className="lbl">Nome do responsável</label>
-                  <input className="field" value={editProspect.responsavel || ""} onChange={e => setEditProspect(s => ({ ...s, responsavel: e.target.value }))} />
-                  <label className="lbl">Telefone / WhatsApp</label>
-                  <input className="field" value={editProspect.telefone || ""} onChange={e => setEditProspect(s => ({ ...s, telefone: e.target.value }))} />
-                  <label className="lbl">Falou com o responsável?</label>
-                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                    {[["sim","✓ Sim"],["funcionario","⚠️ Só funcionário"],["nao","✗ Não encontrou"]].map(([v,l]) => (
-                      <button key={v} onClick={() => setEditProspect(s => ({ ...s, falou: v }))}
-                        style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.falou === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.falou === v ? "var(--ac)22" : "var(--d3)", color: editProspect.falou === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
-                    ))}
-                  </div>
-                  <label className="lbl">Nível de interesse</label>
-                  <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                    {[["alto","Alto 🔥"],["medio","Médio ⚡"],["baixo","Baixo 🧊"]].map(([v,l]) => (
-                      <button key={v} onClick={() => setEditProspect(s => ({ ...s, interesse: v }))}
-                        style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.interesse === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.interesse === v ? "var(--ac)22" : "var(--d3)", color: editProspect.interesse === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
-                    ))}
-                  </div>
-                  <label className="lbl">Observação</label>
-                  <textarea className="textarea" value={editProspect.obs || ""} onChange={e => setEditProspect(s => ({ ...s, obs: e.target.value }))} />
-                  <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                    <button className="btn btn-red" onClick={saveEditProspect}>Salvar</button>
-                    <button className="btn btn-ghost" onClick={() => setEditProspect(null)}>Cancelar</button>
-                  </div>
-                </div>
-              </div>
-            )}
+            {showAddProspect && (<div className="modal-bg" onClick={() => setShowAddProspect(false)}><div className="modal" onClick={e => e.stopPropagation()}><div className="modal-title">🎯 Novo Prospect</div><label className="lbl">Nome do estabelecimento *</label><input className="field" placeholder="Ex: Pizzaria Bella" value={newProspect.nome} onChange={e => setNewProspect(s => ({ ...s, nome: e.target.value }))} /><label className="lbl">Ramo</label><select className="field" value={newProspect.ramo} onChange={e => setNewProspect(s => ({ ...s, ramo: e.target.value }))}>{RAMOS.map(r => <option key={r}>{r}</option>)}</select><label className="lbl">Endereço / Bairro</label><input className="field" value={newProspect.endereco} onChange={e => setNewProspect(s => ({ ...s, endereco: e.target.value }))} /><label className="lbl">Nome do responsável</label><input className="field" value={newProspect.responsavel} onChange={e => setNewProspect(s => ({ ...s, responsavel: e.target.value }))} /><label className="lbl">Telefone / WhatsApp</label><input className="field" value={newProspect.telefone} onChange={e => setNewProspect(s => ({ ...s, telefone: e.target.value }))} /><label className="lbl">Observação</label><textarea className="textarea" value={newProspect.obs} onChange={e => setNewProspect(s => ({ ...s, obs: e.target.value }))} /><div style={{ display: "flex", gap: 10, marginTop: 4 }}><button className="btn btn-red" onClick={addProspect} disabled={!newProspect.nome}>Adicionar</button><button className="btn btn-ghost" onClick={() => setShowAddProspect(false)}>Cancelar</button></div></div></div>)}
+            {editProspect && (<div className="modal-bg" onClick={() => setEditProspect(null)}><div className="modal" onClick={e => e.stopPropagation()}><div className="modal-title">✏️ Editar Prospect</div><label className="lbl">Nome</label><input className="field" value={editProspect.nome} onChange={e => setEditProspect(s => ({ ...s, nome: e.target.value }))} /><label className="lbl">Ramo</label><select className="field" value={editProspect.ramo} onChange={e => setEditProspect(s => ({ ...s, ramo: e.target.value }))}>{RAMOS.map(r => <option key={r}>{r}</option>)}</select><label className="lbl">Endereço</label><input className="field" value={editProspect.endereco || ""} onChange={e => setEditProspect(s => ({ ...s, endereco: e.target.value }))} /><label className="lbl">Responsável</label><input className="field" value={editProspect.responsavel || ""} onChange={e => setEditProspect(s => ({ ...s, responsavel: e.target.value }))} /><label className="lbl">Telefone</label><input className="field" value={editProspect.telefone || ""} onChange={e => setEditProspect(s => ({ ...s, telefone: e.target.value }))} /><label className="lbl">Falou com o responsável?</label><div style={{ display: "flex", gap: 8, marginBottom: 14 }}>{[["sim","✓ Sim"],["funcionario","⚠️ Só funcionário"],["nao","✗ Não encontrou"]].map(([v,l]) => (<button key={v} onClick={() => setEditProspect(s => ({ ...s, falou: v }))} style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.falou === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.falou === v ? "var(--ac)22" : "var(--d3)", color: editProspect.falou === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>))}</div><label className="lbl">Interesse</label><div style={{ display: "flex", gap: 8, marginBottom: 14 }}>{[["alto","Alto 🔥"],["medio","Médio ⚡"],["baixo","Baixo 🧊"]].map(([v,l]) => (<button key={v} onClick={() => setEditProspect(s => ({ ...s, interesse: v }))} style={{ padding: "7px 12px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editProspect.interesse === v ? "var(--ac)" : "var(--border)"}`, background: editProspect.interesse === v ? "var(--ac)22" : "var(--d3)", color: editProspect.interesse === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>))}</div><label className="lbl">Observação</label><textarea className="textarea" value={editProspect.obs || ""} onChange={e => setEditProspect(s => ({ ...s, obs: e.target.value }))} /><div style={{ display: "flex", gap: 10, marginTop: 8 }}><button className="btn btn-red" onClick={saveEditProspect}>Salvar</button><button className="btn btn-ghost" onClick={() => setEditProspect(null)}>Cancelar</button></div></div></div>)}
           </>);
         })()}
 
@@ -2298,148 +1866,37 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           const hoje = contrato.dataContrato;
           const valorMensal = contrato.plano === "R$ 99/mês" ? "99,90" : contrato.plano === "R$ 129/mês" ? "129,90" : "—";
           const nomePlano = contrato.plano === "R$ 99/mês" ? "Basic" : contrato.plano === "R$ 129/mês" ? "Pro" : "Personalizado";
-          const itensPlano = contrato.plano === "R$ 99/mês"
-            ? ["Sistema de feedback com QR Code personalizado", "Roleta de prêmios para os clientes", "Painel de análise com métricas e NPS", "Relatório semanal por e-mail", "Base de clientes com histórico de visitas e WhatsApp", "Suporte via WhatsApp"]
-            : ["Tudo do Plano Basic", "Cardápio digital integrado", "Montagem do cardápio inclusa", "Layouts e paletas de cores personalizadas", "Suporte via WhatsApp"];
-
+          const itensPlano = contrato.plano === "R$ 99/mês" ? ["Sistema de feedback com QR Code personalizado","Roleta de prêmios para os clientes","Painel de análise com métricas e NPS","Relatório semanal por e-mail","Base de clientes com histórico de visitas e WhatsApp","Suporte via WhatsApp"] : ["Tudo do Plano Basic","Cardápio digital integrado","Montagem do cardápio inclusa","Layouts e paletas de cores personalizadas","Suporte via WhatsApp"];
           const imprimirContrato = () => {
             const win = window.open("", "_blank");
-            win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contrato NotaCheia</title><style>
-              *{box-sizing:border-box;margin:0;padding:0}
-              body{font-family:'Arial',sans-serif;color:#111;background:#fff;padding:40px;max-width:800px;margin:0 auto;font-size:13px;line-height:1.6}
-              .header{text-align:center;border-bottom:3px solid #e63946;padding-bottom:20px;margin-bottom:28px}
-              .logo-text{font-size:28px;font-weight:900;color:#e63946;letter-spacing:2px}
-              .logo-sub{font-size:12px;color:#888;margin-top:4px}
-              h2{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#e63946;margin:24px 0 10px;border-bottom:1px solid #eee;padding-bottom:6px}
-              .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
-              .row span:first-child{color:#555;font-weight:600}
-              .row span:last-child{font-weight:700}
-              .destaque{background:#fff5f5;border:1.5px solid #e63946;border-radius:10px;padding:16px;margin:16px 0}
-              .destaque-titulo{font-weight:900;color:#e63946;font-size:14px;margin-bottom:8px}
-              .item{padding:5px 0;font-size:13px}
-              .item::before{content:"✓ ";color:#e63946;font-weight:900}
-              .clausula{margin-bottom:14px;font-size:13px;line-height:1.7}
-              .clausula strong{color:#111}
-              .assinatura-area{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px}
-              .assinatura-box{text-align:center}
-              .assinatura-linha{border-bottom:1.5px solid #111;margin-bottom:8px;height:50px}
-              .assinatura-nome{font-size:12px;font-weight:700}
-              .assinatura-cargo{font-size:11px;color:#888}
-              .rodape{text-align:center;margin-top:36px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:14px}
-              @media print{body{padding:20px}@page{margin:1.5cm}}
-            </style></head><body>
-              <div class="header">
-                <div class="logo-text">NotaCheia ⭐</div>
-                <div class="logo-sub">Sistema de Feedback e Fidelização · notacheia.com.br</div>
-              </div>
-
-              <h2>Contrato de Prestação de Serviços</h2>
-              <p class="clausula">Por meio deste instrumento, as partes abaixo identificadas celebram o presente Contrato de Prestação de Serviços de plataforma digital de coleta de feedbacks e fidelização de clientes.</p>
-
-              <h2>1. Identificação das Partes</h2>
-              <div class="row"><span>Prestador de serviços</span><span>Hudson Nagano — NotaCheia</span></div>
-              <div class="row"><span>WhatsApp</span><span>(41) 99675-6776</span></div>
-              <div class="row"><span>Site</span><span>notacheia.com.br</span></div>
-              <div class="row"><span>Contratante</span><span>${estSel ? estSel.name : "___________________________"}</span></div>
-              <div class="row"><span>Responsável</span><span>${estSel ? (estSel.responsavel || "___________________________") : "___________________________"}</span></div>
-              <div class="row"><span>Ramo</span><span>${estSel ? (estSel.ramo || "___________________________") : "___________________________"}</span></div>
-              <div class="row"><span>Cidade</span><span>${estSel ? (estSel.cidade || "___________________________") : "___________________________"}</span></div>
-              <div class="row"><span>Telefone</span><span>${estSel ? (estSel.telefone || "___________________________") : "___________________________"}</span></div>
-              <div class="row"><span>E-mail</span><span>${estSel ? (estSel.owner || "___________________________") : "___________________________"}</span></div>
-
-              <h2>2. Plano Contratado</h2>
-              <div class="destaque">
-                <div class="destaque-titulo">Plano ${nomePlano} — R$ ${valorMensal}/mês</div>
-                ${itensPlano.map(i => `<div class="item">${i}</div>`).join("")}
-              </div>
-              <div class="row"><span>Taxa de implementação (setup)</span><span>R$ ${contrato.setup} — pagamento único no ato</span></div>
-              <div class="row"><span>Primeiro mês</span><span>R$ ${valorMensal} — pago no ato da contratação</span></div>
-              <div class="row"><span>Vencimento mensal</span><span>Todo dia 5 de cada mês — R$ ${valorMensal}</span></div>
-              <div class="row" style="border-top:2px solid #e63946;margin-top:6px;padding-top:10px;"><span style="font-weight:900;">Total pago no ato</span><span style="color:#e63946;font-size:15px;font-weight:900;">R$ ${contrato.setup} + R$ ${valorMensal}</span></div>
-              <div class="row"><span>Data de início</span><span>${hoje}</span></div>
-
-              <h2>3. Condições do Serviço</h2>
-              <p class="clausula"><strong>3.1 Pagamento:</strong> No ato da contratação, o contratante realiza o pagamento da taxa de implementação (setup) e do primeiro mês do plano. A partir do mês seguinte, a mensalidade vence todo dia 5 de cada mês. O sistema segue o princípio <strong>pagou, usou</strong> — o acesso é liberado somente após a confirmação do pagamento.</p>
-              <p class="clausula"><strong>3.2 Cancelamento:</strong> O contratante pode solicitar o cancelamento a qualquer momento, com aviso prévio de ${contrato.aviso} dias. Não há multa ou fidelidade mínima.</p>
-              <p class="clausula"><strong>3.3 Suspensão:</strong> Em caso de inadimplência, o acesso ao sistema poderá ser suspenso até a regularização do pagamento.</p>
-              <p class="clausula"><strong>3.4 Entregáveis:</strong> O prestador irá configurar o sistema, gerar o QR Code personalizado e entregar as instruções de uso em até 24 horas após o pagamento do setup.</p>
-              <p class="clausula"><strong>3.5 Dúvidas:</strong> Em caso de dúvidas sobre o sistema, o contratante pode entrar em contato pelo WhatsApp (41) 99675-6776.</p>
-              <p class="clausula"><strong>3.6 Dados:</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p>
-
-              <h2>4. Assinaturas</h2>
-              <p style="font-size:12px;color:#888;margin-bottom:20px;">Matinhos — PR, ${hoje}</p>
-              <div class="assinatura-area">
-                <div class="assinatura-box">
-                  <div class="assinatura-linha"></div>
-                  <div class="assinatura-nome">Hudson Nagano</div>
-                  <div class="assinatura-cargo">Prestador — NotaCheia</div>
-                </div>
-                <div class="assinatura-box">
-                  <div class="assinatura-linha"></div>
-                  <div class="assinatura-nome">${estSel ? (estSel.responsavel || "Contratante") : "Contratante"}</div>
-                  <div class="assinatura-cargo">${estSel ? estSel.name : "Estabelecimento"}</div>
-                </div>
-              </div>
-
-              <div class="rodape">NotaCheia ⭐ · notacheia.com.br · (41) 99675-6776 · notificacoes@notacheia.com.br</div>
-            </body></html>`);
-            win.document.close();
-            setTimeout(() => win.print(), 500);
+            win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contrato NotaCheia</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Arial',sans-serif;color:#111;background:#fff;padding:40px;max-width:800px;margin:0 auto;font-size:13px;line-height:1.6}.header{text-align:center;border-bottom:3px solid #e63946;padding-bottom:20px;margin-bottom:28px}.logo-text{font-size:28px;font-weight:900;color:#e63946;letter-spacing:2px}.logo-sub{font-size:12px;color:#888;margin-top:4px}h2{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#e63946;margin:24px 0 10px;border-bottom:1px solid #eee;padding-bottom:6px}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row span:first-child{color:#555;font-weight:600}.row span:last-child{font-weight:700}.destaque{background:#fff5f5;border:1.5px solid #e63946;border-radius:10px;padding:16px;margin:16px 0}.destaque-titulo{font-weight:900;color:#e63946;font-size:14px;margin-bottom:8px}.item{padding:5px 0;font-size:13px}.item::before{content:"✓ ";color:#e63946;font-weight:900}.clausula{margin-bottom:14px;font-size:13px;line-height:1.7}.assinatura-area{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px}.assinatura-box{text-align:center}.assinatura-linha{border-bottom:1.5px solid #111;margin-bottom:8px;height:50px}.assinatura-nome{font-size:12px;font-weight:700}.assinatura-cargo{font-size:11px;color:#888}.rodape{text-align:center;margin-top:36px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:14px}@media print{body{padding:20px}@page{margin:1.5cm}}</style></head><body><div class="header"><div class="logo-text">NotaCheia ⭐</div><div class="logo-sub">Sistema de Feedback e Fidelização · notacheia.com.br</div></div><h2>Contrato de Prestação de Serviços</h2><p class="clausula">Por meio deste instrumento, as partes abaixo identificadas celebram o presente Contrato de Prestação de Serviços de plataforma digital de coleta de feedbacks e fidelização de clientes.</p><h2>1. Identificação das Partes</h2><div class="row"><span>Prestador de serviços</span><span>Hudson Nagano — NotaCheia</span></div><div class="row"><span>WhatsApp</span><span>(41) 99675-6776</span></div><div class="row"><span>Site</span><span>notacheia.com.br</span></div><div class="row"><span>Contratante</span><span>${estSel ? estSel.name : "___________________________"}</span></div><div class="row"><span>Responsável</span><span>${estSel ? (estSel.responsavel || "___________________________") : "___________________________"}</span></div><div class="row"><span>Ramo</span><span>${estSel ? (estSel.ramo || "___________________________") : "___________________________"}</span></div><div class="row"><span>Cidade</span><span>${estSel ? (estSel.cidade || "___________________________") : "___________________________"}</span></div><div class="row"><span>Telefone</span><span>${estSel ? (estSel.telefone || "___________________________") : "___________________________"}</span></div><div class="row"><span>E-mail</span><span>${estSel ? (estSel.owner || "___________________________") : "___________________________"}</span></div><h2>2. Plano Contratado</h2><div class="destaque"><div class="destaque-titulo">Plano ${nomePlano} — R$ ${valorMensal}/mês</div>${itensPlano.map(i => `<div class="item">${i}</div>`).join("")}</div><div class="row"><span>Taxa de implementação (setup)</span><span>R$ ${contrato.setup} — pagamento único no ato</span></div><div class="row"><span>Primeiro mês</span><span>R$ ${valorMensal} — pago no ato da contratação</span></div><div class="row"><span>Vencimento mensal</span><span>Todo dia 5 de cada mês — R$ ${valorMensal}</span></div><div class="row" style="border-top:2px solid #e63946;margin-top:6px;padding-top:10px;"><span style="font-weight:900;">Total pago no ato</span><span style="color:#e63946;font-size:15px;font-weight:900;">R$ ${contrato.setup} + R$ ${valorMensal}</span></div><div class="row"><span>Data de início</span><span>${hoje}</span></div><h2>3. Condições do Serviço</h2><p class="clausula"><strong>3.1 Pagamento:</strong> No ato da contratação, o contratante realiza o pagamento da taxa de implementação (setup) e do primeiro mês do plano. A partir do mês seguinte, a mensalidade vence todo dia 5 de cada mês.</p><p class="clausula"><strong>3.2 Cancelamento:</strong> O contratante pode solicitar o cancelamento a qualquer momento, com aviso prévio de ${contrato.aviso} dias. Não há multa ou fidelidade mínima.</p><p class="clausula"><strong>3.3 Suspensão:</strong> Em caso de inadimplência, o acesso ao sistema poderá ser suspenso até a regularização do pagamento.</p><p class="clausula"><strong>3.4 Entregáveis:</strong> O prestador irá configurar o sistema, gerar o QR Code personalizado e entregar as instruções de uso em até 24 horas após o pagamento do setup.</p><p class="clausula"><strong>3.5 Dados:</strong> Os dados coletados pelos feedbacks são de propriedade do contratante e não serão compartilhados com terceiros.</p><h2>4. Assinaturas</h2><p style="font-size:12px;color:#888;margin-bottom:20px;">Matinhos — PR, ${hoje}</p><div class="assinatura-area"><div class="assinatura-box"><div class="assinatura-linha"></div><div class="assinatura-nome">Hudson Nagano</div><div class="assinatura-cargo">Prestador — NotaCheia</div></div><div class="assinatura-box"><div class="assinatura-linha"></div><div class="assinatura-nome">${estSel ? (estSel.responsavel || "Contratante") : "Contratante"}</div><div class="assinatura-cargo">${estSel ? estSel.name : "Estabelecimento"}</div></div></div><div class="rodape">NotaCheia ⭐ · notacheia.com.br · (41) 99675-6776</div></body></html>`);
+            win.document.close(); setTimeout(() => win.print(), 500);
           };
-
           return (<>
             <div className="main-title">📄 Gerar Contrato</div>
-
             <div className="setup-box" style={{ maxWidth: 500 }}>
               <div className="setup-box-title">Dados do contrato</div>
-
               <label className="lbl">Estabelecimento</label>
               <select className="field" value={contrato.estId} onChange={e => setContrato(s => ({ ...s, estId: e.target.value }))}>
-                <option value="">— Selecione o estabelecimento —</option>
-                {establishments.filter(e => e.id !== "est_demo").map(e => (
-                  <option key={e.id} value={e.id}>{e.emoji} {e.name} — {e.responsavel || e.owner}</option>
-                ))}
+                <option value="">— Selecione —</option>
+                {establishments.filter(e => e.id !== "est_demo").map(e => (<option key={e.id} value={e.id}>{e.emoji} {e.name} — {e.responsavel || e.owner}</option>))}
               </select>
-
               <label className="lbl">Plano</label>
               <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
-                {[["R$ 99/mês","Basic — R$ 99,90/mês"],["R$ 129/mês","Pro — R$ 129,90/mês"]].map(([v,l]) => (
-                  <button key={v} onClick={() => setContrato(s => ({ ...s, plano: v }))}
-                    style={{ padding: "9px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.plano === v ? "var(--ac)" : "var(--border)"}`, background: contrato.plano === v ? "var(--ac)22" : "var(--d3)", color: contrato.plano === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>
-                ))}
+                {[["R$ 99/mês","Basic — R$ 99,90/mês"],["R$ 129/mês","Pro — R$ 129,90/mês"]].map(([v,l]) => (<button key={v} onClick={() => setContrato(s => ({ ...s, plano: v }))} style={{ padding: "9px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.plano === v ? "var(--ac)" : "var(--border)"}`, background: contrato.plano === v ? "var(--ac)22" : "var(--d3)", color: contrato.plano === v ? "var(--text)" : "var(--muted2)" }}>{l}</button>))}
               </div>
-
               <label className="lbl">Taxa de setup (R$)</label>
               <input className="field" value={contrato.setup} onChange={e => setContrato(s => ({ ...s, setup: e.target.value }))} placeholder="200,00" />
-
               <label className="lbl">Aviso prévio para cancelamento (dias)</label>
               <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                {["7","15","30"].map(d => (
-                  <button key={d} onClick={() => setContrato(s => ({ ...s, aviso: d }))}
-                    style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.aviso === d ? "var(--ac)" : "var(--border)"}`, background: contrato.aviso === d ? "var(--ac)22" : "var(--d3)", color: contrato.aviso === d ? "var(--text)" : "var(--muted2)" }}>{d} dias</button>
-                ))}
+                {["7","15","30"].map(d => (<button key={d} onClick={() => setContrato(s => ({ ...s, aviso: d }))} style={{ padding: "8px 16px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${contrato.aviso === d ? "var(--ac)" : "var(--border)"}`, background: contrato.aviso === d ? "var(--ac)22" : "var(--d3)", color: contrato.aviso === d ? "var(--text)" : "var(--muted2)" }}>{d} dias</button>))}
               </div>
-
               <label className="lbl">Data do contrato</label>
               <input className="field" value={contrato.dataContrato} onChange={e => setContrato(s => ({ ...s, dataContrato: e.target.value }))} />
             </div>
-
-            {estSel && (
-              <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", marginBottom: 14, fontSize: 13 }}>
-                <div style={{ fontWeight: 800, marginBottom: 6 }}>{estSel.emoji} {estSel.name}</div>
-                <div style={{ color: "var(--muted2)", fontSize: 12, lineHeight: 1.8 }}>
-                  👤 {estSel.responsavel || "—"} · 📍 {estSel.cidade || "—"} · 🏷️ {estSel.ramo || "—"}<br/>
-                  📧 {estSel.owner} · 📞 {estSel.telefone || "—"}
-                </div>
-              </div>
-            )}
-
-            <button className="btn btn-red" style={{ maxWidth: 280 }} onClick={imprimirContrato} disabled={!contrato.estId}>
-              🖨️ Gerar e imprimir contrato
-            </button>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 10, lineHeight: 1.6 }}>
-              Abrirá uma nova aba com o contrato formatado para impressão. Use <strong style={{ color: "var(--text)" }}>Ctrl+P</strong> para imprimir ou salvar como PDF.
-            </div>
+            {estSel && <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", marginBottom: 14, fontSize: 13 }}><div style={{ fontWeight: 800, marginBottom: 6 }}>{estSel.emoji} {estSel.name}</div><div style={{ color: "var(--muted2)", fontSize: 12, lineHeight: 1.8 }}>👤 {estSel.responsavel || "—"} · 📍 {estSel.cidade || "—"} · 🏷️ {estSel.ramo || "—"}<br/>📧 {estSel.owner} · 📞 {estSel.telefone || "—"}</div></div>}
+            <button className="btn btn-red" style={{ maxWidth: 280 }} onClick={imprimirContrato} disabled={!contrato.estId}>🖨️ Gerar e imprimir contrato</button>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 10, lineHeight: 1.6 }}>Abrirá uma nova aba. Use <strong style={{ color: "var(--text)" }}>Ctrl+P</strong> para imprimir ou salvar como PDF.</div>
           </>);
         })()}
 
@@ -2447,16 +1904,11 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <div className="main-title">🔑 Trocar Senha Master</div>
           <div className="setup-box" style={{ maxWidth: 420 }}>
             <div className="setup-box-title">Alterar senha de acesso Master</div>
-            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>
-              ✅ A senha fica salva no banco de dados e <strong style={{ color: "var(--green)" }}>persiste mesmo após recarregar a página</strong>.
-            </div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 12, color: "var(--muted2)", background: "var(--d2)", border: "1px solid var(--border)", lineHeight: 1.6 }}>✅ A senha fica salva no banco de dados e <strong style={{ color: "var(--green)" }}>persiste mesmo após recarregar a página</strong>.</div>
             {masterPassMsg && <div style={{ padding: "10px 14px", borderRadius: 10, marginBottom: 14, fontSize: 13, fontWeight: 700, background: masterPassMsg.includes("✅") ? "#0a2a0a" : "#1a0505", color: masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)", border: `1px solid ${masterPassMsg.includes("✅") ? "var(--green)" : "var(--red)"}33` }}>{masterPassMsg}</div>}
-            <label className="lbl">Senha atual</label>
-            <input className="field" type="password" value={masterPass.atual} onChange={e => setMasterPass(s => ({ ...s, atual: e.target.value }))} />
-            <label className="lbl">Nova senha</label>
-            <input className="field" type="password" placeholder="Mínimo 6 caracteres" value={masterPass.nova} onChange={e => setMasterPass(s => ({ ...s, nova: e.target.value }))} />
-            <label className="lbl">Confirmar nova senha</label>
-            <input className="field" type="password" value={masterPass.confirma} onChange={e => setMasterPass(s => ({ ...s, confirma: e.target.value }))} />
+            <label className="lbl">Senha atual</label><input className="field" type="password" value={masterPass.atual} onChange={e => setMasterPass(s => ({ ...s, atual: e.target.value }))} />
+            <label className="lbl">Nova senha</label><input className="field" type="password" placeholder="Mínimo 6 caracteres" value={masterPass.nova} onChange={e => setMasterPass(s => ({ ...s, nova: e.target.value }))} />
+            <label className="lbl">Confirmar nova senha</label><input className="field" type="password" value={masterPass.confirma} onChange={e => setMasterPass(s => ({ ...s, confirma: e.target.value }))} />
             <button className="btn btn-red" style={{ maxWidth: 220 }} onClick={trocarSenhaMaster}>Alterar senha</button>
           </div>
         </>)}
@@ -2468,40 +1920,29 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
       {/* Modal novo estabelecimento */}
       {showAdd && (<div className="modal-bg" onClick={() => setShowAdd(false)}><div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-title">➕ Novo Estabelecimento</div>
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>📋 Dados do Estabelecimento</div>
         <label className="lbl">Nome do estabelecimento</label>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}><div style={{ width: 48, height: 48, background: "var(--d2)", border: "1.5px solid var(--border)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{newEst.emoji}</div><input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="Ex: Pizzaria Bella" value={newEst.name} onChange={e => setNewEst(s => ({ ...s, name: e.target.value, slug: s.slug || makeSlug(e.target.value) }))} /></div>
         <label className="lbl">🔗 Link exclusivo</label>
-        <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
+        <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/</span>
-          <input className="field" style={{ marginBottom: 0, flex: 1 }} placeholder="meu-estabelecimento" value={newEst.slug || makeSlug(newEst.name)} onChange={e => setNewEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
+          <input className="field" style={{ marginBottom: 0, flex: 1 }} value={newEst.slug || makeSlug(newEst.name)} onChange={e => setNewEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
         </div>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12 }}>Gerado automaticamente. Pode editar se quiser.</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
-          <div><label className="lbl">Ramo</label>
-            <select className="field" style={{ marginBottom: 0 }} value={newEst.ramo} onChange={e => setNewEst(s => ({ ...s, ramo: e.target.value }))}>
-              {RAMOS.map(r => <option key={r}>{r}</option>)}
-            </select>
-          </div>
+          <div><label className="lbl">Ramo</label><select className="field" style={{ marginBottom: 0 }} value={newEst.ramo} onChange={e => setNewEst(s => ({ ...s, ramo: e.target.value }))}>{RAMOS.map(r => <option key={r}>{r}</option>)}</select></div>
           <div><label className="lbl">Cidade</label><input className="field" style={{ marginBottom: 0 }} placeholder="Ex: Matinhos" value={newEst.cidade} onChange={e => setNewEst(s => ({ ...s, cidade: e.target.value }))} /></div>
         </div>
-
-        <label className="lbl">Emoji do estabelecimento</label>
+        <label className="lbl">Emoji</label>
         <EmojiPicker value={newEst.emoji} ramoAtual={newEst.ramo} onChange={emoji => setNewEst(s => ({ ...s, emoji }))} />
         <label className="lbl">Cor</label><div className="swatch-row" style={{ marginBottom: 14 }}>{COLORS.map(c => <div key={c} className={`swatch ${newEst.color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setNewEst(s => ({ ...s, color: c }))} />)}</div>
         <div className="div" />
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>👤 Dados do Responsável</div>
-        <label className="lbl">Nome do responsável</label>
-        <input className="field" placeholder="Nome completo" value={newEst.responsavel} onChange={e => setNewEst(s => ({ ...s, responsavel: e.target.value }))} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 0 }}>
-          <div><label className="lbl">Telefone</label><input className="field" style={{ marginBottom: 0 }} placeholder="(41) 99999-0000" value={newEst.telefone} onChange={e => setNewEst(s => ({ ...s, telefone: e.target.value }))} /></div>
-          <div><label className="lbl">WhatsApp</label><input className="field" style={{ marginBottom: 0 }} placeholder="5541999990000" value={newEst.whatsapp} onChange={e => setNewEst(s => ({ ...s, whatsapp: e.target.value }))} /></div>
+        <label className="lbl">Nome do responsável</label><input className="field" placeholder="Nome completo" value={newEst.responsavel} onChange={e => setNewEst(s => ({ ...s, responsavel: e.target.value }))} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+          <div><label className="lbl">Telefone</label><input className="field" style={{ marginBottom: 0 }} value={newEst.telefone} onChange={e => setNewEst(s => ({ ...s, telefone: e.target.value }))} /></div>
+          <div><label className="lbl">WhatsApp</label><input className="field" style={{ marginBottom: 0 }} value={newEst.whatsapp} onChange={e => setNewEst(s => ({ ...s, whatsapp: e.target.value }))} /></div>
         </div>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12, marginTop: 4 }}>WhatsApp: código do país + DDD + número, sem espaços.</div>
         <label className="lbl">E-mail de acesso</label><input className="field" placeholder="dono@email.com" value={newEst.owner} onChange={e => setNewEst(s => ({ ...s, owner: e.target.value }))} />
         <label className="lbl">Senha</label><input className="field" placeholder="Senha de acesso" value={newEst.pass} onChange={e => setNewEst(s => ({ ...s, pass: e.target.value }))} />
         <div className="div" />
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>💳 Plano & Configuração</div>
         <label className="lbl">Plano</label>
         <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>{PLANOS.map(p => (<button key={p} onClick={() => setNewEst(s => ({ ...s, plano: p }))} style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${newEst.plano === p ? "var(--ac)" : "var(--border)"}`, background: newEst.plano === p ? "var(--ac)22" : "var(--d3)", color: newEst.plano === p ? "var(--text)" : "var(--muted2)" }}>{p}</button>))}</div>
         <label className="lbl">Google Reviews (opcional)</label><input className="field" placeholder="https://g.page/r/..." value={newEst.googleUrl} onChange={e => setNewEst(s => ({ ...s, googleUrl: e.target.value }))} />
@@ -2511,10 +1952,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
       {/* Modal editar */}
       {editEst && (<div className="modal-bg" onClick={() => setEditEst(null)}><div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-title">✏️ Editar — {editEst.name}</div>
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>📋 Dados do Estabelecimento</div>
-        <label className="lbl">Nome</label>
-        <input className="field" value={editEst.name} onChange={e => setEditEst(s => ({ ...s, name: e.target.value }))} />
-        <label className="lbl">🔗 Link exclusivo</label>
+        <label className="lbl">Nome</label><input className="field" value={editEst.name} onChange={e => setEditEst(s => ({ ...s, name: e.target.value }))} />
+        <label className="lbl">🔗 Slug</label>
         <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>notacheia.com.br/</span>
           <input className="field" style={{ marginBottom: 0, flex: 1 }} value={editEst.slug || makeSlug(editEst.name)} onChange={e => setEditEst(s => ({ ...s, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} />
@@ -2523,25 +1962,17 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
           <div><label className="lbl">Ramo</label><select className="field" style={{ marginBottom: 0 }} value={editEst.ramo || ""} onChange={e => setEditEst(s => ({ ...s, ramo: e.target.value }))}>{RAMOS.map(r => <option key={r}>{r}</option>)}</select></div>
           <div><label className="lbl">Cidade</label><input className="field" style={{ marginBottom: 0 }} value={editEst.cidade || ""} onChange={e => setEditEst(s => ({ ...s, cidade: e.target.value }))} /></div>
         </div>
-        <label className="lbl">Google Reviews</label>
-        <input className="field" placeholder="https://g.page/r/..." value={editEst.googleUrl || ""} onChange={e => setEditEst(s => ({ ...s, googleUrl: e.target.value }))} />
+        <label className="lbl">Google Reviews</label><input className="field" placeholder="https://g.page/r/..." value={editEst.googleUrl || ""} onChange={e => setEditEst(s => ({ ...s, googleUrl: e.target.value }))} />
         <div className="div" />
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>👤 Dados do Responsável</div>
-        <label className="lbl">Nome do responsável</label>
-        <input className="field" value={editEst.responsavel || ""} onChange={e => setEditEst(s => ({ ...s, responsavel: e.target.value }))} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 0 }}>
+        <label className="lbl">Nome do responsável</label><input className="field" value={editEst.responsavel || ""} onChange={e => setEditEst(s => ({ ...s, responsavel: e.target.value }))} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
           <div><label className="lbl">Telefone</label><input className="field" style={{ marginBottom: 0 }} value={editEst.telefone || ""} onChange={e => setEditEst(s => ({ ...s, telefone: e.target.value }))} /></div>
           <div><label className="lbl">WhatsApp</label><input className="field" style={{ marginBottom: 0 }} value={editEst.whatsapp || ""} onChange={e => setEditEst(s => ({ ...s, whatsapp: e.target.value }))} /></div>
         </div>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 12, marginTop: 4 }}>WhatsApp: código país + DDD + número sem espaços.</div>
-        <label className="lbl">E-mail de acesso</label>
-        <input className="field" value={editEst.owner} onChange={e => setEditEst(s => ({ ...s, owner: e.target.value }))} />
-        <label className="lbl">Senha</label>
-        <input className="field" type="password" placeholder="Nova senha (deixe em branco para manter)" value={editEst.pass} onChange={e => setEditEst(s => ({ ...s, pass: e.target.value }))} />
+        <label className="lbl">E-mail de acesso</label><input className="field" value={editEst.owner} onChange={e => setEditEst(s => ({ ...s, owner: e.target.value }))} />
+        <label className="lbl">Senha</label><input className="field" type="password" placeholder="Nova senha" value={editEst.pass} onChange={e => setEditEst(s => ({ ...s, pass: e.target.value }))} />
         <div className="div" />
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>💳 Plano</div>
         <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>{PLANOS.map(p => (<button key={p} onClick={() => setEditEst(s => ({ ...s, plano: p }))} style={{ padding: "8px 14px", borderRadius: 10, fontFamily: "var(--ff-body)", fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1.5px solid ${editEst.plano === p ? "var(--ac)" : "var(--border)"}`, background: editEst.plano === p ? "var(--ac)22" : "var(--d3)", color: editEst.plano === p ? "var(--text)" : "var(--muted2)" }}>{p}</button>))}</div>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4 }}>Cliente desde: <strong style={{ color: "var(--text)" }}>{editEst.desde || "—"}</strong></div>
         <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
           <button className="btn btn-red" onClick={saveEditEst} disabled={editSaving}>{editSaving ? "Salvando..." : editSaved ? "✅ Salvo!" : "Salvar alterações"}</button>
           <button className="btn btn-ghost" onClick={() => setEditEst(null)}>Fechar</button>
@@ -2551,37 +1982,20 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   );
 }
 
-
-
-// ============================================================
-// VALIDAR CUPOM — página acessada pelo dono ao escanear o QR
-// ============================================================
 function ValidarCupom({ ests }) {
   const path = window.location.pathname;
   const m = path.match(/\/validar\/([^/]+)\/([^/]+)/);
-  const estId = m?.[1];
-  const codigo = m?.[2];
+  const estId = m?.[1]; const codigo = m?.[2];
   const est = ests.find(e => e.id === estId);
   const [status, setStatus] = useState("loading");
   const [cupom, setCupom] = useState(null);
   const [msg, setMsg] = useState("");
-
   useEffect(() => {
     if (!estId || !codigo) { setStatus("erro"); setMsg("Link inválido."); return; }
-    validarCupom(codigo, estId).then(res => {
-      if (res.valido) { setCupom(res.cupom); setStatus("valido"); }
-      else { setMsg(res.motivo); setStatus("invalido"); }
-    });
+    validarCupom(codigo, estId).then(res => { if (res.valido) { setCupom(res.cupom); setStatus("valido"); } else { setMsg(res.motivo); setStatus("invalido"); } });
   }, []);
-
-  const confirmar = async () => {
-    setStatus("confirmando");
-    await marcarCupomUsado(codigo, estId);
-    setStatus("entregue");
-  };
-
+  const confirmar = async () => { setStatus("confirmando"); await marcarCupomUsado(codigo, estId); setStatus("entregue"); };
   const ac = est?.color || "#e63946";
-
   return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 0%, ${ac}20, transparent 60%), var(--dark)` }}>
       <div className="card" style={{ textAlign: "center" }}>
@@ -2589,58 +2003,29 @@ function ValidarCupom({ ests }) {
         <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 4 }}>{est?.name || "NotaCheia"}</div>
         <div style={{ fontSize: 11, color: "var(--muted)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 20 }}>Validação de Cupom</div>
         <div className="div" />
-
         {status === "loading" && <div style={{ color: "var(--muted)", padding: 20 }}>Verificando cupom...</div>}
-
-        {status === "valido" && cupom && (
-          <>
-            <div style={{ fontSize: 52, marginBottom: 8 }}>✅</div>
-            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--green)", marginBottom: 6 }}>CUPOM VÁLIDO!</div>
-            <div style={{ background: "var(--d2)", border: "2px dashed var(--green)88", borderRadius: 14, padding: 16, margin: "14px 0" }}>
-              <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Prêmio</div>
-              <div style={{ fontFamily: "var(--ff-head)", fontSize: 24, color: "var(--text)" }}>{cupom.premio}</div>
-              <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 6 }}>👤 {cupom.nome_cliente || "Anônimo"}</div>
-              <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>Código: {cupom.codigo}</div>
-            </div>
-            <button className="btn btn-red" onClick={confirmar} style={{ background: "var(--green)", marginBottom: 8 }}>
-              ✅ Confirmar entrega do brinde
-            </button>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Clique para marcar como entregue e invalidar o cupom.</div>
-          </>
-        )}
-
+        {status === "valido" && cupom && (<>
+          <div style={{ fontSize: 52, marginBottom: 8 }}>✅</div>
+          <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--green)", marginBottom: 6 }}>CUPOM VÁLIDO!</div>
+          <div style={{ background: "var(--d2)", border: "2px dashed var(--green)88", borderRadius: 14, padding: 16, margin: "14px 0" }}>
+            <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 800, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Prêmio</div>
+            <div style={{ fontFamily: "var(--ff-head)", fontSize: 24, color: "var(--text)" }}>{cupom.premio}</div>
+            <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 6 }}>👤 {cupom.nome_cliente || "Anônimo"}</div>
+            <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>Código: {cupom.codigo}</div>
+          </div>
+          <button className="btn btn-red" onClick={confirmar} style={{ background: "var(--green)", marginBottom: 8 }}>✅ Confirmar entrega do brinde</button>
+          <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>Clique para marcar como entregue e invalidar o cupom.</div>
+        </>)}
         {status === "confirmando" && <div style={{ color: "var(--muted)", padding: 20 }}>Registrando...</div>}
-
-        {status === "entregue" && (
-          <>
-            <div style={{ fontSize: 52, marginBottom: 8 }}>🎁</div>
-            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 8 }}>Brinde entregue!</div>
-            <div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7 }}>Cupom marcado como utilizado.<br />Não pode ser usado novamente.</div>
-          </>
-        )}
-
-        {status === "invalido" && (
-          <>
-            <div style={{ fontSize: 52, marginBottom: 8 }}>❌</div>
-            <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--red)", marginBottom: 8 }}>Cupom inválido</div>
-            <div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div>
-          </>
-        )}
-
-        {status === "erro" && (
-          <>
-            <div style={{ fontSize: 52, marginBottom: 8 }}>⚠️</div>
-            <div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div>
-          </>
-        )}
-
+        {status === "entregue" && (<><div style={{ fontSize: 52, marginBottom: 8 }}>🎁</div><div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 8 }}>Brinde entregue!</div><div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7 }}>Cupom marcado como utilizado.<br />Não pode ser usado novamente.</div></>)}
+        {status === "invalido" && (<><div style={{ fontSize: 52, marginBottom: 8 }}>❌</div><div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--red)", marginBottom: 8 }}>Cupom inválido</div><div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div></>)}
+        {status === "erro" && (<><div style={{ fontSize: 52, marginBottom: 8 }}>⚠️</div><div style={{ fontSize: 14, color: "var(--muted2)" }}>{msg}</div></>)}
         <div style={{ fontSize: 11, color: "#444", marginTop: 20 }}>NotaCheia ⭐ · Validação de cupom</div>
       </div>
     </div>
   );
 }
 
-// Tela de escolha: Demo do painel OU login real
 function OwnerGateway({ onDemo, onLogin }) {
   return (
     <div className="page page-center fade-up" style={{ background: "radial-gradient(ellipse at 50% 0%, #e6394615, transparent 50%), var(--dark)" }}>
@@ -2684,7 +2069,7 @@ function LoginScreen({ title, hint, onLogin, prefillEmail = "", prefillPass = ""
           <button onClick={() => setShow(s => !s)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#555" }}>{show ? "🙈" : "👁️"}</button>
         </div>
         <button className="btn btn-red" onClick={handle}>Entrar →</button>
-        <div style={{ textAlign: "center", fontSize: 11, color: "var(--muted)", marginTop: 14 }}>{hint}</div>
+        {hint && <div style={{ textAlign: "center", fontSize: 11, color: "var(--muted)", marginTop: 14 }}>{hint}</div>}
       </div>
     </div>
   );
