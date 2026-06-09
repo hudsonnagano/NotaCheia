@@ -1167,6 +1167,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const initialStep = temCardapio ? "cardapio" : "welcome";
   const [step, setStep] = useState(initialStep);
   const [nome, setNome] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
