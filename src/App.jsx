@@ -1219,8 +1219,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-tag">Sua opinião é muito importante para nós!<br />Responda e ganhe um brinde surpresa 🎁</div>
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
-        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: `1.5px solid ${lgpd ? "var(--ac)66" : "var(--border)"}`, borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer", transition: "border 0.2s" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
           </div>
@@ -1233,8 +1232,9 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
             ← Ver cardápio
           </button>
         )}
-        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}>
-          {lgpd || masterMode ? "Começar pesquisa →" : "Aceite os termos para continuar"}
+        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}
+          style={{ opacity: lgpd || masterMode ? 1 : 0.4, cursor: lgpd || masterMode ? "pointer" : "not-allowed" }}>
+          {lgpd || masterMode ? "Começar pesquisa →" : "✋ Aceite os termos para continuar"}
         </button>
       </div>
     </div>
@@ -2805,17 +2805,21 @@ export default function App() {
     <>
       <style>{css}</style>
       <div>
-        <div className="top-bar">
-          {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
-          {mode === "client" && (<>
+        {mode !== "client" && mode !== "notFound" && (
+          <div className="top-bar">
+            <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>
+          </div>
+        )}
+        {mode === "client" && (
+          <div className="top-bar" style={{ justifyContent: "flex-start" }}>
             <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
               value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
               {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
             <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
             <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
-          </>)}
-        </div>
+          </div>
+        )}
         {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
         {mode === "ownerGateway" && <OwnerGateway onDemo={() => { const demo = ests.find(e => e.id === "est_demo") || SEED.find(e => e.id === "est_demo"); setLoggedEst(demo); setMode("ownerDash"); }} onLogin={() => setMode("ownerLogin")} />}
         {mode === "ownerLogin" && <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email, pass) => { const found = ests.find(e => e.owner === email && e.pass === pass); if (found) { setLoggedEst(found); setMode("ownerDash"); return true; } return false; }} />}
