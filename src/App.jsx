@@ -1150,6 +1150,26 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
       </div>
+      {/* Bottom Nav Mobile */}
+      <div className="bottom-nav">
+        <div className="bottom-nav-inner">
+          {[
+            { id: "overview", icon: "📊", lbl: "Início" },
+            { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
+            { id: "brindes", icon: "🎁", lbl: "Brindes" },
+            { id: "qrcode", icon: "📱", lbl: "QR Code" },
+          ].map(n => (
+            <button key={n.id} className={`bottom-tab ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
+              <span className="bottom-tab-icon">{n.icon}</span>
+              <span>{n.lbl}</span>
+            </button>
+          ))}
+          <button className={`bottom-tab ${["insights","clientes","relatorio","cardapio","setup","senha"].includes(tab) ? "on" : ""}`} onClick={() => setOpen(true)}>
+            <span className="bottom-tab-icon">☰</span>
+            <span>Mais</span>
+          </button>
+        </div>
+      </div>
     </>
   );
 }
