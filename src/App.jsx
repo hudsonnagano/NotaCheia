@@ -1275,30 +1275,9 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
           <div className="confirm-sub">Sua resposta foi registrada!<br />Agora gire a roleta e descubra seu prêmio 🎁</div>
           <div className="div" />
-          <Wheel prizes={est.prizes} onResult={async (p) => {
-            setPrize(p); setSaving(true);
-            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
-            if (!masterMode) await saveCupom(est.id, coupon, p.label, savedNome);
-            markFeedbackDone(est.id, masterMode);
-            setSaving(false);
-            if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
-              const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
-              const comentario = savedAnswers?.q_sug || "";
-              const cliente = savedNome && savedNome !== "Anônimo" ? savedNome : "Anônimo";
-              try {
-                await fetch("https://api.resend.com/emails", {
-                  method: "POST",
-                  headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    from: "NotaCheia <notificacoes@notacheia.com.br>",
-                    to: [est.owner],
-                    subject: `⚠️ Avaliação negativa no ${est.name}`,
-                    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${cliente}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
-                  }),
-                });
-              } catch (e) { console.log("Erro ao enviar email:", e); }
-            }
-            setStep("prize");
+          <Wheel prizes={est.prizes} onResult={(p) => {
+            setPrize(p);
+            setStep("resgate");
           }} />
           {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
         </div>
@@ -1306,7 +1285,65 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
-  if (step === "prize") return (
+  if (step === "resgate") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
+      <div className="card" style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 52, marginBottom: 6 }}>{prize.emoji}</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 4 }}>Você ganhou!</div>
+        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 4 }}>{prize.label}</div>
+        <div style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 20, lineHeight: 1.6 }}>
+          Para resgatar seu prêmio, preencha os dados abaixo 👇
+        </div>
+        <div style={{ textAlign: "left" }}>
+          <input
+            className="field"
+            placeholder="Seu nome (opcional)"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+          />
+          <input
+            className="field"
+            placeholder="WhatsApp (opcional, ex: 41999990000)"
+            value={whatsapp}
+            onChange={e => setWhatsapp(e.target.value)}
+          />
+          <button
+            className="btn btn-red"
+            onClick={async () => {
+              const nomeFinal = nome.trim() || "Anônimo";
+              setSaving(true);
+              await onSubmit({ nome: nomeFinal, answers: savedAnswers, premio: prize.label, whatsapp });
+              if (!masterMode) await saveCupom(est.id, coupon, prize.label, nomeFinal);
+              markFeedbackDone(est.id, masterMode);
+              setSaving(false);
+              if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
+                const npsQ = est.questions.find(q => q.type === "nps");
+                const nps = npsQ && savedAnswers?.[npsQ.id] !== undefined ? savedAnswers[npsQ.id] : "-";
+                const comentario = savedAnswers?.q_sug || "";
+                try {
+                  await fetch("https://api.resend.com/emails", {
+                    method: "POST",
+                    headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      from: "NotaCheia <notificacoes@notacheia.com.br>",
+                      to: [est.owner],
+                      subject: `⚠️ Avaliação negativa no ${est.name}`,
+                      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${nomeFinal}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? \`<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>\` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
+                    }),
+                  });
+                } catch (e) { console.log("Erro ao enviar email:", e); }
+              }
+              setStep("prize");
+            }}
+          >
+            {saving ? "Salvando..." : "🎁 Resgatar meu prêmio!"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+    if (step === "prize") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
       <div className="card prize-wrap">
         <div className="prize-emoji">{prize.emoji}</div>
