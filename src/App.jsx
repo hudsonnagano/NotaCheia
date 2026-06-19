@@ -1493,7 +1493,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
 
 function QRCodeView({ est }) {
   const slug = est.slug || makeSlug(est.name);
-  const url = `https://notacheia.com.br/${slug}`;
+  const url = `https://app.notacheia.com.br/${slug}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=111111&margin=10`;
   return (
     <div>
