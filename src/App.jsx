@@ -1547,7 +1547,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
       <div className="mobile-header">
         <button className="hamburger" onClick={() => setOpen(true)}>☰</button>
         <div style={{ fontFamily: "var(--ff-head)", fontSize: 15 }}>{isMaster ? "👑 Master" : `${est?.emoji} ${est?.name}`}</div>
-        <div style={{ width: 32 }} />
+        <button onClick={onLogout} style={{ background:"none", border:"1px solid var(--border)", borderRadius:8, color:"var(--muted2)", fontSize:11, fontWeight:700, padding:"5px 10px", cursor:"pointer", fontFamily:"var(--ff-body)", whiteSpace:"nowrap" }}>← Sair</button>
       </div>
       <div className={`sidebar-overlay ${open ? "open" : ""}`} onClick={() => setOpen(false)} />
       <div className={`sidebar ${open ? "open" : ""}`}>
