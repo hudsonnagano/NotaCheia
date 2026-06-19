@@ -1631,7 +1631,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-tag">Sua opinião é muito importante para nós!<br />Responda e ganhe um brinde surpresa 🎁</div>
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
-        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
@@ -1694,7 +1693,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
             markFeedbackDone(est.id, masterMode);
             setSaving(false);
             if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
-              const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
+              const npsQ = est.questions.find(q => q.type === "nps");
+              const nps = npsQ && savedAnswers?.[npsQ.id] !== undefined ? savedAnswers[npsQ.id] : "-";
               const comentario = savedAnswers?.q_sug || "";
               const cliente = savedNome && savedNome !== "Anônimo" ? savedNome : "Anônimo";
               try {
@@ -1734,7 +1734,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           </div>
         </div>
         <button className="btn-download" onClick={() => { const txt = `NotaCheia ⭐\n${est.name}\n\nPrêmio: ${prize.label}\nCupom: ${coupon}\nVálido até: ${addDays(7)}\n\nApresente ao atendente para resgatar.`; const blob = new Blob([txt], { type: "text/plain" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `premio-${coupon}.txt`; a.click(); }}>⬇️ Baixar comprovante</button>
-        {est.googleUrl && avgStars >= 4 && (
+        {est.googleUrl && savedAnswers && (() => { const npsQ = est.questions.find(q => q.type === "nps"); const npsVal = npsQ ? savedAnswers[npsQ.id] : undefined; return npsVal >= 9; })() && (
           <button className="btn btn-red" style={{ marginTop: 8 }} onClick={() => setStep("google")}>
             Continuar →
           </button>
