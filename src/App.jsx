@@ -2048,6 +2048,92 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           </div>
           {staffRanking().length > 0 && (<div className="chart-wrap"><div className="chart-title">🏆 Ranking colaboradores</div>{staffRanking().map((s, i) => (<div className="rank-row" key={s.name}><div className="rank-num">{i + 1}</div><div className="rank-name">{s.name}</div><div className="rank-bar"><div className="rank-fill" style={{ width: `${(s.avg / 5) * 100}%` }} /></div><div className="rank-score">{s.avg}</div></div>))}</div>)}
           {howKnew().length > 0 && (<div className="chart-wrap"><div className="chart-title">📍 Como chegaram</div><MiniBarChart data={howKnew().map(([lbl, val]) => ({ lbl: lbl.slice(0, 10), val }))} color="var(--green)" /></div>)}
+
+          {/* ── MÉTRICAS AGREGADAS POR PERGUNTA ── */}
+          {est.feedbacks.length > 0 && (() => {
+            const choiceQs = est.questions.filter(q => q.type === "choice");
+            const textQs = est.questions.filter(q => q.type === "text");
+            const staffQs = est.questions.filter(q => q.type === "staff");
+
+            // Ranking de staff com IDs do banco
+            const staffMetrics = staffQs.map(q => {
+              const map = {};
+              est.feedbacks.forEach(f => {
+                const nome = f.answers?.[q.id];
+                if (!nome) return;
+                if (!map[nome]) map[nome] = { total: 0, count: 0 };
+                const s = starQs.map(sq => f.answers?.[sq.id] || 0).filter(v => v > 0);
+                if (s.length) { map[nome].total += s.reduce((a, b) => a + b, 0) / s.length; map[nome].count++; }
+              });
+              const ranking = Object.entries(map).map(([nome, d]) => ({ nome, avg: d.count ? (d.total / d.count).toFixed(1) : 0 })).sort((a, b) => b.avg - a.avg);
+              return { q, ranking };
+            }).filter(x => x.ranking.length > 0);
+
+            // Métricas de múltipla escolha
+            const choiceMetrics = choiceQs.map(q => {
+              const total = est.feedbacks.filter(f => f.answers?.[q.id]).length;
+              if (total === 0) return null;
+              const counts = {};
+              est.feedbacks.forEach(f => { const v = f.answers?.[q.id]; if (v) counts[v] = (counts[v] || 0) + 1; });
+              const opts = q.options.map(opt => ({ opt, count: counts[opt] || 0, pct: total > 0 ? Math.round(((counts[opt] || 0) / total) * 100) : 0 }));
+              return { q, opts, total };
+            }).filter(Boolean);
+
+            // Últimos comentários de texto
+            const textMetrics = textQs.map(q => {
+              const respostas = est.feedbacks.map(f => ({ texto: f.answers?.[q.id], nome: f.nome, data: f.data })).filter(r => r.texto && r.texto.trim().length > 3).slice(0, 3);
+              return { q, respostas };
+            }).filter(x => x.respostas.length > 0);
+
+            return (<>
+              {/* Staff com IDs do banco */}
+              {staffMetrics.map(({ q, ranking }) => (
+                <div className="chart-wrap" key={q.id}>
+                  <div className="chart-title">👤 {q.label}</div>
+                  {ranking.map((r, i) => (
+                    <div className="rank-row" key={r.nome}>
+                      <div className="rank-num">{i + 1}</div>
+                      <div className="rank-name">{r.nome}</div>
+                      <div className="rank-bar"><div className="rank-fill" style={{ width: `${(r.avg / 5) * 100}%` }} /></div>
+                      <div className="rank-score">{r.avg}</div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+
+              {/* Múltipla escolha */}
+              {choiceMetrics.map(({ q, opts, total }) => (
+                <div className="chart-wrap" key={q.id}>
+                  <div className="chart-title">☑️ {q.label}</div>
+                  <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 10 }}>{total} resposta{total !== 1 ? "s" : ""}</div>
+                  {opts.filter(o => o.count > 0).sort((a, b) => b.count - a.count).map(({ opt, count, pct }) => (
+                    <div key={opt} style={{ marginBottom: 10 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 13 }}>
+                        <span style={{ color: "var(--text)", fontWeight: 600 }}>{opt.replace("Outro:", "")}</span>
+                        <span style={{ color: "var(--ac)", fontWeight: 800 }}>{pct}% <span style={{ color: "var(--muted)", fontWeight: 400 }}>({count})</span></span>
+                      </div>
+                      <div style={{ height: 6, background: "var(--d3)", borderRadius: 3, overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${pct}%`, background: pct >= 70 ? "var(--green)" : pct >= 40 ? "var(--ac)" : "var(--muted)", borderRadius: 3, transition: "width 0.4s ease" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+
+              {/* Comentários de texto */}
+              {textMetrics.map(({ q, respostas }) => (
+                <div className="chart-wrap" key={q.id}>
+                  <div className="chart-title">💬 {q.label}</div>
+                  {respostas.map((r, i) => (
+                    <div key={i} style={{ borderLeft: "3px solid var(--ac)44", padding: "8px 12px", background: "var(--dark)", borderRadius: "0 8px 8px 0", marginBottom: 8, fontSize: 13, fontStyle: "italic", color: "#bbb" }}>
+                      "{r.texto}"
+                      <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 3, fontStyle: "normal" }}>{r.nome || "Anônimo"} · {r.data?.split(" ")?.[0] || ""}</div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </>);
+          })()}
         </>)}
         {tab === "feedbacks" && (<>
           <div className="main-title">💬 Feedbacks</div>
