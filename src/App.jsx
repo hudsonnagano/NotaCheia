@@ -64,6 +64,425 @@ const makeDefaultQuestions = () => [
   { id: "q_sug",   type: "text",   label: "Sugestão ou elogio para nós!",     required: false },
 ];
 
+// ============================================================
+// BANCO DE PERGUNTAS POR NICHO
+// ============================================================
+const PERGUNTAS_POR_NICHO = {
+  "Hamburgueria": [
+    { id:"hb_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"hb_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"hb_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
+    { id:"hb_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"hb_hora",      cat:"Atendimento",        type:"choice", label:"Em qual período foi seu atendimento?",         options:["Almoço","Tarde","Jantar","Madrugada"], defaultActive:false },
+    { id:"hb_burguer",   cat:"Produto",            type:"stars",  label:"Como avalia a qualidade do hambúrguer?",                                                  defaultActive:true  },
+    { id:"hb_porcao",    cat:"Produto",            type:"stars",  label:"Como avalia o tamanho da porção?",                                                        defaultActive:true  },
+    { id:"hb_bebida",    cat:"Produto",            type:"stars",  label:"Como avalia as bebidas?",                                                                 defaultActive:false },
+    { id:"hb_batata",    cat:"Produto",            type:"stars",  label:"Como avalia as batatas fritas?",                                                          defaultActive:true  },
+    { id:"hb_apres",     cat:"Produto",            type:"stars",  label:"Como avalia a apresentação do prato?",                                                    defaultActive:false },
+    { id:"hb_temp",      cat:"Produto",            type:"choice", label:"Seu pedido chegou na temperatura certa?",      options:["Sim, perfeito!","Estava frio","Estava quente demais"], defaultActive:false },
+    { id:"hb_espera",    cat:"Experiência",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"hb_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente / decoração?",                                                     defaultActive:true  },
+    { id:"hb_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza do local?",                                                         defaultActive:true  },
+    { id:"hb_mesa",      cat:"Experiência",        type:"choice", label:"Quantas pessoas vieram com você?",            options:["Vim sozinho","2 pessoas","3 a 6 pessoas","Mais de 6"], defaultActive:false },
+    { id:"hb_musica",    cat:"Experiência",        type:"stars",  label:"Como avalia o som ambiente / música?",                                                    defaultActive:false },
+    { id:"hb_estac",     cat:"Experiência",        type:"choice", label:"Como foi o estacionamento?",                  options:["Ótimo","Regular","Difícil de estacionar","Não usei"], defaultActive:false },
+    { id:"hb_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"hb_como",      cat:"Preço & Fidelização",type:"choice", label:"Como conheceu a gente?",                      options:["Instagram","Indicação","Google Maps","Passando na rua","TikTok","Outro"], defaultActive:false, allowOther:true },
+    { id:"hb_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria ao nosso estabelecimento?",     options:["Com certeza!","Provavelmente sim","Talvez","Provavelmente não"], defaultActive:false },
+    { id:"hb_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"hb_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Pizzaria": [
+    { id:"pz_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"pz_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"pz_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
+    { id:"pz_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"pz_hora",      cat:"Atendimento",        type:"choice", label:"Em qual período veio?",                        options:["Almoço","Jantar","Madrugada"],  defaultActive:false },
+    { id:"pz_pizza",     cat:"Produto",            type:"stars",  label:"Como avalia a qualidade da pizza?",                                                       defaultActive:true  },
+    { id:"pz_massa",     cat:"Produto",            type:"stars",  label:"Como avalia a massa (crocância e sabor)?",                                                defaultActive:true  },
+    { id:"pz_recheio",   cat:"Produto",            type:"stars",  label:"Como avalia o recheio (quantidade e sabor)?",                                             defaultActive:true  },
+    { id:"pz_borda",     cat:"Produto",            type:"choice", label:"Como foi a borda?",                            options:["Ótima!","Boa","Regular","Ruim"], defaultActive:false },
+    { id:"pz_tamanho",   cat:"Produto",            type:"choice", label:"O tamanho foi adequado?",                      options:["Perfeito","Poderia ser maior","Veio menor do que esperado"], defaultActive:false },
+    { id:"pz_bebida",    cat:"Produto",            type:"stars",  label:"Como avalia as bebidas?",                                                                 defaultActive:false },
+    { id:"pz_temp",      cat:"Produto",            type:"choice", label:"A pizza chegou na temperatura certa?",         options:["Sim, quente e perfeita!","Um pouco fria","Muito quente"], defaultActive:false },
+    { id:"pz_espera",    cat:"Experiência",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"pz_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente?",                                                                 defaultActive:true  },
+    { id:"pz_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"pz_delivery",  cat:"Experiência",        type:"choice", label:"Como veio seu pedido?",                        options:["No local","Delivery","Retirada"], defaultActive:false },
+    { id:"pz_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"pz_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"pz_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"pz_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Restaurante": [
+    { id:"rs_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"rs_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"rs_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
+    { id:"rs_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"rs_hora",      cat:"Atendimento",        type:"choice", label:"Em qual período veio?",                        options:["Café da manhã","Almoço","Tarde","Jantar"], defaultActive:false },
+    { id:"rs_prato",     cat:"Cardápio",           type:"stars",  label:"Como avalia a qualidade dos pratos?",                                                     defaultActive:true  },
+    { id:"rs_variedade", cat:"Cardápio",           type:"stars",  label:"Como avalia a variedade do cardápio?",                                                    defaultActive:true  },
+    { id:"rs_porcao",    cat:"Cardápio",           type:"stars",  label:"Como avalia o tamanho das porções?",                                                      defaultActive:true  },
+    { id:"rs_bebida",    cat:"Cardápio",           type:"stars",  label:"Como avalia as bebidas?",                                                                 defaultActive:false },
+    { id:"rs_sobremesa", cat:"Cardápio",           type:"stars",  label:"Como avalia as sobremesas?",                                                              defaultActive:false },
+    { id:"rs_espera",    cat:"Experiência",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"rs_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente / decoração?",                                                     defaultActive:true  },
+    { id:"rs_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"rs_conforto",  cat:"Experiência",        type:"stars",  label:"Como avalia o conforto (mesas, cadeiras)?",                                              defaultActive:false },
+    { id:"rs_mesa",      cat:"Experiência",        type:"choice", label:"Quantas pessoas na mesa?",                    options:["Vim sozinho","2 pessoas","3 a 6 pessoas","Mais de 6"], defaultActive:false },
+    { id:"rs_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço geral?",                options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"rs_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria ao nosso restaurante?",         options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"rs_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"rs_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Cafeteria": [
+    { id:"cf_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"cf_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"cf_espera",    cat:"Atendimento",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"cf_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"cf_cafe",      cat:"Produto",            type:"stars",  label:"Como avalia a qualidade do café?",                                                        defaultActive:true  },
+    { id:"cf_salgado",   cat:"Produto",            type:"stars",  label:"Como avalia os salgados / lanches?",                                                      defaultActive:true  },
+    { id:"cf_doce",      cat:"Produto",            type:"stars",  label:"Como avalia os bolos e doces?",                                                           defaultActive:false },
+    { id:"cf_porcao",    cat:"Produto",            type:"stars",  label:"Como avalia o tamanho das porções?",                                                      defaultActive:false },
+    { id:"cf_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente e conforto?",                                                      defaultActive:true  },
+    { id:"cf_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"cf_wifi",      cat:"Experiência",        type:"choice", label:"Como avalia o Wi-Fi?",                         options:["Ótimo","Bom","Lento","Não usei"], defaultActive:false },
+    { id:"cf_musica",    cat:"Experiência",        type:"stars",  label:"Como avalia o som ambiente / música?",                                                    defaultActive:false },
+    { id:"cf_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"cf_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"cf_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"cf_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Lanchonete": [
+    { id:"lc_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"lc_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"lc_espera",    cat:"Atendimento",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"lc_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"lc_lanche",    cat:"Produto",            type:"stars",  label:"Como avalia a qualidade do lanche?",                                                      defaultActive:true  },
+    { id:"lc_porcao",    cat:"Produto",            type:"stars",  label:"Como avalia o tamanho da porção?",                                                        defaultActive:true  },
+    { id:"lc_bebida",    cat:"Produto",            type:"stars",  label:"Como avalia as bebidas?",                                                                 defaultActive:false },
+    { id:"lc_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente?",                                                                 defaultActive:true  },
+    { id:"lc_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"lc_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"lc_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"lc_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:false },
+  ],
+  "Bar": [
+    { id:"br_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"br_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"br_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
+    { id:"br_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"br_cerveja",   cat:"Produto",            type:"stars",  label:"Como avalia a qualidade das cervejas?",                                                   defaultActive:true  },
+    { id:"br_drinks",    cat:"Produto",            type:"stars",  label:"Como avalia os drinks / coquetéis?",                                                      defaultActive:false },
+    { id:"br_petisco",   cat:"Produto",            type:"stars",  label:"Como avalia os petiscos / tira-gostos?",                                                  defaultActive:true  },
+    { id:"br_porcao",    cat:"Produto",            type:"stars",  label:"Como avalia o tamanho das porções?",                                                      defaultActive:false },
+    { id:"br_gelada",    cat:"Produto",            type:"choice", label:"As bebidas estavam bem geladas?",              options:["Sim, ótimas!","Poderiam estar mais geladas","Não estavam geladas"], defaultActive:false },
+    { id:"br_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente / clima do bar?",                                                  defaultActive:true  },
+    { id:"br_musica",    cat:"Experiência",        type:"stars",  label:"Como avalia a música / entretenimento?",                                                  defaultActive:true  },
+    { id:"br_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"br_banheiro",  cat:"Experiência",        type:"stars",  label:"Como avalia os banheiros?",                                                               defaultActive:false },
+    { id:"br_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"br_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"br_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"br_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Churrascaria": [
+    { id:"ch_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"ch_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"ch_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade dos garçons?",                                                    defaultActive:true  },
+    { id:"ch_carne",     cat:"Produto",            type:"stars",  label:"Como avalia a qualidade e sabor das carnes?",                                             defaultActive:true  },
+    { id:"ch_ponto",     cat:"Produto",            type:"choice", label:"As carnes chegaram no ponto certo?",           options:["Sim, perfeito!","Um pouco passada","Mal passada demais","Fria"], defaultActive:false },
+    { id:"ch_variedade", cat:"Produto",            type:"stars",  label:"Como avalia a variedade de carnes?",                                                      defaultActive:true  },
+    { id:"ch_buffet",    cat:"Produto",            type:"stars",  label:"Como avalia o buffet de acompanhamentos?",                                                defaultActive:true  },
+    { id:"ch_bebida",    cat:"Produto",            type:"stars",  label:"Como avalia as bebidas?",                                                                 defaultActive:false },
+    { id:"ch_espera",    cat:"Experiência",        type:"stars",  label:"Como avalia o tempo de espera para ser servido?",                                         defaultActive:true  },
+    { id:"ch_amb",       cat:"Experiência",        type:"stars",  label:"Como avalia o ambiente?",                                                                 defaultActive:true  },
+    { id:"ch_limpeza",   cat:"Experiência",        type:"stars",  label:"Como avalia a limpeza?",                                                                  defaultActive:true  },
+    { id:"ch_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"ch_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"ch_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Salão de Beleza": [
+    { id:"sb_atend",     cat:"Atendimento",        type:"staff",  label:"Quem realizou seu atendimento?",               options:["Ana","Bruna","Carla","Fernanda"], defaultActive:true  },
+    { id:"sb_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"sb_pontual",   cat:"Atendimento",        type:"stars",  label:"O atendimento foi pontual (sem espera)?",                                                  defaultActive:true  },
+    { id:"sb_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"sb_escuta",    cat:"Atendimento",        type:"choice", label:"A profissional entendeu o que você queria?",  options:["Sim, perfeitamente!","Mais ou menos","Não muito bem"], defaultActive:true  },
+    { id:"sb_cabelo",    cat:"Serviço",            type:"stars",  label:"Como avalia o resultado do cabelo?",                                                      defaultActive:true  },
+    { id:"sb_coloracao", cat:"Serviço",            type:"stars",  label:"Como avalia a coloração / tintura?",                                                      defaultActive:false },
+    { id:"sb_unha",      cat:"Serviço",            type:"stars",  label:"Como avalia o serviço de unhas?",                                                         defaultActive:false },
+    { id:"sb_sobrancelha",cat:"Serviço",           type:"stars",  label:"Como avalia o serviço de sobrancelha?",                                                   defaultActive:false },
+    { id:"sb_maquiagem", cat:"Serviço",            type:"stars",  label:"Como avalia a maquiagem?",                                                                defaultActive:false },
+    { id:"sb_produtos",  cat:"Serviço",            type:"stars",  label:"Como avalia a qualidade dos produtos usados?",                                            defaultActive:true  },
+    { id:"sb_resultado", cat:"Serviço",            type:"choice", label:"O resultado ficou como você esperava?",        options:["Amei! Ficou ótimo","Gostei","Ficou ok","Não gostei"], defaultActive:true  },
+    { id:"sb_amb",       cat:"Ambiente",           type:"stars",  label:"Como avalia o ambiente do salão?",                                                        defaultActive:true  },
+    { id:"sb_limpeza",   cat:"Ambiente",           type:"stars",  label:"Como avalia a limpeza e higiene?",                                                        defaultActive:true  },
+    { id:"sb_conforto",  cat:"Ambiente",           type:"stars",  label:"Como avalia o conforto durante o serviço?",                                               defaultActive:false },
+    { id:"sb_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"sb_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"sb_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"sb_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Barbearia": [
+    { id:"bb_atend",     cat:"Atendimento",        type:"staff",  label:"Quem realizou seu atendimento?",               options:["Carlos","João","Rafael","Thiago"], defaultActive:true  },
+    { id:"bb_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"bb_pontual",   cat:"Atendimento",        type:"stars",  label:"O atendimento foi pontual?",                                                               defaultActive:true  },
+    { id:"bb_first",     cat:"Atendimento",        type:"choice", label:"É a sua primeira vez aqui?",                   options:["Sim","Não"],                    defaultActive:true  },
+    { id:"bb_escuta",    cat:"Atendimento",        type:"choice", label:"O barbeiro entendeu o que você queria?",      options:["Sim, perfeitamente!","Mais ou menos","Não muito bem"], defaultActive:true  },
+    { id:"bb_corte",     cat:"Serviço",            type:"stars",  label:"Como avalia o corte de cabelo?",                                                          defaultActive:true  },
+    { id:"bb_barba",     cat:"Serviço",            type:"stars",  label:"Como avalia o serviço de barba?",                                                         defaultActive:true  },
+    { id:"bb_acabamento",cat:"Serviço",            type:"stars",  label:"Como avalia o acabamento e capricho?",                                                    defaultActive:true  },
+    { id:"bb_sobrancelha",cat:"Serviço",           type:"stars",  label:"Como avalia o alinhamento de sobrancelha?",                                               defaultActive:false },
+    { id:"bb_hidratacao",cat:"Serviço",            type:"stars",  label:"Como avalia a hidratação / tratamento?",                                                  defaultActive:false },
+    { id:"bb_resultado", cat:"Serviço",            type:"choice", label:"O resultado ficou como esperava?",             options:["Amei!","Gostei","Ficou ok","Não gostei"], defaultActive:true  },
+    { id:"bb_amb",       cat:"Ambiente",           type:"stars",  label:"Como avalia o ambiente da barbearia?",                                                    defaultActive:true  },
+    { id:"bb_limpeza",   cat:"Ambiente",           type:"stars",  label:"Como avalia a limpeza e higiene?",                                                        defaultActive:true  },
+    { id:"bb_espera",    cat:"Ambiente",           type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"bb_wifi",      cat:"Ambiente",           type:"choice", label:"Usou o Wi-Fi?",                               options:["Sim, ótimo!","Sim, mas foi lento","Não usei"], defaultActive:false },
+    { id:"bb_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"bb_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"bb_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"bb_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Clínica Médica": [
+    { id:"cm_atend",     cat:"Recepção",           type:"stars",  label:"Como avalia o atendimento na recepção?",                                                  defaultActive:true  },
+    { id:"cm_simpatia",  cat:"Recepção",           type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
+    { id:"cm_agenda",    cat:"Recepção",           type:"stars",  label:"Como avalia a facilidade para agendar consulta?",                                         defaultActive:true  },
+    { id:"cm_espera",    cat:"Recepção",           type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"cm_pontual",   cat:"Recepção",           type:"choice", label:"A consulta foi no horário marcado?",          options:["Sim, pontual","Atrasou pouco","Atrasou muito"], defaultActive:true  },
+    { id:"cm_medico",    cat:"Consulta",           type:"staff",  label:"Qual médico te atendeu?",                      options:["Dr. Carlos","Dra. Ana","Dr. João","Dra. Maria"], defaultActive:true  },
+    { id:"cm_escuta",    cat:"Consulta",           type:"stars",  label:"Como avalia a atenção do médico ao seu caso?",                                            defaultActive:true  },
+    { id:"cm_clareza",   cat:"Consulta",           type:"stars",  label:"O médico explicou tudo de forma clara?",                                                  defaultActive:true  },
+    { id:"cm_confianca", cat:"Consulta",           type:"stars",  label:"Você se sentiu seguro e bem cuidado?",                                                    defaultActive:true  },
+    { id:"cm_amb",       cat:"Estrutura",          type:"stars",  label:"Como avalia a estrutura / instalações da clínica?",                                       defaultActive:true  },
+    { id:"cm_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza e higiene?",                                                        defaultActive:true  },
+    { id:"cm_conforto",  cat:"Estrutura",          type:"stars",  label:"Como avalia o conforto da sala de espera?",                                               defaultActive:false },
+    { id:"cm_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do custo da consulta?",          options:["Muito em conta","Justo","Um pouco salgado","Caro"], defaultActive:true  },
+    { id:"cm_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria a essa clínica?",              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"cm_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"cm_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Clínica Odontológica": [
+    { id:"co_atend",     cat:"Recepção",           type:"stars",  label:"Como avalia o atendimento na recepção?",                                                  defaultActive:true  },
+    { id:"co_simpatia",  cat:"Recepção",           type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
+    { id:"co_espera",    cat:"Recepção",           type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"co_pontual",   cat:"Recepção",           type:"choice", label:"Foi atendido no horário marcado?",            options:["Sim, pontual","Atrasou pouco","Atrasou muito"], defaultActive:true  },
+    { id:"co_dentista",  cat:"Consulta",           type:"staff",  label:"Qual dentista te atendeu?",                   options:["Dr. Carlos","Dra. Ana","Dr. João","Dra. Maria"], defaultActive:true  },
+    { id:"co_escuta",    cat:"Consulta",           type:"stars",  label:"O dentista foi atencioso e explicou o procedimento?",                                     defaultActive:true  },
+    { id:"co_dor",       cat:"Consulta",           type:"choice", label:"Você sentiu dor ou desconforto além do esperado?",options:["Não, ficou ótimo","Um pouco, mas ok","Sim, senti desconforto"], defaultActive:true  },
+    { id:"co_confianca", cat:"Consulta",           type:"stars",  label:"Você se sentiu seguro durante o procedimento?",                                           defaultActive:true  },
+    { id:"co_resultado", cat:"Consulta",           type:"stars",  label:"Como avalia o resultado do procedimento?",                                                defaultActive:true  },
+    { id:"co_higiene",   cat:"Consulta",           type:"stars",  label:"Como avalia a higiene / esterilização do equipamento?",                                   defaultActive:true  },
+    { id:"co_amb",       cat:"Estrutura",          type:"stars",  label:"Como avalia a estrutura da clínica?",                                                     defaultActive:true  },
+    { id:"co_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza e organização?",                                                    defaultActive:true  },
+    { id:"co_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Muito em conta","Justo","Um pouco salgado","Caro"], defaultActive:true  },
+    { id:"co_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"co_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"co_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Pet Shop": [
+    { id:"ps_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"ps_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia com você e seu pet?",                                              defaultActive:true  },
+    { id:"ps_espera",    cat:"Atendimento",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
+    { id:"ps_first",     cat:"Atendimento",        type:"choice", label:"É a primeira vez aqui com seu pet?",           options:["Sim","Não"],                    defaultActive:true  },
+    { id:"ps_cuidado",   cat:"Serviço",            type:"stars",  label:"Como avalia o cuidado e carinho com seu pet?",                                            defaultActive:true  },
+    { id:"ps_banho",     cat:"Serviço",            type:"stars",  label:"Como avalia o resultado do banho?",                                                       defaultActive:true  },
+    { id:"ps_tosa",      cat:"Serviço",            type:"stars",  label:"Como avalia o resultado da tosa?",                                                        defaultActive:false },
+    { id:"ps_veterinario",cat:"Serviço",           type:"stars",  label:"Como avalia o atendimento veterinário?",                                                  defaultActive:false },
+    { id:"ps_resultado", cat:"Serviço",            type:"choice", label:"Seu pet saiu como esperava?",                  options:["Amei! Ficou ótimo","Gostei","Ficou ok","Não gostei"], defaultActive:true  },
+    { id:"ps_pet_ok",    cat:"Serviço",            type:"choice", label:"Seu pet pareceu estressado?",                  options:["Não, ficou tranquilo","Um pouco","Sim, ficou bem estressado"], defaultActive:true  },
+    { id:"ps_limpeza",   cat:"Loja & Ambiente",    type:"stars",  label:"Como avalia a limpeza e higiene do local?",                                               defaultActive:true  },
+    { id:"ps_seguranca", cat:"Loja & Ambiente",    type:"choice", label:"Seu pet ficou seguro o tempo todo?",           options:["Sim, com certeza","Sim, mas tive preocupação","Não senti segurança"], defaultActive:true  },
+    { id:"ps_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
+    { id:"ps_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"ps_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"ps_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Farmácia": [
+    { id:"fm_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"fm_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"fm_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
+    { id:"fm_encontrou", cat:"Atendimento",        type:"choice", label:"Encontrou tudo que procurava?",                options:["Sim, tudo!","A maioria","Só metade","Quase nada"], defaultActive:true  },
+    { id:"fm_orientacao",cat:"Atendimento",        type:"stars",  label:"O farmacêutico te orientou sobre o medicamento?",                                         defaultActive:true  },
+    { id:"fm_estoque",   cat:"Produtos",           type:"stars",  label:"Como avalia a variedade e estoque de produtos?",                                          defaultActive:true  },
+    { id:"fm_preco_med", cat:"Produtos",           type:"choice", label:"O preço dos medicamentos está adequado?",      options:["Muito em conta","Justo","Um pouco salgado","Prefiro outra farmácia"], defaultActive:true  },
+    { id:"fm_limpeza",   cat:"Ambiente",           type:"stars",  label:"Como avalia a limpeza e organização?",                                                    defaultActive:true  },
+    { id:"fm_fila",      cat:"Ambiente",           type:"choice", label:"Teve que esperar muito na fila?",              options:["Não, rápido!","Um pouco","Esperei bastante"], defaultActive:true  },
+    { id:"fm_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"fm_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Academia": [
+    { id:"ac_atend",     cat:"Atendimento",        type:"staff",  label:"Qual profissional te atendeu hoje?",           options:["Carlos","João","Rafael","Thiago","Ana"], defaultActive:true  },
+    { id:"ac_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
+    { id:"ac_first",     cat:"Atendimento",        type:"choice", label:"É seu primeiro treino aqui?",                  options:["Sim","Não"],                    defaultActive:true  },
+    { id:"ac_professor", cat:"Treino",             type:"stars",  label:"Como avalia a orientação do professor?",                                                  defaultActive:true  },
+    { id:"ac_ficha",     cat:"Treino",             type:"choice", label:"Sua ficha de treino está atualizada?",         options:["Sim, e adoro!","Sim, mas poderia melhorar","Não, precisa atualizar","Não tenho"], defaultActive:false },
+    { id:"ac_equipamentos",cat:"Estrutura",        type:"stars",  label:"Como avalia a qualidade dos equipamentos?",                                               defaultActive:true  },
+    { id:"ac_disp_equip",cat:"Estrutura",          type:"choice", label:"Os equipamentos estavam disponíveis quando precisou?",options:["Sim, todos disponíveis","A maioria sim","Faltou alguns","Não, estava lotado"], defaultActive:true  },
+    { id:"ac_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza da academia?",                                                      defaultActive:true  },
+    { id:"ac_vestiario", cat:"Estrutura",          type:"stars",  label:"Como avalia os vestiários e banheiros?",                                                  defaultActive:true  },
+    { id:"ac_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou da mensalidade?",                 options:["Muito em conta","Justa","Um pouco cara","Cara demais"], defaultActive:true  },
+    { id:"ac_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"ac_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Posto de Gasolina": [
+    { id:"pg_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"pg_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
+    { id:"pg_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no abastecimento?",                                               defaultActive:true  },
+    { id:"pg_combustivel",cat:"Produto & Serviço", type:"choice", label:"Que combustível abasteceu?",                   options:["Gasolina comum","Gasolina aditivada","Etanol","Diesel","GNV"], defaultActive:true  },
+    { id:"pg_litros",    cat:"Produto & Serviço",  type:"choice", label:"Ficou satisfeito com a quantidade abastecida?",options:["Sim, correto","Achei baixo para o valor","Não verifiquei"], defaultActive:true  },
+    { id:"pg_preco_comb",cat:"Produto & Serviço",  type:"choice", label:"O preço do combustível está adequado?",        options:["Muito em conta","Justo","Um pouco acima","Caro demais"], defaultActive:true  },
+    { id:"pg_calibragem",cat:"Produto & Serviço",  type:"choice", label:"Usou o serviço de calibragem?",               options:["Sim, ótimo!","Sim, mas poderia melhorar","Não precisei"], defaultActive:false },
+    { id:"pg_limpeza",   cat:"Conveniência",       type:"stars",  label:"Como avalia a limpeza geral do posto?",                                                   defaultActive:true  },
+    { id:"pg_banheiro",  cat:"Conveniência",       type:"stars",  label:"Como avalia os banheiros?",                                                               defaultActive:true  },
+    { id:"pg_conveniencia",cat:"Conveniência",     type:"stars",  label:"Como avalia a loja de conveniência?",                                                     defaultActive:false },
+    { id:"pg_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"pg_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Imobiliária": [
+    { id:"im_corretor",  cat:"Atendimento",        type:"staff",  label:"Qual corretor te atendeu?",                    options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
+    { id:"im_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do corretor?",                                                     defaultActive:true  },
+    { id:"im_prontidao", cat:"Atendimento",        type:"stars",  label:"O corretor foi ágil em responder suas dúvidas?",                                          defaultActive:true  },
+    { id:"im_escuta",    cat:"Atendimento",        type:"stars",  label:"O corretor entendeu o que você procurava?",                                               defaultActive:true  },
+    { id:"im_opcoes",    cat:"Imóveis Apresentados",type:"stars", label:"Como avalia as opções de imóveis apresentadas?",                                          defaultActive:true  },
+    { id:"im_fotos",     cat:"Imóveis Apresentados",type:"stars", label:"As fotos e descrições corresponderam à realidade?",                                       defaultActive:true  },
+    { id:"im_documentacao",cat:"Processo",         type:"stars",  label:"Como avalia a assessoria na documentação?",                                               defaultActive:true  },
+    { id:"im_transparencia",cat:"Processo",        type:"stars",  label:"O processo foi transparente e sem surpresas?",                                            defaultActive:true  },
+    { id:"im_agilidade", cat:"Processo",           type:"stars",  label:"Como avalia a agilidade no fechamento?",                                                  defaultActive:true  },
+    { id:"im_objetivo",  cat:"Processo",           type:"choice", label:"Qual era seu objetivo?",                      options:["Comprar imóvel","Alugar imóvel","Vender imóvel","Apenas pesquisar"], defaultActive:false },
+    { id:"im_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou das taxas / comissões?",          options:["Muito em conta","Justo","Um pouco alto","Caro demais"], defaultActive:true  },
+    { id:"im_volta",     cat:"Preço & Fidelização",type:"choice", label:"Voltaria a usar nossa imobiliária?",          options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
+    { id:"im_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"im_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Hotel": [
+    { id:"ht_checkin",   cat:"Check-in & Check-out",type:"stars", label:"Como avalia o processo de check-in?",                                                     defaultActive:true  },
+    { id:"ht_espera",    cat:"Check-in & Check-out",type:"stars", label:"Como avalia o tempo de espera no check-in?",                                              defaultActive:true  },
+    { id:"ht_recepcao",  cat:"Check-in & Check-out",type:"stars", label:"Como avalia a simpatia e eficiência da recepção?",                                        defaultActive:true  },
+    { id:"ht_checkout",  cat:"Check-in & Check-out",type:"stars", label:"Como avalia o processo de check-out?",                                                    defaultActive:false },
+    { id:"ht_limpeza",   cat:"Quarto",              type:"stars",  label:"Como avalia a limpeza do quarto?",                                                        defaultActive:true  },
+    { id:"ht_conforto",  cat:"Quarto",              type:"stars",  label:"Como avalia o conforto da cama e travesseiros?",                                          defaultActive:true  },
+    { id:"ht_ar",        cat:"Quarto",              type:"stars",  label:"Como avalia o ar condicionado?",                                                          defaultActive:true  },
+    { id:"ht_banheiro",  cat:"Quarto",              type:"stars",  label:"Como avalia o banheiro (limpeza e estrutura)?",                                           defaultActive:true  },
+    { id:"ht_silencio",  cat:"Quarto",              type:"choice", label:"O quarto era silencioso o suficiente?",        options:["Sim, muito tranquilo","Razoável","Tinha muito barulho"], defaultActive:true  },
+    { id:"ht_wifi",      cat:"Quarto",              type:"choice", label:"Como avalia o Wi-Fi no quarto?",               options:["Excelente","Bom","Lento","Não funcionou","Não usei"], defaultActive:true  },
+    { id:"ht_tv",        cat:"Quarto",              type:"choice", label:"Como avalia a TV (canais e qualidade)?",       options:["Ótima","Boa","Regular","Ruim","Não usei"], defaultActive:false },
+    { id:"ht_cafe",      cat:"Serviços",            type:"stars",  label:"Como avalia o café da manhã?",                                                            defaultActive:true  },
+    { id:"ht_piscina",   cat:"Serviços",            type:"stars",  label:"Como avalia a piscina?",                                                                  defaultActive:false },
+    { id:"ht_restaurante",cat:"Serviços",           type:"stars",  label:"Como avalia o restaurante do hotel?",                                                     defaultActive:false },
+    { id:"ht_room_service",cat:"Serviços",          type:"stars",  label:"Como avalia o room service?",                                                             defaultActive:false },
+    { id:"ht_estac",     cat:"Serviços",            type:"choice", label:"Como foi o estacionamento?",                  options:["Ótimo","Bom","Regular","Ruim","Não usei"], defaultActive:false },
+    { id:"ht_equipe",    cat:"Equipe",              type:"stars",  label:"Como avalia a simpatia de toda a equipe?",                                                defaultActive:true  },
+    { id:"ht_solucao",   cat:"Equipe",              type:"choice", label:"Precisou resolver algum problema com a equipe?",options:["Sim e resolveram ótimo","Sim mas demorou","Sim e não resolveram","Não precisei"], defaultActive:false },
+    { id:"ht_custo",     cat:"Preço & Fidelização", type:"choice", label:"Como avalia o custo-benefício da hospedagem?",options:["Excelente","Bom","Razoável","Ruim"], defaultActive:true  },
+    { id:"ht_motivo",    cat:"Preço & Fidelização", type:"choice", label:"Qual o motivo da sua hospedagem?",            options:["Lazer / férias","Trabalho / negócios","Evento","Outro"], defaultActive:false },
+    { id:"ht_volta",     cat:"Preço & Fidelização", type:"choice", label:"Você voltaria a se hospedar aqui?",           options:["Com certeza!","Provavelmente sim","Talvez","Provavelmente não"], defaultActive:true  },
+    { id:"ht_nps",       cat:"Preço & Fidelização", type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"ht_sug",       cat:"Preço & Fidelização", type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+  "Supermercado": [
+    { id:"sm_atend",     cat:"Atendimento",        type:"stars",  label:"Como avalia o atendimento dos funcionários?",                                             defaultActive:true  },
+    { id:"sm_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
+    { id:"sm_info",      cat:"Atendimento",        type:"choice", label:"Quando pediu informação, foi bem atendido?",  options:["Sim, ótimo!","Razoável","Ninguém me ajudou","Não precisei"], defaultActive:true  },
+    { id:"sm_produtos",  cat:"Produtos",           type:"stars",  label:"Como avalia a variedade de produtos?",                                                    defaultActive:true  },
+    { id:"sm_qualidade", cat:"Produtos",           type:"stars",  label:"Como avalia a qualidade e frescor dos produtos?",                                         defaultActive:true  },
+    { id:"sm_estoque",   cat:"Produtos",           type:"choice", label:"Encontrou tudo que precisava?",              options:["Sim, tudo!","A maioria","Só metade","Muitos itens em falta"], defaultActive:true  },
+    { id:"sm_hortifruti",cat:"Produtos",           type:"stars",  label:"Como avalia o hortifruti (frutas, legumes, verduras)?",                                   defaultActive:false },
+    { id:"sm_acougue",   cat:"Produtos",           type:"stars",  label:"Como avalia o açougue?",                                                                  defaultActive:false },
+    { id:"sm_padaria",   cat:"Produtos",           type:"stars",  label:"Como avalia a padaria?",                                                                  defaultActive:false },
+    { id:"sm_preco_prod",cat:"Produtos",           type:"choice", label:"O preço dos produtos está adequado?",        options:["Muito em conta","Justo","Um pouco salgado","Caro demais"], defaultActive:true  },
+    { id:"sm_promocoes", cat:"Produtos",           type:"choice", label:"As promoções são atraentes?",               options:["Sim, ótimas!","Razoáveis","Poucas promoções","Quase nenhuma"], defaultActive:false },
+    { id:"sm_limpeza",   cat:"Loja & Ambiente",    type:"stars",  label:"Como avalia a limpeza e organização da loja?",                                            defaultActive:true  },
+    { id:"sm_organizacao",cat:"Loja & Ambiente",   type:"stars",  label:"Como avalia a facilidade de encontrar os produtos?",                                      defaultActive:true  },
+    { id:"sm_estacion",  cat:"Loja & Ambiente",    type:"choice", label:"Como foi o estacionamento?",                 options:["Ótimo","Bom","Difícil","Não usei"], defaultActive:false },
+    { id:"sm_caixa",     cat:"Caixas & Pagamento", type:"stars",  label:"Como avalia a agilidade nos caixas?",                                                     defaultActive:true  },
+    { id:"sm_fila",      cat:"Caixas & Pagamento", type:"choice", label:"Esperou muito na fila do caixa?",           options:["Não, rápido!","Um pouco","Esperei bastante","Fila enorme"], defaultActive:true  },
+    { id:"sm_pagamento", cat:"Caixas & Pagamento", type:"choice", label:"Aceitaram seu meio de pagamento preferido?",options:["Sim, sem problemas","Sim mas com taxa","Não aceitaram"], defaultActive:false },
+    { id:"sm_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
+    { id:"sm_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+  ],
+};
+
+const RAMO_PARA_BANCO = {
+  "Hamburgueria":"Hamburgueria","Pizzaria":"Pizzaria","Restaurante":"Restaurante",
+  "Cafeteria":"Cafeteria","Lanchonete":"Lanchonete","Bar":"Bar","Bar / Pub":"Bar",
+  "Churrascaria":"Churrascaria","Sushi/Japonês":"Restaurante","Comida Japonesa":"Restaurante",
+  "Sorveteria / Açaí":"Lanchonete","Padaria":"Cafeteria","Confeitaria":"Cafeteria",
+  "Salão de Beleza":"Salão de Beleza","Barbearia":"Barbearia","Spa / Estética":"Salão de Beleza",
+  "Clínica Médica":"Clínica Médica","Clínica Odontológica":"Clínica Odontológica",
+  "Clínica Dentista":"Clínica Odontológica","Fisioterapia":"Clínica Médica",
+  "Psicologia":"Clínica Médica","Nutrição":"Clínica Médica",
+  "Pet Shop":"Pet Shop","Petshop":"Pet Shop","Clínica Veterinária":"Pet Shop",
+  "Farmácia":"Farmácia","Academia":"Academia","Posto de Gasolina":"Posto de Gasolina",
+  "Imobiliária":"Imobiliária","Hotel":"Hotel","Pousada":"Hotel","Hostel":"Hotel",
+  "Supermercado":"Supermercado",
+};
+
+function bancoPerguntasParaQuestions(ramo, activePerguntaIds = null) {
+  const bancoKey = RAMO_PARA_BANCO[ramo];
+  if (!bancoKey || !PERGUNTAS_POR_NICHO[bancoKey]) return makeDefaultQuestions();
+  const banco = PERGUNTAS_POR_NICHO[bancoKey];
+  const ativas = activePerguntaIds
+    ? banco.filter(p => activePerguntaIds.includes(p.id))
+    : banco.filter(p => p.defaultActive);
+  return ativas.map(p => ({
+    id: p.id, type: p.type, label: p.label,
+    options: p.options || [], required: true,
+    allowOther: p.allowOther || false, emoji: "",
+  }));
+}
+
+function QuestionBankSelector({ ramo, activeIds, onChangeIds }) {
+  const bancoKey = RAMO_PARA_BANCO[ramo];
+  const banco = bancoKey ? PERGUNTAS_POR_NICHO[bancoKey] : null;
+  if (!banco) return (
+    <div style={{ padding:"12px 14px", background:"var(--d2)", borderRadius:10, fontSize:13, color:"var(--muted2)" }}>
+      Banco de perguntas não disponível para este ramo. Use o editor manual abaixo.
+    </div>
+  );
+  const cats = [...new Set(banco.map(p => p.cat))];
+  const defaultIds = banco.filter(p => p.defaultActive).map(p => p.id);
+  const currentActive = activeIds || defaultIds;
+  const toggle = (id) => {
+    const next = currentActive.includes(id) ? currentActive.filter(x => x !== id) : [...currentActive, id];
+    onChangeIds(next);
+  };
+  const TYPE_ICON = { stars:"⭐", choice:"☑️", nps:"📊", text:"📝", staff:"👤" };
+  return (
+    <div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, flexWrap:"wrap", gap:8 }}>
+        <div style={{ fontSize:12, color:"var(--muted2)" }}>
+          <strong style={{color:"var(--ac)"}}>{currentActive.length}</strong> ativa{currentActive.length!==1?"s":""} de {banco.length} disponíveis
+        </div>
+        <div style={{ display:"flex", gap:6 }}>
+          <button className="btn-sm btn-sm-ghost" onClick={() => onChangeIds(defaultIds)} style={{fontSize:11}}>↺ Restaurar padrão</button>
+          <button className="btn-sm btn-sm-ghost" onClick={() => onChangeIds(banco.map(p=>p.id))} style={{fontSize:11}}>✓ Todas</button>
+        </div>
+      </div>
+      {cats.map(cat => (
+        <div key={cat} style={{ marginBottom:14 }}>
+          <div style={{ fontSize:10, fontWeight:800, letterSpacing:2, textTransform:"uppercase", color:"var(--muted)", marginBottom:6 }}>{cat}</div>
+          {banco.filter(p => p.cat === cat).map(p => {
+            const ativo = currentActive.includes(p.id);
+            return (
+              <div key={p.id} onClick={() => toggle(p.id)}
+                style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:ativo?"var(--ac)11":"var(--d2)", border:`1.5px solid ${ativo?"var(--ac)55":"var(--border)"}`, borderRadius:10, marginBottom:5, cursor:"pointer", transition:"all 0.15s" }}>
+                <div style={{ width:20, height:20, borderRadius:6, border:`2px solid ${ativo?"var(--ac)":"var(--muted)"}`, background:ativo?"var(--ac)":"transparent", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}>
+                  {ativo && <span style={{fontSize:11,color:"#fff",fontWeight:900}}>✓</span>}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13, fontWeight:ativo?700:500, color:ativo?"var(--text)":"var(--muted2)" }}>{p.label}</div>
+                </div>
+                <span style={{ fontSize:11, color:"var(--muted)", flexShrink:0 }}>{TYPE_ICON[p.type]}</span>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const SEED = [
   {
     id: "est_1", owner: "joao@burguer.com", pass: "123456", ativo: true,
@@ -420,12 +839,6 @@ const CSS = (ac = "#e63946") => `
   .fade-up { animation: fadeUp 0.4s ease forwards; }
   ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--dark); } ::-webkit-scrollbar-thumb { background: var(--d3); border-radius: 3px; }
   .div { height: 1px; background: var(--border); margin: 14px 0; }
-  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 400; background: var(--d1); border-top: 1px solid var(--border); padding: 8px 4px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
-  .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; }
-  .bottom-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; cursor: pointer; border: none; background: none; color: var(--muted); font-family: var(--ff-body); font-size: 10px; font-weight: 700; transition: all 0.15s; min-width: 52px; }
-  .bottom-tab.on { color: var(--ac); background: var(--ac)15; }
-  .bottom-tab-icon { font-size: 20px; }
-  @media (max-width: 768px) { .bottom-nav { display: block; } .main { padding-bottom: 80px !important; } }
 `;
 
 
@@ -1080,7 +1493,7 @@ function QuestionItem({ q, idx, answer, onChange }) {
 
 function QRCodeView({ est }) {
   const slug = est.slug || makeSlug(est.name);
-  const url = `https://app.notacheia.com.br/${slug}`;
+  const url = `https://notacheia.com.br/${slug}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=111111&margin=10`;
   return (
     <div>
@@ -1126,7 +1539,6 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "relatorio", icon: "📋", lbl: "Relatório" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
         ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
-        { id: "brindes", icon: "🎁", lbl: "Brindes" },
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
         { id: "senha", icon: "🔑", lbl: "Trocar senha" },
       ];
@@ -1150,26 +1562,6 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
       </div>
-      {/* Bottom Nav Mobile */}
-      <div className="bottom-nav">
-        <div className="bottom-nav-inner">
-          {[
-            { id: "overview", icon: "📊", lbl: "Início" },
-            { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
-            { id: "brindes", icon: "🎁", lbl: "Brindes" },
-            { id: "qrcode", icon: "📱", lbl: "QR Code" },
-          ].map(n => (
-            <button key={n.id} className={`bottom-tab ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
-              <span className="bottom-tab-icon">{n.icon}</span>
-              <span>{n.lbl}</span>
-            </button>
-          ))}
-          <button className={`bottom-tab ${["insights","clientes","relatorio","cardapio","setup","senha"].includes(tab) ? "on" : ""}`} onClick={() => setOpen(true)}>
-            <span className="bottom-tab-icon">☰</span>
-            <span>Mais</span>
-          </button>
-        </div>
-      </div>
     </>
   );
 }
@@ -1187,7 +1579,6 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const initialStep = temCardapio ? "cardapio" : "welcome";
   const [step, setStep] = useState(initialStep);
   const [nome, setNome] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
   const [coupon] = useState(genCoupon());
@@ -1240,7 +1631,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
         <div className="welcome-tag">Sua opinião é muito importante para nós!<br />Responda e ganhe um brinde surpresa 🎁</div>
         <div className="welcome-badge">🎰 Gire a roleta e ganhe na hora!</div>
         <WheelTeaser prizes={est.prizes} />
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: `1.5px solid ${lgpd ? "var(--ac)66" : "var(--border)"}`, borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer", transition: "border 0.2s" }} onClick={() => setLgpd(l => !l)}>
+        <input className="field" placeholder="Seu nome (opcional)" value={nome} onChange={e => setNome(e.target.value)} />
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "left", cursor: "pointer" }} onClick={() => setLgpd(l => !l)}>
           <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${lgpd ? "var(--ac)" : "var(--muted)"}`, background: lgpd ? "var(--ac)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
             {lgpd && <span style={{ fontSize: 12, color: "#fff", fontWeight: 900 }}>✓</span>}
           </div>
@@ -1253,9 +1645,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
             ← Ver cardápio
           </button>
         )}
-        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}
-          style={{ opacity: lgpd || masterMode ? 1 : 0.4, cursor: lgpd || masterMode ? "pointer" : "not-allowed" }}>
-          {lgpd || masterMode ? "Começar pesquisa →" : "✋ Aceite os termos para continuar"}
+        <button className="btn btn-red" onClick={() => setStep("survey")} disabled={!lgpd && !masterMode}>
+          {lgpd || masterMode ? "Começar pesquisa →" : "Aceite os termos para continuar"}
         </button>
       </div>
     </div>
@@ -1296,9 +1687,30 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, margin: "6px 0" }}>{est.name}</div>
           <div className="confirm-sub">Sua resposta foi registrada!<br />Agora gire a roleta e descubra seu prêmio 🎁</div>
           <div className="div" />
-          <Wheel prizes={est.prizes} onResult={(p) => {
-            setPrize(p);
-            setStep("resgate");
+          <Wheel prizes={est.prizes} onResult={async (p) => {
+            setPrize(p); setSaving(true);
+            await onSubmit({ nome: savedNome, answers: savedAnswers, premio: p.label });
+            if (!masterMode) await saveCupom(est.id, coupon, p.label, savedNome);
+            markFeedbackDone(est.id, masterMode);
+            setSaving(false);
+            if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
+              const nps = savedAnswers?.q_nps !== undefined ? savedAnswers.q_nps : "-";
+              const comentario = savedAnswers?.q_sug || "";
+              const cliente = savedNome && savedNome !== "Anônimo" ? savedNome : "Anônimo";
+              try {
+                await fetch("https://api.resend.com/emails", {
+                  method: "POST",
+                  headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    from: "NotaCheia <notificacoes@notacheia.com.br>",
+                    to: [est.owner],
+                    subject: `⚠️ Avaliação negativa no ${est.name}`,
+                    html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;"><h2 style="color:#e63946;margin-bottom:4px;">⚠️ Avaliação negativa!</h2><p style="color:#999;margin-bottom:20px;font-size:13px;">Recebida agora em <strong style="color:#fff">${est.name}</strong></p><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">👤 Cliente</p><p style="margin:0;font-weight:700;">${cliente}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">⭐ Nota média</p><p style="margin:0;font-weight:700;color:#e63946;font-size:22px;">${avgStars.toFixed(1)}</p></div><div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;"><p style="margin:0 0 8px;font-size:13px;color:#999;">📊 NPS</p><p style="margin:0;font-weight:700;">${nps}</p></div>${comentario ? `<div style="background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;"><p style="margin:0 0 8px;font-size:13px;color:#999;">💬 Comentário</p><p style="margin:0;font-style:italic;">"${comentario}"</p></div>` : ""}<p style="font-size:12px;color:#555;margin-top:20px;text-align:center;">Acesse o painel NotaCheia para ver o feedback completo.</p></div>`,
+                  }),
+                });
+              } catch (e) { console.log("Erro ao enviar email:", e); }
+            }
+            setStep("prize");
           }} />
           {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
         </div>
@@ -1306,65 +1718,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
     </div>
   );
 
-  if (step === "resgate") return (
-    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
-      <div className="card" style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 52, marginBottom: 6 }}>{prize.emoji}</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)", marginBottom: 4 }}>Você ganhou!</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 18, marginBottom: 4 }}>{prize.label}</div>
-        <div style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 20, lineHeight: 1.6 }}>
-          Para resgatar seu prêmio, preencha os dados abaixo 👇
-        </div>
-        <div style={{ textAlign: "left" }}>
-          <input
-            className="field"
-            placeholder="Seu nome (opcional)"
-            value={nome}
-            onChange={e => setNome(e.target.value)}
-          />
-          <input
-            className="field"
-            placeholder="WhatsApp (opcional, ex: 41999990000)"
-            value={whatsapp}
-            onChange={e => setWhatsapp(e.target.value)}
-          />
-          <button
-            className="btn btn-red"
-            onClick={async () => {
-              const nomeFinal = nome.trim() || "Anônimo";
-              setSaving(true);
-              await onSubmit({ nome: nomeFinal, answers: savedAnswers, premio: prize.label, whatsapp });
-              if (!masterMode) await saveCupom(est.id, coupon, prize.label, nomeFinal);
-              markFeedbackDone(est.id, masterMode);
-              setSaving(false);
-              if (!masterMode && avgStars > 0 && avgStars < 4 && est.owner) {
-                const npsQ = est.questions.find(q => q.type === "nps");
-                const nps = npsQ && savedAnswers?.[npsQ.id] !== undefined ? savedAnswers[npsQ.id] : "-";
-                const comentario = savedAnswers?.q_sug || "";
-                try {
-                  await fetch("https://api.resend.com/emails", {
-                    method: "POST",
-                    headers: { "Authorization": "Bearer re_3kBjVHJT_MhYrCC7g7x5U9B8TMfJYTmev", "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      from: "NotaCheia <notificacoes@notacheia.com.br>",
-                      to: [est.owner],
-                      subject: `⚠️ Avaliação negativa no ${est.name}`,
-                      html: "<div style=\"font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#111;color:#f0ede8;border-radius:16px;\"><h2 style=\"color:#e63946;margin-bottom:4px;\">⚠️ Avaliação negativa!</h2><p style=\"color:#999;margin-bottom:20px;font-size:13px;\">Recebida agora em <strong style=\"color:#fff\">" + est.name + "</strong></p><div style=\"background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;\"><p style=\"margin:0 0 8px;font-size:13px;color:#999;\">👤 Cliente</p><p style=\"margin:0;font-weight:700;\">" + nomeFinal + "</p></div><div style=\"background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;\"><p style=\"margin:0 0 8px;font-size:13px;color:#999;\">⭐ Nota média</p><p style=\"margin:0;font-weight:700;color:#e63946;font-size:22px;\">" + avgStars.toFixed(1) + "</p></div><div style=\"background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;\"><p style=\"margin:0 0 8px;font-size:13px;color:#999;\">📊 NPS</p><p style=\"margin:0;font-weight:700;\">" + nps + "</p></div>" + (comentario ? "<div style=\"background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid #e63946;\"><p style=\"margin:0 0 8px;font-size:13px;color:#999;\">💬 Comentário</p><p style=\"margin:0;font-style:italic;\">\"" + comentario + "\"</p></div>" : "") + "<p style=\"font-size:12px;color:#555;margin-top:20px;text-align:center;\">Acesse o painel NotaCheia para ver o feedback completo.</p></div>",
-                    }),
-                  });
-                } catch (e) { console.log("Erro ao enviar email:", e); }
-              }
-              setStep("prize");
-            }}
-          >
-            {saving ? "Salvando..." : "🎁 Resgatar meu prêmio!"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-    if (step === "prize") return (
+  if (step === "prize") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 20%, ${est.color}25, transparent 60%), var(--dark)` }}>
       <div className="card prize-wrap">
         <div className="prize-emoji">{prize.emoji}</div>
@@ -1670,15 +2024,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="main-title">💬 Feedbacks</div>
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ marginTop: 8 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
-                    <div className="fb-prize">🎁 {f.premio}</div>
-                    {f.brinde_entregue
-                      ? <span style={{ fontSize: 12, color: "var(--green)", fontWeight: 800 }}>✅ Brinde entregue</span>
-                      : <button style={{ padding: "8px 14px", background: "var(--green)", border: "none", borderRadius: 10, color: "#fff", fontFamily: "var(--ff-body)", fontSize: 12, fontWeight: 800, cursor: "pointer" }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>✅ Entregar brinde</button>
-                    }
-                  </div>
-                </div>}</div>); })}
+          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
@@ -1688,74 +2034,6 @@ function OwnerDash({ est, onUpdate, onLogout }) {
         </>)}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
 
-        {tab === "brindes" && (() => {
-          const pendentes = est.feedbacks.filter(f => f.premio && !f.brinde_entregue);
-          const entregues = est.feedbacks.filter(f => f.premio && f.brinde_entregue);
-          return (<>
-            <div className="main-title">🎁 Brindes</div>
-            <div className="metrics" style={{ marginBottom: 16 }}>
-              <div className="metric" style={{ borderTop: "3px solid var(--red)" }}>
-                <div className="metric-val" style={{ color: "var(--red)" }}>{pendentes.length}</div>
-                <div className="metric-lbl">Pendentes</div>
-              </div>
-              <div className="metric" style={{ borderTop: "3px solid var(--green)" }}>
-                <div className="metric-val" style={{ color: "var(--green)" }}>{entregues.length}</div>
-                <div className="metric-lbl">Entregues</div>
-              </div>
-              <div className="metric">
-                <div className="metric-val">{est.feedbacks.filter(f => f.premio).length}</div>
-                <div className="metric-lbl">Total</div>
-              </div>
-            </div>
-            {pendentes.length > 0 && (<>
-              <div style={{ fontSize: 12, fontWeight: 800, color: "var(--red)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>⏳ Aguardando entrega ({pendentes.length})</div>
-              {pendentes.map((f, i) => (
-                <div key={f.id || i} style={{ background: "var(--d1)", border: "1.5px solid var(--red)44", borderRadius: 14, padding: 16, marginBottom: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>👤</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 800, fontSize: 14 }}>{f.nome}</div>
-                      <div style={{ fontSize: 11, color: "var(--muted)" }}>{f.data || "Agora"}</div>
-                    </div>
-                    <div style={{ background: "var(--ac)22", border: "1px solid var(--ac)44", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 700, color: "var(--ac)" }}>🎁 {f.premio}</div>
-                  </div>
-                  <button
-                    style={{ width: "100%", padding: "12px", background: "var(--green)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "var(--ff-body)", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
-                    onClick={async () => {
-                      await marcarBrindeEntregue(f.id);
-                      onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) });
-                    }}
-                  >
-                    ✅ Confirmar entrega do brinde
-                  </button>
-                </div>
-              ))}
-            </>)}
-            {pendentes.length === 0 && (
-              <div style={{ background: "#0a1f0a", border: "1px solid var(--green)33", borderRadius: 14, padding: 20, textAlign: "center", marginBottom: 16 }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🎉</div>
-                <div style={{ fontWeight: 800, color: "var(--green)", fontSize: 15 }}>Nenhum brinde pendente!</div>
-                <div style={{ fontSize: 12, color: "var(--muted2)", marginTop: 4 }}>Todos os brindes foram entregues.</div>
-              </div>
-            )}
-            {entregues.length > 0 && (<>
-              <div style={{ fontSize: 12, fontWeight: 800, color: "var(--green)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10, marginTop: 6 }}>✅ Já entregues ({entregues.length})</div>
-              {entregues.map((f, i) => (
-                <div key={f.id || i} style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, marginBottom: 8, display: "flex", alignItems: "center", gap: 10, opacity: 0.7 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>👤</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: 13 }}>{f.nome}</div>
-                    <div style={{ fontSize: 11, color: "var(--muted)" }}>{f.data || "—"}</div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 12, color: "var(--muted2)", fontWeight: 700 }}>🎁 {f.premio}</span>
-                    <span style={{ fontSize: 11, color: "var(--green)", fontWeight: 800 }}>✅</span>
-                  </div>
-                </div>
-              ))}
-            </>)}
-          </>);
-        })()}
         {tab === "relatorio" && (() => {
           const fbSemana = getFeedbacksSemana(0);
           const fbAnterior = getFeedbacksSemana(1);
@@ -1867,8 +2145,26 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4 }}>O cliente só poderá responder novamente após este período.</div>
           </div>
           <div className="setup-box">
-            <div className="setup-box-title">❓ Perguntas</div>
-            {ed.questions.map(q => (
+            <div className="setup-box-title">❓ Perguntas do Questionário</div>
+            {RAMO_PARA_BANCO[est.ramo] && (
+              <>
+                <div style={{ padding:"10px 14px", background:"var(--ac)11", border:"1px solid var(--ac)33", borderRadius:10, fontSize:12, color:"var(--muted2)", marginBottom:14, lineHeight:1.6 }}>
+                  📋 <strong style={{color:"var(--text)"}}>Banco de perguntas para {est.ramo}</strong> — Ative ou desative as perguntas que fazem sentido para o seu negócio. O sistema gera as métricas automaticamente.
+                </div>
+                <QuestionBankSelector
+                  ramo={est.ramo}
+                  activeIds={ed.activePerguntaIds || null}
+                  onChangeIds={(ids) => {
+                    const novasQuestions = bancoPerguntasParaQuestions(est.ramo, ids);
+                    setEd(e => ({ ...e, activePerguntaIds: ids, questions: novasQuestions }));
+                  }}
+                />
+                <div style={{ height:1, background:"var(--border)", margin:"14px 0" }} />
+                <div style={{ fontSize:11, fontWeight:800, letterSpacing:1.5, textTransform:"uppercase", color:"var(--muted)", marginBottom:10 }}>➕ Perguntas extras (opcional)</div>
+                <div style={{ fontSize:12, color:"var(--muted2)", marginBottom:10 }}>Adicione perguntas personalizadas além do banco padrão.</div>
+              </>
+            )}
+            {ed.questions.filter(q => !Object.values(PERGUNTAS_POR_NICHO).flat().some(bp => bp.id === q.id)).map(q => (
               <div className="pill-row" key={q.id} style={{ position: "relative" }}>
                 <button
                   onClick={() => setQEmojiOpen(qEmojiOpen === q.id ? null : q.id)}
@@ -1968,6 +2264,8 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
   const [editEst, setEditEst] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
   const [editSaved, setEditSaved] = useState(false);
+  const [masterSearch, setMasterSearch] = useState("");
+  const [masterCityFilter, setMasterCityFilter] = useState("todas");
   const EMPTY_EST = { name: "", emoji: "🏪", owner: "", pass: "", color: "#e63946", googleUrl: "", slug: "", responsavel: "", cidade: "", ramo: "Restaurante", telefone: "", whatsapp: "", plano: "R$ 99/mês" };
   const [newEst, setNewEst] = useState(EMPTY_EST);
   const [actionLoading, setActionLoading] = useState(false);
@@ -2182,11 +2480,45 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             <div className="metric"><div className="metric-val">R$ {mrr.toLocaleString("pt-BR")}</div><div className="metric-lbl">MRR</div></div>
             <div className="metric"><div className="metric-val">{total}</div><div className="metric-lbl">Feedbacks</div></div>
           </div>
+          {/* Busca + Filtro por cidade */}
+          <div style={{ display:"flex", gap:8, marginBottom:14, flexWrap:"wrap" }}>
+            <input
+              className="field-inline"
+              placeholder="🔍 Buscar por nome..."
+              value={masterSearch}
+              onChange={e => setMasterSearch(e.target.value)}
+              style={{ flex:1, minWidth:180 }}
+            />
+            <select
+              className="type-sel"
+              value={masterCityFilter}
+              onChange={e => setMasterCityFilter(e.target.value)}
+              style={{ minWidth:140 }}
+            >
+              <option value="todas">📍 Todas as cidades</option>
+              {[...new Set(establishments.map(e => e.cidade).filter(Boolean))].sort().map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            {(masterSearch || masterCityFilter !== "todas") && (
+              <button className="btn-sm btn-sm-ghost" onClick={() => { setMasterSearch(""); setMasterCityFilter("todas"); }}>✕ Limpar</button>
+            )}
+          </div>
+          {(() => {
+            const filtered = establishments.filter(e => {
+              const matchName = !masterSearch || e.name.toLowerCase().includes(masterSearch.toLowerCase()) || (e.responsavel||"").toLowerCase().includes(masterSearch.toLowerCase());
+              const matchCity = masterCityFilter === "todas" || e.cidade === masterCityFilter;
+              return matchName && matchCity;
+            });
+            if (filtered.length === 0) return (
+              <div style={{ textAlign:"center", color:"var(--muted)", padding:40, fontSize:14 }}>Nenhum estabelecimento encontrado.</div>
+            );
+            return (<>
           <div className="tbl-wrap" id="master-table">
             <div className="tbl-head" style={{ gridTemplateColumns: "1.6fr 1.2fr 0.9fr 0.9fr 70px 80px 90px", minWidth: 650 }}>
               <span>Estabelecimento</span><span>Responsável</span><span>Cidade</span><span>Plano</span><span>Feedbacks</span><span>Status</span><span>Ações</span>
             </div>
-            {establishments.map(e => {
+            {filtered.map(e => {
               const sqs = e.questions.filter(q => q.type === "stars");
               const vals = e.feedbacks.flatMap(f => sqs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0));
               const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "-";
@@ -2216,9 +2548,11 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
             })}
           </div>
           <div id="master-cards">
-            {establishments.map(e => <EstCard key={e.id} e={e} />)}
+            {filtered.map(e => <EstCard key={e.id} e={e} />)}
           </div>
           <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>💡 Clique em 🎯 para fazer uma demo sem bloqueio de tempo</div>
+          </>);
+          })()}
         </>)}
         {tab === "metricas" && (<>
           <div className="main-title">📊 Métricas Gerais</div>
@@ -2647,29 +2981,6 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
 // ============================================================
 // VALIDAR CUPOM — página acessada pelo dono ao escanear o QR
 // ============================================================
-
-function NotFoundScreen() {
-  return (
-    <div className="page page-center fade-up" style={{ background: "var(--dark)" }}>
-      <div className="card" style={{ textAlign: "center" }}>
-        <LogoSVG size={130} style={{ margin: "0 auto 18px" }} />
-        <div style={{ fontSize: 52, marginBottom: 12 }}>🔍</div>
-        <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, marginBottom: 8 }}>Estabelecimento não encontrado</div>
-        <div style={{ fontSize: 14, color: "var(--muted2)", lineHeight: 1.7, marginBottom: 20 }}>
-          O link que você acessou não corresponde a nenhum<br />estabelecimento cadastrado no NotaCheia.
-        </div>
-        <div style={{ background: "var(--d2)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", marginBottom: 20, fontSize: 12, color: "var(--muted2)", lineHeight: 1.6 }}>
-          💡 Se você recebeu este QR Code de um estabelecimento,<br />peça para eles verificarem o link com o suporte NotaCheia.
-        </div>
-        <a href="https://wa.me/5541996756776" target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#25d366", color: "#fff", borderRadius: 12, padding: "12px 20px", fontWeight: 800, fontSize: 14, textDecoration: "none", marginBottom: 10 }}>
-          💬 Falar com suporte
-        </a>
-        <div style={{ fontSize: 11, color: "#444", marginTop: 10 }}>NotaCheia ⭐ · notacheia.com.br</div>
-      </div>
-    </div>
-  );
-}
-
 function ValidarCupom({ ests }) {
   const path = window.location.pathname;
   const m = path.match(/\/validar\/([^/]+)\/([^/]+)/);
@@ -2822,19 +3133,17 @@ export default function App() {
       if (data && data.length > 0) {
         const withFeedbacks = await Promise.all(data.map(async (e) => ({ ...e, feedbacks: await loadFeedbacks(e.id) })));
         setEsts(withFeedbacks);
-        if (slug && !["painel","master","validar","cardapio"].includes(slug)) {
-          const found = withFeedbacks.find(e => (e.slug || makeSlug(e.name)).toLowerCase().trim() === slug.toLowerCase().trim());
-          if (found) { setActiveEst(found); } else { setMode("notFound"); }
-        } else if (!slug || slug === "") {
-          setActiveEst(withFeedbacks[0]);
+        if (slug) {
+          const found = withFeedbacks.find(e => (e.slug || makeSlug(e.name)) === slug);
+          setActiveEst(found || withFeedbacks[0]);
         } else {
           setActiveEst(withFeedbacks[0]);
         }
       } else {
         setEsts(SEED);
-        if (slug && !["painel","master","validar","cardapio"].includes(slug)) {
-          const found = SEED.find(e => (e.slug || makeSlug(e.name)).toLowerCase().trim() === slug.toLowerCase().trim());
-          if (found) { setActiveEst(found); } else { setMode("notFound"); }
+        if (slug) {
+          const found = SEED.find(e => (e.slug || makeSlug(e.name)) === slug);
+          setActiveEst(found || SEED[0]);
         } else {
           setActiveEst(SEED[0]);
         }
@@ -2863,21 +3172,17 @@ export default function App() {
     <>
       <style>{css}</style>
       <div>
-        {mode !== "client" && mode !== "notFound" && (
-          <div className="top-bar">
-            <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>
-          </div>
-        )}
-        {mode === "client" && (
-          <div className="top-bar" style={{ justifyContent: "flex-start" }}>
+        <div className="top-bar">
+          {mode !== "client" && <button className="top-btn top-btn-ghost" onClick={() => setMode("client")}>📱 Cliente</button>}
+          {mode === "client" && (<>
             <select style={{ background: "var(--d2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 10px", fontFamily: "var(--ff-body)", fontSize: 12, cursor: "pointer" }}
               value={activeEst?.id} onChange={e => setActiveEst(ests.find(x => x.id === e.target.value))}>
               {ests.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.name}</option>)}
             </select>
             <button className="top-btn top-btn-ghost" onClick={() => setMode("ownerGateway")}>🏪 Dono</button>
             <button className="top-btn top-btn-red" onClick={() => setMode("masterLogin")}>👑 Master</button>
-          </div>
-        )}
+          </>)}
+        </div>
         {mode === "client" && activeEst && <ClientApp est={activeEst} onSubmit={addFeedback} key={activeEst.id} />}
         {mode === "ownerGateway" && <OwnerGateway onDemo={() => { const demo = ests.find(e => e.id === "est_demo") || SEED.find(e => e.id === "est_demo"); setLoggedEst(demo); setMode("ownerDash"); }} onLogin={() => setMode("ownerLogin")} />}
         {mode === "ownerLogin" && <LoginScreen title="ACESSO DO PROPRIETÁRIO" hint="" onLogin={(email, pass) => { const found = ests.find(e => e.owner === email && e.pass === pass); if (found) { setLoggedEst(found); setMode("ownerDash"); return true; } return false; }} />}
@@ -2885,7 +3190,6 @@ export default function App() {
         {mode === "masterLogin" && <LoginScreen title="PAINEL MASTER" hint="" prefillEmail="master@notacheia.com.br" prefillPass="hu2001" onLogin={(email, pass) => { if (email === MASTER.user && pass === MASTER.pass) { setMode("masterDash"); return true; } return false; }} />}
         {mode === "masterDash" && <MasterPanel establishments={ests} setEstablishments={setEsts} onLogout={() => setMode("client")} />}
         {mode === "validar" && <ValidarCupom ests={ests} />}
-        {mode === "notFound" && <NotFoundScreen />}
       </div>
     </>
   );
