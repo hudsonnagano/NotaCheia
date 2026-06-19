@@ -1335,14 +1335,20 @@ function CardapioEditor({ est, onChange }) {
 async function loadEstabelecimentos() {
   const { data, error } = await supabase.from("estabelecimentos").select("*");
   if (error || !data || data.length === 0) return null;
-  return data.map(e => ({
-    ...e,
-    questions: e.questions || makeDefaultQuestions(),
-    prizes: e.prizes || [],
-    feedbacks: [],
-    slug: e.slug || makeSlug(e.name),
-    cardapio: e.cardapio || null,
-  }));
+  return data.map(e => {
+    // Se não tem perguntas salvas, usa o banco do nicho
+    // Se tem perguntas genéricas (IDs q_atend, q_amb etc), migra para o banco do nicho
+    const isGeneric = !e.questions || e.questions.some(q => q.id === "q_atend" || q.id === "q_amb");
+    const questions = isGeneric ? bancoPerguntasParaQuestions(e.ramo) : e.questions;
+    return {
+      ...e,
+      questions,
+      prizes: e.prizes || [],
+      feedbacks: [],
+      slug: e.slug || makeSlug(e.name),
+      cardapio: e.cardapio || null,
+    };
+  });
 }
 async function loadFeedbacks(estId) {
   const { data, error } = await supabase.from("feedbacks").select("*").eq("estabelecimento_id", estId).order("created_at", { ascending: false });
@@ -2476,7 +2482,7 @@ function MasterPanel({ establishments, setEstablishments, onLogout }) {
     const temCardapio = temCardapioPorPlano(newEst.plano);
     const novo = {
       ...newEst, slug, id: "est_" + uid(), ativo: true, logoUrl: "", feedbackInterval: 30,
-      questions: makeDefaultQuestions(),
+      questions: bancoPerguntasParaQuestions(newEst.ramo),
       prizes: [{ id: uid(), label: "Brinde Grátis", emoji: "🎁", color: newEst.color }, { id: uid(), label: "10% Desconto", emoji: "🏷️", color: "#333" }, { id: uid(), label: "Surpresa!", emoji: "🎉", color: "#6d597a" }],
       cardapio: temCardapio ? makeDefaultCardapio() : null,
       feedbacks: [], desde: new Date().toLocaleDateString("pt-BR")
