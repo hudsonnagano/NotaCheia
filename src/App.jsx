@@ -839,6 +839,12 @@ const CSS = (ac = "#e63946") => `
   .fade-up { animation: fadeUp 0.4s ease forwards; }
   ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--dark); } ::-webkit-scrollbar-thumb { background: var(--d3); border-radius: 3px; }
   .div { height: 1px; background: var(--border); margin: 14px 0; }
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 400; background: var(--d1); border-top: 1px solid var(--border); padding: 8px 4px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+  .bottom-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; cursor: pointer; border: none; background: none; color: var(--muted); font-family: var(--ff-body); font-size: 10px; font-weight: 700; transition: all 0.15s; min-width: 52px; }
+  .bottom-tab.on { color: var(--ac); background: var(--ac)15; }
+  .bottom-tab-icon { font-size: 20px; }
+  @media (max-width: 768px) { .bottom-nav { display: block; } .main { padding-bottom: 80px !important; } }
 `;
 
 
@@ -1562,6 +1568,28 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         <div style={{ flex: 1 }} />
         <button className="nav" onClick={onLogout}><span>🚪</span><span>Sair</span></button>
       </div>
+      {/* Bottom Nav Mobile */}
+      {!isMaster && (
+        <div className="bottom-nav">
+          <div className="bottom-nav-inner">
+            {[
+              { id: "overview", icon: "📊", lbl: "Início" },
+              { id: "feedbacks", icon: "💬", lbl: "Feedbacks" },
+              { id: "brindes", icon: "🎁", lbl: "Brindes" },
+              { id: "qrcode", icon: "📱", lbl: "QR Code" },
+            ].map(n => (
+              <button key={n.id} className={`bottom-tab ${tab === n.id ? "on" : ""}`} onClick={() => setTab(n.id)}>
+                <span className="bottom-tab-icon">{n.icon}</span>
+                <span>{n.lbl}</span>
+              </button>
+            ))}
+            <button className={`bottom-tab ${["insights","clientes","relatorio","cardapio","setup","senha"].includes(tab) ? "on" : ""}`} onClick={() => setOpen(true)}>
+              <span className="bottom-tab-icon">☰</span>
+              <span>Mais</span>
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
