@@ -3712,7 +3712,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   );
 }
 
-const RAMOS = ["Hamburgueria", "Pizzaria", "Restaurante", "Cafeteria", "Lanchonete", "Bar", "Sorveteria", "Padaria", "Sushi/Japonês", "Churrascaria", "Clínica Odontológica", "Clínica Médica", "Barbearia", "Salão de Beleza", "Academia", "Pet Shop", "Farmácia", "Outro"];
+const RAMOS = ["Hamburgueria","Pizzaria","Restaurante","Cafeteria","Lanchonete","Bar","Sorveteria","Padaria","Churrascaria","Comida Japonesa","Comida Mexicana","Comida Chinesa","Açaí","Confeitaria","Salão de Beleza","Barbearia","Spa / Estética","Clínica Médica","Clínica Odontológica","Pet Shop","Farmácia","Academia","Posto de Gasolina","Imobiliária","Hotel","Pousada","Hostel","Supermercado","Loja de Roupas","Calçados","Ótica","Joalheria","Papelaria","Floricultura","Escola / Curso","Oficina / Auto","Lavanderia","Delivery","Clínica Veterinária","Fisioterapia","Psicologia","Nutrição","Advocacia","Contabilidade","Tecnologia / TI","Fotografia","Escola de Música","Escape Room / Lazer","Outro"];
 const PLANOS = ["R$ 99/mês", "R$ 129/mês", "Personalizado"];
 
 function MasterPanel({ establishments, setEstablishments, onLogout }) {
