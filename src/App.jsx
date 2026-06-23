@@ -1503,10 +1503,7 @@ const PERGUNTAS_POR_NICHO = {
     { id:"er_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
     { id:"er_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
-      choice", label:"O que te faria voltar?", options:["Promoções","Novidades","Personalização","Atendimento","Variedade"] },
-    { id:"jo_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
-    { id:"jo_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
-  ],
+      ],
      "Comida Japonesa": [
     { id:"jp_1",  type:"stars",  label:"Como avalia a qualidade do peixe/frutos do mar?", defaultActive:true },
     { id:"jp_2",  type:"stars",  label:"Como avalia o sabor dos pratos?", defaultActive:true },
