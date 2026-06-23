@@ -382,151 +382,311 @@ const PERGUNTAS_POR_NICHO = {
     { id:"bb_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Clínica Médica": [
-    { id:"cm_atend",     cat:"Recepção",           type:"stars",  label:"Como avalia o atendimento na recepção?",                                                  defaultActive:true  },
-    { id:"cm_simpatia",  cat:"Recepção",           type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
-    { id:"cm_agenda",    cat:"Recepção",           type:"stars",  label:"Como avalia a facilidade para agendar consulta?",                                         defaultActive:true  },
-    { id:"cm_espera",    cat:"Recepção",           type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
-    { id:"cm_pontual",   cat:"Recepção",           type:"choice", label:"A consulta foi no horário marcado?",          options:["Sim, pontual","Atrasou pouco","Atrasou muito"], defaultActive:true  },
-    { id:"cm_medico",    cat:"Consulta",           type:"staff",  label:"Qual médico te atendeu?",                      options:["Dr. Carlos","Dra. Ana","Dr. João","Dra. Maria"], defaultActive:true  },
-    { id:"cm_escuta",    cat:"Consulta",           type:"stars",  label:"Como avalia a atenção do médico ao seu caso?",                                            defaultActive:true  },
-    { id:"cm_clareza",   cat:"Consulta",           type:"stars",  label:"O médico explicou tudo de forma clara?",                                                  defaultActive:true  },
-    { id:"cm_confianca", cat:"Consulta",           type:"stars",  label:"Você se sentiu seguro e bem cuidado?",                                                    defaultActive:true  },
-    { id:"cm_amb",       cat:"Estrutura",          type:"stars",  label:"Como avalia a estrutura / instalações da clínica?",                                       defaultActive:true  },
-    { id:"cm_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza e higiene?",                                                        defaultActive:true  },
-    { id:"cm_conforto",  cat:"Estrutura",          type:"stars",  label:"Como avalia o conforto da sala de espera?",                                               defaultActive:false },
-    { id:"cm_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do custo da consulta?",          options:["Muito em conta","Justo","Um pouco salgado","Caro"], defaultActive:true  },
-    { id:"cm_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria a essa clínica?",              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
-    { id:"cm_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"cm_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"cm_1",  type:"stars",  label:"Como avalia o atendimento do médico?", defaultActive:true },
+    { id:"cm_2",  type:"stars",  label:"Como avalia a atenção e escuta do médico?", defaultActive:true },
+    { id:"cm_3",  type:"stars",  label:"Como avalia o atendimento da recepção?", defaultActive:true },
+    { id:"cm_4",  type:"stars",  label:"Como avalia a clareza das explicações médicas?", defaultActive:true },
+    { id:"cm_5",  type:"stars",  label:"Como avalia o tempo de espera?", defaultActive:true },
+    { id:"cm_6",  type:"stars",  label:"Como avalia a limpeza e higiene?" },
+    { id:"cm_7",  type:"stars",  label:"Como avalia o conforto da sala de espera?" },
+    { id:"cm_8",  type:"stars",  label:"Como avalia a agilidade no agendamento?" },
+    { id:"cm_9",  type:"stars",  label:"Como avalia a estrutura/equipamentos?" },
+    { id:"cm_10", type:"stars",  label:"Como avalia o custo-benefício?" },
+    { id:"cm_11", type:"choice", label:"O que achou do preço?", options:["Acessível","Justo","Caro"], defaultActive:true },
+    { id:"cm_12", type:"choice", label:"É sua primeira consulta aqui?", options:["Sim","Não"] },
+    { id:"cm_13", type:"choice", label:"O horário agendado foi cumprido?", options:["Sim, pontual","Pequeno atraso","Muito atraso"] },
+    { id:"cm_14", type:"choice", label:"Como agendou?", options:["Telefone","WhatsApp","App","Plano de saúde"] },
+    { id:"cm_15", type:"choice", label:"Seu plano de saúde é aceito?", options:["Sim","Paguei particular","Não aceita meu plano"] },
+    { id:"cm_16", type:"choice", label:"As orientações do médico foram claras?", options:["Sim, muito","Razoável","Precisei pedir mais explicações"] },
+    { id:"cm_17", type:"choice", label:"Você voltaria para uma próxima consulta?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"cm_18", type:"choice", label:"Indicaria para amigos/família?", options:["Com certeza","Talvez","Não"] },
+    { id:"cm_19", type:"staff",  label:"Com qual médico foi atendido?", options:[] },
+    { id:"cm_20", type:"choice", label:"O ambiente transmite confiança e segurança?", options:["Sim","Razoável","Não"] },
+    { id:"cm_21", type:"choice", label:"Como nos conheceu?", options:["Indicação","Google","Plano de saúde","Outro"] },
+    { id:"cm_22", type:"choice", label:"A consulta durou tempo suficiente?", options:["Sim","Poderia ter sido mais longa","Muito curta"] },
+    { id:"cm_23", type:"choice", label:"A recepção foi cordial e eficiente?", options:["Sim","Razoável","Não"] },
+    { id:"cm_24", type:"choice", label:"Você conseguiu tirar todas as suas dúvidas?", options:["Sim","Maioria","Não"] },
+    { id:"cm_25", type:"choice", label:"O retorno/resultado foi entregue no prazo?", options:["Sim","Com atraso","Ainda aguardo"] },
+    { id:"cm_26", type:"choice", label:"A clínica tem estacionamento?", options:["Sim","Difícil","Não tem"] },
+    { id:"cm_27", type:"choice", label:"O banheiro estava limpo?", options:["Sim","Razoável","Não"] },
+    { id:"cm_28", type:"choice", label:"Você se sentiu bem acolhido desde a chegada?", options:["Sim","Razoável","Não"] },
+    { id:"cm_29", type:"choice", label:"O que mais valoriza numa clínica?", options:["Pontualidade","Atenção do médico","Limpeza","Preço","Facilidade de agendamento"] },
+    { id:"cm_30", type:"choice", label:"O que te faria recomendar?", options:["Atendimento humanizado","Preço","Pontualidade","Estrutura moderna"] },
+    { id:"cm_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"cm_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Clínica Odontológica": [
-    { id:"co_atend",     cat:"Recepção",           type:"stars",  label:"Como avalia o atendimento na recepção?",                                                  defaultActive:true  },
-    { id:"co_simpatia",  cat:"Recepção",           type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
-    { id:"co_espera",    cat:"Recepção",           type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
-    { id:"co_pontual",   cat:"Recepção",           type:"choice", label:"Foi atendido no horário marcado?",            options:["Sim, pontual","Atrasou pouco","Atrasou muito"], defaultActive:true  },
-    { id:"co_dentista",  cat:"Consulta",           type:"staff",  label:"Qual dentista te atendeu?",                   options:["Dr. Carlos","Dra. Ana","Dr. João","Dra. Maria"], defaultActive:true  },
-    { id:"co_escuta",    cat:"Consulta",           type:"stars",  label:"O dentista foi atencioso e explicou o procedimento?",                                     defaultActive:true  },
-    { id:"co_dor",       cat:"Consulta",           type:"choice", label:"Você sentiu dor ou desconforto além do esperado?",options:["Não, ficou ótimo","Um pouco, mas ok","Sim, senti desconforto"], defaultActive:true  },
-    { id:"co_confianca", cat:"Consulta",           type:"stars",  label:"Você se sentiu seguro durante o procedimento?",                                           defaultActive:true  },
-    { id:"co_resultado", cat:"Consulta",           type:"stars",  label:"Como avalia o resultado do procedimento?",                                                defaultActive:true  },
-    { id:"co_higiene",   cat:"Consulta",           type:"stars",  label:"Como avalia a higiene / esterilização do equipamento?",                                   defaultActive:true  },
-    { id:"co_amb",       cat:"Estrutura",          type:"stars",  label:"Como avalia a estrutura da clínica?",                                                     defaultActive:true  },
-    { id:"co_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza e organização?",                                                    defaultActive:true  },
-    { id:"co_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Muito em conta","Justo","Um pouco salgado","Caro"], defaultActive:true  },
-    { id:"co_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
-    { id:"co_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"co_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"od_1",  type:"stars",  label:"Como avalia o atendimento do dentista?", defaultActive:true },
+    { id:"od_2",  type:"stars",  label:"Como avalia a habilidade/delicadeza?", defaultActive:true },
+    { id:"od_3",  type:"stars",  label:"Como avalia a clareza nas explicações?", defaultActive:true },
+    { id:"od_4",  type:"stars",  label:"Como avalia o atendimento da recepção?", defaultActive:true },
+    { id:"od_5",  type:"stars",  label:"Como avalia o tempo de espera?", defaultActive:true },
+    { id:"od_6",  type:"stars",  label:"Como avalia a limpeza e esterilização?" },
+    { id:"od_7",  type:"stars",  label:"Como avalia o conforto durante o procedimento?" },
+    { id:"od_8",  type:"stars",  label:"Como avalia a estrutura/equipamentos?" },
+    { id:"od_9",  type:"stars",  label:"Como avalia o custo-benefício?" },
+    { id:"od_10", type:"stars",  label:"Como avalia o agendamento?" },
+    { id:"od_11", type:"choice", label:"O que achou do preço?", options:["Acessível","Justo","Caro"], defaultActive:true },
+    { id:"od_12", type:"choice", label:"É sua primeira consulta aqui?", options:["Sim","Não"] },
+    { id:"od_13", type:"choice", label:"Qual serviço fez?", options:["Limpeza","Restauração","Extração","Ortodontia","Clareamento","Implante","Outro"] },
+    { id:"od_14", type:"choice", label:"O horário agendado foi cumprido?", options:["Sim, pontual","Pequeno atraso","Muito atraso"] },
+    { id:"od_15", type:"choice", label:"Sentiu dor durante o procedimento?", options:["Não, sem dor","Leve","Sim, bastante"] },
+    { id:"od_16", type:"choice", label:"Como nos conheceu?", options:["Indicação","Google","Instagram","Plano odontológico","Outro"] },
+    { id:"od_17", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"od_18", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"od_19", type:"staff",  label:"Qual dentista te atendeu?", options:[] },
+    { id:"od_20", type:"choice", label:"O dentista explicou o tratamento antes?", options:["Sim","Razoável","Não"] },
+    { id:"od_21", type:"choice", label:"O ambiente transmite limpeza e confiança?", options:["Sim","Razoável","Não"] },
+    { id:"od_22", type:"choice", label:"O plano odontológico é aceito?", options:["Sim","Pago particular","Não aceita o meu"] },
+    { id:"od_23", type:"choice", label:"A recepção foi eficiente e simpática?", options:["Sim","Razoável","Não"] },
+    { id:"od_24", type:"choice", label:"O tratamento ficou com boa aparência/resultado?", options:["Sim","Razoável","Não"] },
+    { id:"od_25", type:"choice", label:"Com que frequência você vai ao dentista?", options:["A cada 6 meses","Anualmente","Só quando dói","Primeira vez"] },
+    { id:"od_26", type:"choice", label:"O que mais gostou?", options:["Delicadeza","Resultado","Limpeza","Atendimento","Preço"] },
+    { id:"od_27", type:"choice", label:"Você se sentiu bem acolhido(a)?", options:["Sim","Razoável","Não"] },
+    { id:"od_28", type:"choice", label:"O dentista é pontual nas consultas?", options:["Sim, sempre","Às vezes atrasa","Frequentemente atrasa"] },
+    { id:"od_29", type:"choice", label:"O local tem Wi-Fi/entretenimento na espera?", options:["Sim","Razoável","Não"] },
+    { id:"od_30", type:"choice", label:"O que te faria recomendar?", options:["Delicadeza","Resultado","Pontualidade","Preço","Limpeza"] },
+    { id:"od_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"od_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Pet Shop": [
-    { id:"ps_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
-    { id:"ps_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia com você e seu pet?",                                              defaultActive:true  },
-    { id:"ps_espera",    cat:"Atendimento",        type:"stars",  label:"Como avalia o tempo de espera?",                                                          defaultActive:true  },
-    { id:"ps_first",     cat:"Atendimento",        type:"choice", label:"É a primeira vez aqui com seu pet?",           options:["Sim","Não"],                    defaultActive:true  },
-    { id:"ps_cuidado",   cat:"Serviço",            type:"stars",  label:"Como avalia o cuidado e carinho com seu pet?",                                            defaultActive:true  },
-    { id:"ps_banho",     cat:"Serviço",            type:"stars",  label:"Como avalia o resultado do banho?",                                                       defaultActive:true  },
-    { id:"ps_tosa",      cat:"Serviço",            type:"stars",  label:"Como avalia o resultado da tosa?",                                                        defaultActive:false },
-    { id:"ps_veterinario",cat:"Serviço",           type:"stars",  label:"Como avalia o atendimento veterinário?",                                                  defaultActive:false },
-    { id:"ps_resultado", cat:"Serviço",            type:"choice", label:"Seu pet saiu como esperava?",                  options:["Amei! Ficou ótimo","Gostei","Ficou ok","Não gostei"], defaultActive:true  },
-    { id:"ps_pet_ok",    cat:"Serviço",            type:"choice", label:"Seu pet pareceu estressado?",                  options:["Não, ficou tranquilo","Um pouco","Sim, ficou bem estressado"], defaultActive:true  },
-    { id:"ps_limpeza",   cat:"Loja & Ambiente",    type:"stars",  label:"Como avalia a limpeza e higiene do local?",                                               defaultActive:true  },
-    { id:"ps_seguranca", cat:"Loja & Ambiente",    type:"choice", label:"Seu pet ficou seguro o tempo todo?",           options:["Sim, com certeza","Sim, mas tive preocupação","Não senti segurança"], defaultActive:true  },
-    { id:"ps_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou do preço?",                       options:["Barato pelo que oferece","Ideal pelo que oferece","Caro pelo que oferece"], defaultActive:true  },
-    { id:"ps_volta",     cat:"Preço & Fidelização",type:"choice", label:"Você voltaria?",                              options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
-    { id:"ps_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"ps_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"pt_1",  type:"stars",  label:"Como avalia o resultado do banho/tosa?", defaultActive:true },
+    { id:"pt_2",  type:"stars",  label:"Como avalia o cuidado com seu pet?", defaultActive:true },
+    { id:"pt_3",  type:"stars",  label:"Como avalia o atendimento?", defaultActive:true },
+    { id:"pt_4",  type:"stars",  label:"Como avalia a limpeza e higiene?", defaultActive:true },
+    { id:"pt_5",  type:"stars",  label:"Como avalia o tempo de espera?", defaultActive:true },
+    { id:"pt_6",  type:"stars",  label:"Como avalia os produtos disponíveis?" },
+    { id:"pt_7",  type:"stars",  label:"Como avalia a variedade de ração e petiscos?" },
+    { id:"pt_8",  type:"stars",  label:"Como avalia o ambiente para os animais?" },
+    { id:"pt_9",  type:"stars",  label:"Como avalia o custo-benefício?" },
+    { id:"pt_10", type:"stars",  label:"Como avalia o agendamento?" },
+    { id:"pt_11", type:"choice", label:"O que achou do preço?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"pt_12", type:"choice", label:"É sua primeira visita?", options:["Sim","Não"] },
+    { id:"pt_13", type:"choice", label:"Qual serviço usou?", options:["Banho","Tosa","Banho e tosa","Consulta vet","Compra de produto","Outro"] },
+    { id:"pt_14", type:"choice", label:"Seu pet ficou tranquilo durante o serviço?", options:["Sim","Um pouco agitado","Não sei"] },
+    { id:"pt_15", type:"choice", label:"O resultado da tosa/banho ficou como esperado?", options:["Sim, ótimo","Razoável","Não"] },
+    { id:"pt_16", type:"choice", label:"Como nos conheceu?", options:["Indicação","Google","Instagram","Mora perto","Outro"] },
+    { id:"pt_17", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"pt_18", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"pt_19", type:"staff",  label:"Quem cuidou do seu pet?", options:[] },
+    { id:"pt_20", type:"choice", label:"Você se sentiu seguro(a) deixando seu pet?", options:["Sim","Razoável","Fiquei preocupado(a)"] },
+    { id:"pt_21", type:"choice", label:"O pet voltou com cheiro e aparência ótimos?", options:["Sim","Razoável","Não"] },
+    { id:"pt_22", type:"choice", label:"Encontrou o produto que precisava?", options:["Sim","Maioria","Não"] },
+    { id:"pt_23", type:"choice", label:"Com que frequência traz seu pet?", options:["Primeira vez","Mensalmente","A cada 2 meses","Raramente"] },
+    { id:"pt_24", type:"choice", label:"O local tem serviço de táxi dog?", options:["Sim e é ótimo","Sim mas não usei","Não tem"] },
+    { id:"pt_25", type:"choice", label:"O horário agendado foi cumprido?", options:["Sim","Pequeno atraso","Muito atraso"] },
+    { id:"pt_26", type:"choice", label:"O que mais gostou?", options:["Cuidado com o pet","Resultado","Preço","Atendimento","Variedade"] },
+    { id:"pt_27", type:"choice", label:"Qual animal tem?", options:["Cachorro","Gato","Ave","Roedor","Outro"] },
+    { id:"pt_28", type:"choice", label:"O espaço é adequado para o porte do seu animal?", options:["Sim","Razoável","Não"] },
+    { id:"pt_29", type:"choice", label:"O profissional demonstra amor pelos animais?", options:["Sim, claramente","Razoável","Não percebi"] },
+    { id:"pt_30", type:"choice", label:"O que te faria vir mais vezes?", options:["Promoções","Pacotes","Agendamento mais fácil","Horários amplos"] },
+    { id:"pt_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"pt_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Farmácia": [
-    { id:"fm_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
-    { id:"fm_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
-    { id:"fm_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no atendimento?",                                                 defaultActive:true  },
-    { id:"fm_encontrou", cat:"Atendimento",        type:"choice", label:"Encontrou tudo que procurava?",                options:["Sim, tudo!","A maioria","Só metade","Quase nada"], defaultActive:true  },
-    { id:"fm_orientacao",cat:"Atendimento",        type:"stars",  label:"O farmacêutico te orientou sobre o medicamento?",                                         defaultActive:true  },
-    { id:"fm_estoque",   cat:"Produtos",           type:"stars",  label:"Como avalia a variedade e estoque de produtos?",                                          defaultActive:true  },
-    { id:"fm_preco_med", cat:"Produtos",           type:"choice", label:"O preço dos medicamentos está adequado?",      options:["Muito em conta","Justo","Um pouco salgado","Prefiro outra farmácia"], defaultActive:true  },
-    { id:"fm_limpeza",   cat:"Ambiente",           type:"stars",  label:"Como avalia a limpeza e organização?",                                                    defaultActive:true  },
-    { id:"fm_fila",      cat:"Ambiente",           type:"choice", label:"Teve que esperar muito na fila?",              options:["Não, rápido!","Um pouco","Esperei bastante"], defaultActive:true  },
-    { id:"fm_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"fm_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"fm_1",  type:"stars",  label:"Como avalia o atendimento?", defaultActive:true },
+    { id:"fm_2",  type:"stars",  label:"Como avalia a disponibilidade dos produtos?", defaultActive:true },
+    { id:"fm_3",  type:"stars",  label:"Como avalia a agilidade no atendimento?", defaultActive:true },
+    { id:"fm_4",  type:"stars",  label:"Como avalia o conhecimento dos atendentes?", defaultActive:true },
+    { id:"fm_5",  type:"stars",  label:"Como avalia a limpeza e organização?", defaultActive:true },
+    { id:"fm_6",  type:"stars",  label:"Como avalia o preço dos produtos?" },
+    { id:"fm_7",  type:"stars",  label:"Como avalia a variedade de produtos?" },
+    { id:"fm_8",  type:"stars",  label:"Como avalia o conforto da loja?" },
+    { id:"fm_9",  type:"stars",  label:"Como avalia o serviço de entrega (se usou)?" },
+    { id:"fm_10", type:"stars",  label:"Como avalia o custo-benefício geral?" },
+    { id:"fm_11", type:"choice", label:"O que achou do preço?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"fm_12", type:"choice", label:"É sua primeira visita?", options:["Sim","Não"] },
+    { id:"fm_13", type:"choice", label:"O que veio buscar?", options:["Medicamento","Produto de beleza","Vitamina","Higiene","Outro"] },
+    { id:"fm_14", type:"choice", label:"Encontrou o que precisava?", options:["Sim, tudo","Maioria","Não encontrei"] },
+    { id:"fm_15", type:"choice", label:"O atendente ajudou bem?", options:["Sim, muito","Razoável","Não precisei de ajuda"] },
+    { id:"fm_16", type:"choice", label:"Recebeu orientação sobre o medicamento?", options:["Sim","Parcial","Não"] },
+    { id:"fm_17", type:"choice", label:"O tempo de espera no caixa foi:", options:["Rápido","Razoável","Demorado"] },
+    { id:"fm_18", type:"choice", label:"Como nos conheceu?", options:["Mora perto","Indicação","Google","Outro"] },
+    { id:"fm_19", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"fm_20", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"fm_21", type:"staff",  label:"Quem te atendeu?", options:[] },
+    { id:"fm_22", type:"choice", label:"O atendimento foi discreto e respeitoso?", options:["Sim","Razoável","Não"] },
+    { id:"fm_23", type:"choice", label:"A farmácia tem aferição de pressão/glicemia?", options:["Sim e é bom","Sim mas demora","Não tem"] },
+    { id:"fm_24", type:"choice", label:"Aceita delivery?", options:["Sim e funciona bem","Sim mas demora","Não"] },
+    { id:"fm_25", type:"choice", label:"O que mais gostou?", options:["Atendimento","Preço","Disponibilidade","Localização","Rapidez"] },
+    { id:"fm_26", type:"choice", label:"Com que frequência você compra aqui?", options:["Primeira vez","Raramente","Mensalmente","Frequentemente"] },
+    { id:"fm_27", type:"choice", label:"Há estacionamento fácil?", options:["Sim","Difícil","Não tem"] },
+    { id:"fm_28", type:"choice", label:"O local aceita convênios/farmácias populares?", options:["Sim","Não sei","Não"] },
+    { id:"fm_29", type:"choice", label:"A vitrine/exposição de produtos estava boa?", options:["Sim","Razoável","Não"] },
+    { id:"fm_30", type:"choice", label:"O que te faria preferir esta farmácia?", options:["Preço menor","Mais variedade","Entrega rápida","Atendimento melhor"] },
+    { id:"fm_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"fm_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Academia": [
-    { id:"ac_atend",     cat:"Atendimento",        type:"staff",  label:"Qual profissional te atendeu hoje?",           options:["Carlos","João","Rafael","Thiago","Ana"], defaultActive:true  },
-    { id:"ac_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
-    { id:"ac_first",     cat:"Atendimento",        type:"choice", label:"É seu primeiro treino aqui?",                  options:["Sim","Não"],                    defaultActive:true  },
-    { id:"ac_professor", cat:"Treino",             type:"stars",  label:"Como avalia a orientação do professor?",                                                  defaultActive:true  },
-    { id:"ac_ficha",     cat:"Treino",             type:"choice", label:"Sua ficha de treino está atualizada?",         options:["Sim, e adoro!","Sim, mas poderia melhorar","Não, precisa atualizar","Não tenho"], defaultActive:false },
-    { id:"ac_equipamentos",cat:"Estrutura",        type:"stars",  label:"Como avalia a qualidade dos equipamentos?",                                               defaultActive:true  },
-    { id:"ac_disp_equip",cat:"Estrutura",          type:"choice", label:"Os equipamentos estavam disponíveis quando precisou?",options:["Sim, todos disponíveis","A maioria sim","Faltou alguns","Não, estava lotado"], defaultActive:true  },
-    { id:"ac_limpeza",   cat:"Estrutura",          type:"stars",  label:"Como avalia a limpeza da academia?",                                                      defaultActive:true  },
-    { id:"ac_vestiario", cat:"Estrutura",          type:"stars",  label:"Como avalia os vestiários e banheiros?",                                                  defaultActive:true  },
-    { id:"ac_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou da mensalidade?",                 options:["Muito em conta","Justa","Um pouco cara","Cara demais"], defaultActive:true  },
-    { id:"ac_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"ac_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"ac_1",  type:"stars",  label:"Como avalia a qualidade dos equipamentos?", defaultActive:true },
+    { id:"ac_2",  type:"stars",  label:"Como avalia a limpeza da academia?", defaultActive:true },
+    { id:"ac_3",  type:"stars",  label:"Como avalia os vestiários?", defaultActive:true },
+    { id:"ac_4",  type:"stars",  label:"Como avalia o atendimento da equipe?", defaultActive:true },
+    { id:"ac_5",  type:"stars",  label:"Como avalia os professores/personal?", defaultActive:true },
+    { id:"ac_6",  type:"stars",  label:"Como avalia as aulas coletivas?" },
+    { id:"ac_7",  type:"stars",  label:"Como avalia o ambiente/climatização?" },
+    { id:"ac_8",  type:"stars",  label:"Como avalia a variedade de equipamentos?" },
+    { id:"ac_9",  type:"stars",  label:"Como avalia o custo-benefício?" },
+    { id:"ac_10", type:"stars",  label:"Como avalia a musculação/zona de peso?" },
+    { id:"ac_11", type:"choice", label:"O que achou do preço da mensalidade?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"ac_12", type:"choice", label:"Há quanto tempo é aluno?", options:["Hoje é meu primeiro dia","Menos de 3 meses","3 a 12 meses","Mais de 1 ano"] },
+    { id:"ac_13", type:"choice", label:"Qual período você costuma treinar?", options:["Manhã","Tarde","Noite"] },
+    { id:"ac_14", type:"choice", label:"Os equipamentos estavam disponíveis quando precisou?", options:["Sim, todos","Maioria","Fila grande"] },
+    { id:"ac_15", type:"choice", label:"As aulas coletivas são variadas o suficiente?", options:["Sim","Podia ter mais opções","Não faço coletivas"] },
+    { id:"ac_16", type:"choice", label:"O professor acompanha o treino individualmente?", options:["Sim, sempre","Às vezes","Não"] },
+    { id:"ac_17", type:"choice", label:"Como nos conheceu?", options:["Indicação","Google","Instagram","Mora perto","Outro"] },
+    { id:"ac_18", type:"choice", label:"Você indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"ac_19", type:"staff",  label:"Qual professor te atende?", options:[] },
+    { id:"ac_20", type:"choice", label:"O app/sistema de agendamento funciona bem?", options:["Sim","Razoável","Não tem"] },
+    { id:"ac_21", type:"choice", label:"A academia tem estacionamento?", options:["Sim","Difícil","Não tem"] },
+    { id:"ac_22", type:"choice", label:"O que mais valoriza?", options:["Equipamentos","Limpeza","Professores","Preço","Localização"] },
+    { id:"ac_23", type:"choice", label:"A academia tem nutricionista?", options:["Sim e é ótimo","Tem mas não uso","Não tem"] },
+    { id:"ac_24", type:"choice", label:"Há bebedouro e área de descanso?", options:["Sim, bom","Razoável","Não tem"] },
+    { id:"ac_25", type:"choice", label:"O ambiente te motiva a treinar?", options:["Sim, muito","Razoável","Não muito"] },
+    { id:"ac_26", type:"choice", label:"Você voltaria a renovar a matrícula?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"ac_27", type:"choice", label:"O cadastro/matrícula foi fácil?", options:["Sim","Razoável","Complicado"] },
+    { id:"ac_28", type:"choice", label:"Os horários de funcionamento atendem sua rotina?", options:["Sim","Podia ser mais amplo","Não"] },
+    { id:"ac_29", type:"choice", label:"A limpeza dos equipamentos após uso é respeitada?", options:["Sim, todos limpam","Maioria","Raramente"] },
+    { id:"ac_30", type:"choice", label:"O que te faria indicar?", options:["Preço","Professores","Equipamentos","Limpeza","Ambiente"] },
+    { id:"ac_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"ac_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Posto de Gasolina": [
-    { id:"pg_atend",     cat:"Atendimento",        type:"staff",  label:"Quem te atendeu?",                              options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
-    { id:"pg_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do atendimento?",                                                  defaultActive:true  },
-    { id:"pg_agilidade", cat:"Atendimento",        type:"stars",  label:"Como avalia a agilidade no abastecimento?",                                               defaultActive:true  },
-    { id:"pg_combustivel",cat:"Produto & Serviço", type:"choice", label:"Que combustível abasteceu?",                   options:["Gasolina comum","Gasolina aditivada","Etanol","Diesel","GNV"], defaultActive:true  },
-    { id:"pg_litros",    cat:"Produto & Serviço",  type:"choice", label:"Ficou satisfeito com a quantidade abastecida?",options:["Sim, correto","Achei baixo para o valor","Não verifiquei"], defaultActive:true  },
-    { id:"pg_preco_comb",cat:"Produto & Serviço",  type:"choice", label:"O preço do combustível está adequado?",        options:["Muito em conta","Justo","Um pouco acima","Caro demais"], defaultActive:true  },
-    { id:"pg_calibragem",cat:"Produto & Serviço",  type:"choice", label:"Usou o serviço de calibragem?",               options:["Sim, ótimo!","Sim, mas poderia melhorar","Não precisei"], defaultActive:false },
-    { id:"pg_limpeza",   cat:"Conveniência",       type:"stars",  label:"Como avalia a limpeza geral do posto?",                                                   defaultActive:true  },
-    { id:"pg_banheiro",  cat:"Conveniência",       type:"stars",  label:"Como avalia os banheiros?",                                                               defaultActive:true  },
-    { id:"pg_conveniencia",cat:"Conveniência",     type:"stars",  label:"Como avalia a loja de conveniência?",                                                     defaultActive:false },
-    { id:"pg_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"pg_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"pg_1",  type:"stars",  label:"Como avalia o atendimento dos frentistas?", defaultActive:true },
+    { id:"pg_2",  type:"stars",  label:"Como avalia a agilidade no abastecimento?", defaultActive:true },
+    { id:"pg_3",  type:"stars",  label:"Como avalia a limpeza do posto?", defaultActive:true },
+    { id:"pg_4",  type:"stars",  label:"Como avalia a limpeza dos banheiros?", defaultActive:true },
+    { id:"pg_5",  type:"stars",  label:"Como avalia a conveniência (loja)?", defaultActive:true },
+    { id:"pg_6",  type:"stars",  label:"Como avalia os produtos da loja?" },
+    { id:"pg_7",  type:"stars",  label:"Como avalia o preço do combustível?" },
+    { id:"pg_8",  type:"stars",  label:"Como avalia a segurança do local?" },
+    { id:"pg_9",  type:"stars",  label:"Como avalia o serviço de lavagem (se usou)?" },
+    { id:"pg_10", type:"stars",  label:"Como avalia o custo-benefício geral?" },
+    { id:"pg_11", type:"choice", label:"O que achou do preço do combustível?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"pg_12", type:"choice", label:"É sua primeira visita?", options:["Sim","Não"] },
+    { id:"pg_13", type:"choice", label:"Qual combustível abasteceu?", options:["Gasolina comum","Gasolina aditivada","Etanol","Diesel","Elétrico"] },
+    { id:"pg_14", type:"choice", label:"O frentista calibrou os pneus?", options:["Sim, pedi e fez bem","Sim mas sem cuidado","Não pedi"] },
+    { id:"pg_15", type:"choice", label:"Usou a loja de conveniência?", options:["Sim","Não desta vez"] },
+    { id:"pg_16", type:"choice", label:"O banheiro estava limpo?", options:["Sim","Razoável","Não"] },
+    { id:"pg_17", type:"choice", label:"O frentista perguntou sobre o nível do óleo?", options:["Sim","Não"] },
+    { id:"pg_18", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"pg_19", type:"staff",  label:"Quem te atendeu?", options:[] },
+    { id:"pg_20", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"pg_21", type:"choice", label:"Como nos conheceu?", options:["Mora perto","Indicação","Google","Passando","Outro"] },
+    { id:"pg_22", type:"choice", label:"O atendimento foi educado e cuidadoso?", options:["Sim","Razoável","Não"] },
+    { id:"pg_23", type:"choice", label:"O marcador de combustível foi zerado corretamente?", options:["Sim","Não prestei atenção","Não"] },
+    { id:"pg_24", type:"choice", label:"Há serviço de lavagem de carro?", options:["Sim e é bom","Sim mas demorado","Não tem"] },
+    { id:"pg_25", type:"choice", label:"O que mais gostou?", options:["Atendimento","Preço","Limpeza","Agilidade","Conveniência"] },
+    { id:"pg_26", type:"choice", label:"Com que frequência abastece aqui?", options:["Primeira vez","Semanalmente","Sempre que passo","Raramente"] },
+    { id:"pg_27", type:"choice", label:"A loja de conveniência tem bons produtos?", options:["Sim","Razoável","Poucas opções"] },
+    { id:"pg_28", type:"choice", label:"O posto tem horário 24h?", options:["Sim","Não sei","Não"] },
+    { id:"pg_29", type:"choice", label:"O estacionamento/acesso é fácil?", options:["Sim","Razoável","Difícil"] },
+    { id:"pg_30", type:"choice", label:"O que te faria preferir este posto?", options:["Preço menor","Melhor atendimento","Programa de pontos","Loja melhor"] },
+    { id:"pg_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"pg_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Imobiliária": [
-    { id:"im_corretor",  cat:"Atendimento",        type:"staff",  label:"Qual corretor te atendeu?",                    options:["Ana","Carlos","João","Maria"],  defaultActive:true  },
-    { id:"im_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia do corretor?",                                                     defaultActive:true  },
-    { id:"im_prontidao", cat:"Atendimento",        type:"stars",  label:"O corretor foi ágil em responder suas dúvidas?",                                          defaultActive:true  },
-    { id:"im_escuta",    cat:"Atendimento",        type:"stars",  label:"O corretor entendeu o que você procurava?",                                               defaultActive:true  },
-    { id:"im_opcoes",    cat:"Imóveis Apresentados",type:"stars", label:"Como avalia as opções de imóveis apresentadas?",                                          defaultActive:true  },
-    { id:"im_fotos",     cat:"Imóveis Apresentados",type:"stars", label:"As fotos e descrições corresponderam à realidade?",                                       defaultActive:true  },
-    { id:"im_documentacao",cat:"Processo",         type:"stars",  label:"Como avalia a assessoria na documentação?",                                               defaultActive:true  },
-    { id:"im_transparencia",cat:"Processo",        type:"stars",  label:"O processo foi transparente e sem surpresas?",                                            defaultActive:true  },
-    { id:"im_agilidade", cat:"Processo",           type:"stars",  label:"Como avalia a agilidade no fechamento?",                                                  defaultActive:true  },
-    { id:"im_objetivo",  cat:"Processo",           type:"choice", label:"Qual era seu objetivo?",                      options:["Comprar imóvel","Alugar imóvel","Vender imóvel","Apenas pesquisar"], defaultActive:false },
-    { id:"im_preco",     cat:"Preço & Fidelização",type:"choice", label:"O que achou das taxas / comissões?",          options:["Muito em conta","Justo","Um pouco alto","Caro demais"], defaultActive:true  },
-    { id:"im_volta",     cat:"Preço & Fidelização",type:"choice", label:"Voltaria a usar nossa imobiliária?",          options:["Com certeza!","Provavelmente sim","Talvez","Não"], defaultActive:false },
-    { id:"im_nps",       cat:"Preço & Fidelização",type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"im_sug",       cat:"Preço & Fidelização",type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"im_1",  type:"stars",  label:"Como avalia o atendimento do corretor?", defaultActive:true },
+    { id:"im_2",  type:"stars",  label:"Como avalia o conhecimento do corretor?", defaultActive:true },
+    { id:"im_3",  type:"stars",  label:"Como avalia as opções de imóveis apresentadas?", defaultActive:true },
+    { id:"im_4",  type:"stars",  label:"Como avalia a agilidade no processo?", defaultActive:true },
+    { id:"im_5",  type:"stars",  label:"Como avalia a transparência nas informações?", defaultActive:true },
+    { id:"im_6",  type:"stars",  label:"Como avalia o suporte na documentação?" },
+    { id:"im_7",  type:"stars",  label:"Como avalia a comunicação durante o processo?" },
+    { id:"im_8",  type:"stars",  label:"Como avalia o pós-venda/acompanhamento?" },
+    { id:"im_9",  type:"stars",  label:"Como avalia o custo-benefício da comissão?" },
+    { id:"im_10", type:"stars",  label:"Como avalia a experiência geral?" },
+    { id:"im_11", type:"choice", label:"O que achou dos honorários/comissão?", options:["Justo","Um pouco alto","Caro"], defaultActive:true },
+    { id:"im_12", type:"choice", label:"É sua primeira experiência com esta imobiliária?", options:["Sim","Não"] },
+    { id:"im_13", type:"choice", label:"Qual o motivo do atendimento?", options:["Compra","Venda","Aluguel","Avaliação de imóvel"] },
+    { id:"im_14", type:"choice", label:"O corretor entendeu bem o que você buscava?", options:["Sim, perfeitamente","Razoável","Não"] },
+    { id:"im_15", type:"choice", label:"As opções apresentadas estavam dentro do seu perfil?", options:["Sim, todas","Algumas","Não"] },
+    { id:"im_16", type:"choice", label:"Como nos conheceu?", options:["Indicação","Google","Instagram","Placa de imóvel","Outro"] },
+    { id:"im_17", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"im_18", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"im_19", type:"staff",  label:"Qual corretor te atendeu?", options:[] },
+    { id:"im_20", type:"choice", label:"O processo de documentação foi claro?", options:["Sim","Razoável","Muito confuso"] },
+    { id:"im_21", type:"choice", label:"O corretor retornou suas mensagens com agilidade?", options:["Sim, sempre","Às vezes","Demorava muito"] },
+    { id:"im_22", type:"choice", label:"Houve alguma surpresa negativa no processo?", options:["Não","Custo extra inesperado","Prazo não cumprido","Outro"] },
+    { id:"im_23", type:"choice", label:"O negócio foi fechado?", options:["Sim","Ainda em andamento","Não desta vez"] },
+    { id:"im_24", type:"choice", label:"Você se sentiu pressionado a fechar?", options:["Não","Um pouco","Sim"] },
+    { id:"im_25", type:"choice", label:"O que mais valoriza num corretor?", options:["Honestidade","Agilidade","Conhecimento","Comunicação","Preço"] },
+    { id:"im_26", type:"choice", label:"O site/app da imobiliária é fácil de usar?", options:["Sim","Razoável","Não uso"] },
+    { id:"im_27", type:"choice", label:"O imóvel estava conforme descrito?", options:["Sim","Pequenas diferenças","Muito diferente"] },
+    { id:"im_28", type:"choice", label:"O processo levou quanto tempo?", options:["Rápido (menos de 1 mês)","Médio (1–3 meses)","Longo (mais de 3 meses)"] },
+    { id:"im_29", type:"choice", label:"Recebeu suporte após o fechamento?", options:["Sim","Parcial","Não"] },
+    { id:"im_30", type:"choice", label:"O que te faria recomendar esta imobiliária?", options:["Honestidade","Preço justo","Processo rápido","Boas opções"] },
+    { id:"im_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"im_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Hotel": [
-    { id:"ht_checkin",   cat:"Check-in & Check-out",type:"stars", label:"Como avalia o processo de check-in?",                                                     defaultActive:true  },
-    { id:"ht_espera",    cat:"Check-in & Check-out",type:"stars", label:"Como avalia o tempo de espera no check-in?",                                              defaultActive:true  },
-    { id:"ht_recepcao",  cat:"Check-in & Check-out",type:"stars", label:"Como avalia a simpatia e eficiência da recepção?",                                        defaultActive:true  },
-    { id:"ht_checkout",  cat:"Check-in & Check-out",type:"stars", label:"Como avalia o processo de check-out?",                                                    defaultActive:false },
-    { id:"ht_limpeza",   cat:"Quarto",              type:"stars",  label:"Como avalia a limpeza do quarto?",                                                        defaultActive:true  },
-    { id:"ht_conforto",  cat:"Quarto",              type:"stars",  label:"Como avalia o conforto da cama e travesseiros?",                                          defaultActive:true  },
-    { id:"ht_ar",        cat:"Quarto",              type:"stars",  label:"Como avalia o ar condicionado?",                                                          defaultActive:true  },
-    { id:"ht_banheiro",  cat:"Quarto",              type:"stars",  label:"Como avalia o banheiro (limpeza e estrutura)?",                                           defaultActive:true  },
-    { id:"ht_silencio",  cat:"Quarto",              type:"choice", label:"O quarto era silencioso o suficiente?",        options:["Sim, muito tranquilo","Razoável","Tinha muito barulho"], defaultActive:true  },
-    { id:"ht_wifi",      cat:"Quarto",              type:"choice", label:"Como avalia o Wi-Fi no quarto?",               options:["Excelente","Bom","Lento","Não funcionou","Não usei"], defaultActive:true  },
-    { id:"ht_tv",        cat:"Quarto",              type:"choice", label:"Como avalia a TV (canais e qualidade)?",       options:["Ótima","Boa","Regular","Ruim","Não usei"], defaultActive:false },
-    { id:"ht_cafe",      cat:"Serviços",            type:"stars",  label:"Como avalia o café da manhã?",                                                            defaultActive:true  },
-    { id:"ht_piscina",   cat:"Serviços",            type:"stars",  label:"Como avalia a piscina?",                                                                  defaultActive:false },
-    { id:"ht_restaurante",cat:"Serviços",           type:"stars",  label:"Como avalia o restaurante do hotel?",                                                     defaultActive:false },
-    { id:"ht_room_service",cat:"Serviços",          type:"stars",  label:"Como avalia o room service?",                                                             defaultActive:false },
-    { id:"ht_estac",     cat:"Serviços",            type:"choice", label:"Como foi o estacionamento?",                  options:["Ótimo","Bom","Regular","Ruim","Não usei"], defaultActive:false },
-    { id:"ht_equipe",    cat:"Equipe",              type:"stars",  label:"Como avalia a simpatia de toda a equipe?",                                                defaultActive:true  },
-    { id:"ht_solucao",   cat:"Equipe",              type:"choice", label:"Precisou resolver algum problema com a equipe?",options:["Sim e resolveram ótimo","Sim mas demorou","Sim e não resolveram","Não precisei"], defaultActive:false },
-    { id:"ht_custo",     cat:"Preço & Fidelização", type:"choice", label:"Como avalia o custo-benefício da hospedagem?",options:["Excelente","Bom","Razoável","Ruim"], defaultActive:true  },
-    { id:"ht_motivo",    cat:"Preço & Fidelização", type:"choice", label:"Qual o motivo da sua hospedagem?",            options:["Lazer / férias","Trabalho / negócios","Evento","Outro"], defaultActive:false },
-    { id:"ht_volta",     cat:"Preço & Fidelização", type:"choice", label:"Você voltaria a se hospedar aqui?",           options:["Com certeza!","Provavelmente sim","Talvez","Provavelmente não"], defaultActive:true  },
-    { id:"ht_nps",       cat:"Preço & Fidelização", type:"nps",    label:"De 0 a 10, o quanto nos indicaria?",                                                      defaultActive:true  },
-    { id:"ht_sug",       cat:"Preço & Fidelização", type:"text",   label:"Alguma sugestão ou elogio?",                                                              defaultActive:true  },
+    { id:"ht_1",  type:"stars",  label:"Como avalia o conforto do quarto?", defaultActive:true },
+    { id:"ht_2",  type:"stars",  label:"Como avalia a limpeza do quarto?", defaultActive:true },
+    { id:"ht_3",  type:"stars",  label:"Como avalia a limpeza das áreas comuns?", defaultActive:true },
+    { id:"ht_4",  type:"stars",  label:"Como avalia o atendimento da recepção?", defaultActive:true },
+    { id:"ht_5",  type:"stars",  label:"Como avalia o check-in/check-out?", defaultActive:true },
+    { id:"ht_6",  type:"stars",  label:"Como avalia o café da manhã?" },
+    { id:"ht_7",  type:"stars",  label:"Como avalia a cama e roupa de cama?" },
+    { id:"ht_8",  type:"stars",  label:"Como avalia o Wi-Fi?" },
+    { id:"ht_9",  type:"stars",  label:"Como avalia o custo-benefício?" },
+    { id:"ht_10", type:"stars",  label:"Como avalia a localização?" },
+    { id:"ht_11", type:"choice", label:"O que achou do preço da diária?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"ht_12", type:"choice", label:"É sua primeira estadia aqui?", options:["Sim","Não"] },
+    { id:"ht_13", type:"choice", label:"Qual o motivo da sua viagem?", options:["Turismo","Negócios","Evento","Família","Lua de mel"] },
+    { id:"ht_14", type:"choice", label:"Quantas noites ficou?", options:["1 noite","2 a 3 noites","4 a 7 noites","Mais de 1 semana"] },
+    { id:"ht_15", type:"choice", label:"O check-in foi ágil?", options:["Sim","Razoável","Demorado"] },
+    { id:"ht_16", type:"choice", label:"O quarto estava limpo na chegada?", options:["Sim, perfeito","Razoável","Não"] },
+    { id:"ht_17", type:"choice", label:"O Wi-Fi funcionou bem?", options:["Sim","Razoável","Muito lento"] },
+    { id:"ht_18", type:"choice", label:"Como nos conheceu?", options:["Booking","Google","Indicação","Instagram","Outro"] },
+    { id:"ht_19", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"ht_20", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"ht_21", type:"choice", label:"O café da manhã foi satisfatório?", options:["Sim, ótimo","Razoável","Não incluído"] },
+    { id:"ht_22", type:"choice", label:"A climatização (AC/ventilador) funcionou bem?", options:["Sim","Razoável","Não"] },
+    { id:"ht_23", type:"choice", label:"O barulho externo/corredor incomodou?", options:["Não","Um pouco","Sim, muito"] },
+    { id:"ht_24", type:"staff",  label:"Quem fez seu check-in?", options:[] },
+    { id:"ht_25", type:"choice", label:"A piscina/área de lazer estava em boas condições?", options:["Sim","Razoável","Não tem"] },
+    { id:"ht_26", type:"choice", label:"O estacionamento foi adequado?", options:["Sim","Podia melhorar","Não tem"] },
+    { id:"ht_27", type:"choice", label:"O que mais gostou?", options:["Conforto","Limpeza","Localização","Atendimento","Café"] },
+    { id:"ht_28", type:"choice", label:"O banheiro do quarto estava em boas condições?", options:["Sim","Razoável","Não"] },
+    { id:"ht_29", type:"choice", label:"Algum pedido especial foi atendido?", options:["Sim, perfeitamente","Parcialmente","Não fiz pedidos"] },
+    { id:"ht_30", type:"choice", label:"O que te faria voltar?", options:["Preço melhor","Mais comodidades","Excelente localização","Ótimo atendimento"] },
+    { id:"ht_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"ht_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
   ],
   "Supermercado": [
-    { id:"sm_atend",     cat:"Atendimento",        type:"stars",  label:"Como avalia o atendimento dos funcionários?",                                             defaultActive:true  },
-    { id:"sm_simpatia",  cat:"Atendimento",        type:"stars",  label:"Como avalia a simpatia da equipe?",                                                       defaultActive:true  },
-    { id:"sm_info",      cat:"Atendimento",        type:"choice", label:"Quando pediu informação, foi bem atendido?",  options:["Sim, ótimo!","Razoável","Ninguém me ajudou","Não precisei"], defaultActive:true  },
-    { id:"sm_produtos",  cat:"Produtos",           type:"stars",  label:"Como avalia a variedade de produtos?",                                                    defaultActive:true  },
-    { id:"sm_qualidade", cat:"Produtos",           type:"stars",  label:"Como avalia a qualidade e frescor dos produtos?",                                         defaultActive:true  },
-    { id:"sm_estoque",   cat:"Produtos",           type:"choice", label:"Encontrou tudo que precisava?",              options:["Sim, tudo!","A maioria","Só metade","Muitos itens em falta"], defaultActive:true  },
-    { id:"sm_hortifruti",cat:"Produtos",           type:"stars",  label:"Como avalia o hortifruti (frutas, legumes, verduras)?",                                   defaultActive:false },
-    { id:"sm_acougue",   cat:"Produtos",           type:"stars",  label:"Como avalia o açougue?",                                                                  defaultActive:false },
-    { id:"sm_padaria",   cat:"Produtos",           type:"stars",  label:"Como avalia a padaria?",                                                                  defaultActive:false },
+    { id:"sm_1",  type:"stars",  label:"Como avalia o atendimento?", defaultActive:true },
+    { id:"sm_2",  type:"stars",  label:"Como avalia a variedade de produtos?", defaultActive:true },
+    { id:"sm_3",  type:"stars",  label:"Como avalia a organização das prateleiras?", defaultActive:true },
+    { id:"sm_4",  type:"stars",  label:"Como avalia a limpeza?", defaultActive:true },
+    { id:"sm_5",  type:"stars",  label:"Como avalia a agilidade nos caixas?", defaultActive:true },
+    { id:"sm_6",  type:"stars",  label:"Como avalia o setor de hortifrúti?" },
+    { id:"sm_7",  type:"stars",  label:"Como avalia o setor de açougue/peixaria?" },
+    { id:"sm_8",  type:"stars",  label:"Como avalia o setor de padaria/frios?" },
+    { id:"sm_9",  type:"stars",  label:"Como avalia o preço dos produtos?" },
+    { id:"sm_10", type:"stars",  label:"Como avalia o custo-benefício geral?" },
+    { id:"sm_11", type:"choice", label:"O que achou do preço?", options:["Barato","Justo","Caro"], defaultActive:true },
+    { id:"sm_12", type:"choice", label:"É sua primeira visita?", options:["Sim","Não"] },
+    { id:"sm_13", type:"choice", label:"Encontrou tudo o que precisava?", options:["Sim","Maioria","Não"] },
+    { id:"sm_14", type:"choice", label:"A fila do caixa foi:", options:["Rápida","Razoável","Demorada"] },
+    { id:"sm_15", type:"choice", label:"Com que frequência você compra aqui?", options:["Primeira vez","Semanalmente","Todo dia","Raramente"] },
+    { id:"sm_16", type:"choice", label:"Como nos conheceu?", options:["Mora perto","Indicação","Google","Panfleto","Outro"] },
+    { id:"sm_17", type:"choice", label:"Algum produto estava fora do prazo ou estragado?", options:["Não","Sim"] },
+    { id:"sm_18", type:"choice", label:"Os funcionários estavam disponíveis para ajudar?", options:["Sim","Maioria","Difícil achar alguém"] },
+    { id:"sm_19", type:"choice", label:"Você voltaria?", options:["Com certeza","Talvez","Provavelmente não"] },
+    { id:"sm_20", type:"choice", label:"O estacionamento é fácil?", options:["Sim","Difícil","Não tem"] },
+    { id:"sm_21", type:"staff",  label:"Quem te atendeu no caixa?", options:[] },
+    { id:"sm_22", type:"choice", label:"Os preços estavam bem sinalizados?", options:["Sim","Maioria","Não"] },
+    { id:"sm_23", type:"choice", label:"Indicaria para amigos?", options:["Com certeza","Talvez","Não"] },
+    { id:"sm_24", type:"choice", label:"O que mais gostou?", options:["Preço","Variedade","Limpeza","Localização","Atendimento"] },
+    { id:"sm_25", type:"choice", label:"Faltou algum produto que procurou?", options:["Não","Sim, frequentemente","Às vezes"] },
+    { id:"sm_26", type:"choice", label:"O delivery/compra online funciona bem?", options:["Sim","Razoável","Não tem"] },
+    { id:"sm_27", type:"choice", label:"Há programa de fidelidade/pontos?", options:["Sim e uso","Sim mas não uso","Não tem"] },
+    { id:"sm_28", type:"choice", label:"O horário de funcionamento atende sua rotina?", options:["Sim","Precisava de mais horas","Fecha cedo"] },
+    { id:"sm_29", type:"choice", label:"A sinalização interna dos setores é clara?", options:["Sim","Razoável","Me perco fácil"] },
+    { id:"sm_30", type:"choice", label:"O que te faria preferir este supermercado?", options:["Preço menor","Mais variedade","Caixa mais rápido","Delivery"] },
+    { id:"sm_nps", type:"nps",  label:"De 0 a 10, o quanto nos indicaria?", defaultActive:true },
+    { id:"sm_sug", type:"text", label:"Alguma sugestão ou elogio?", defaultActive:true },
+  ],
     { id:"sm_preco_prod",cat:"Produtos",           type:"choice", label:"O preço dos produtos está adequado?",        options:["Muito em conta","Justo","Um pouco salgado","Caro demais"], defaultActive:true  },
     { id:"sm_promocoes", cat:"Produtos",           type:"choice", label:"As promoções são atraentes?",               options:["Sim, ótimas!","Razoáveis","Poucas promoções","Quase nenhuma"], defaultActive:false },
     { id:"sm_limpeza",   cat:"Loja & Ambiente",    type:"stars",  label:"Como avalia a limpeza e organização da loja?",                                            defaultActive:true  },
@@ -2189,9 +2349,11 @@ function OwnerDash({ est, onUpdate, onLogout }) {
   const [relatorioEnviado, setRelatorioEnviado] = useState(false);
   const COLORS = ["#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#6d597a", "#e76f51", "#264653", "#e9c46a", "#f72585", "#4cc9f0", "#111", "#333"];
   const starQs = est.questions.filter(q => q.type === "stars");
+  const npsId = (est.questions.find(q => q.type === "nps")?.id) || "q_nps";
+  const staffId = (est.questions.find(q => q.type === "staff")?.id) || "q_atend";
   const starAvg = (key) => { const v = est.feedbacks.map(f => f.answers?.[key]).filter(v => typeof v === "number" && v > 0); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
   const overall = () => { if (!starQs.length || !est.feedbacks.length) return "-"; const v = est.feedbacks.flatMap(f => starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0)); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
-  const npsAvg = () => { const v = est.feedbacks.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
+  const npsAvg = () => { const v = est.feedbacks.map(f => f.answers?.[npsId]).filter(v => v !== undefined); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : "-"; };
   const staffRanking = () => { const map = {}; est.feedbacks.forEach(f => { const atd = f.answers?.q_atend; if (!atd) return; if (!map[atd]) map[atd] = { total: 0, count: 0 }; const s = starQs.map(q => f.answers?.[q.id] || 0).filter(v => v > 0); if (s.length) { map[atd].total += s.reduce((a, b) => a + b, 0) / s.length; map[atd].count++; } }); return Object.entries(map).map(([name, d]) => ({ name, avg: d.count ? (d.total / d.count).toFixed(1) : 0 })).sort((a, b) => b.avg - a.avg); };
   const howKnew = () => { const map = {}; est.feedbacks.forEach(f => { const v = f.answers?.q_como; if (v) map[v] = (map[v] || 0) + 1; }); return Object.entries(map).sort((a, b) => b[1] - a[1]); };
   const chartData = (() => { const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], result = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const lbl = days[d.getDay()], dateStr = d.toLocaleDateString("pt-BR"); result.push({ lbl, val: est.feedbacks.filter(f => f.data?.includes(dateStr)).length }); } return result; })();
@@ -2208,7 +2370,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     } catch {}
   }, []);
 
-  const filteredFeedbacks = () => { if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9); if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6); if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }); return est.feedbacks; };
+  const filteredFeedbacks = () => { if (filter === "positivos") return est.feedbacks.filter(f => (f.answers?.[npsId] || 0) >= 9); if (filter === "negativos") return est.feedbacks.filter(f => (f.answers?.[npsId] || 0) <= 6); if (filter === "neutros") return est.feedbacks.filter(f => { const n = f.answers?.[npsId]; return n === 7 || n === 8; }); return est.feedbacks; };
   const save = async () => { setSaving(true); await saveEstabelecimento(ed); onUpdate(ed); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000); };
   const addQ = () => { if (!newQ.label) return; const opts = newQ.options.split(",").map(s => s.trim()).filter(Boolean); setEd(e => ({ ...e, questions: [...e.questions, { id: uid(), ...newQ, options: opts, required: true }] })); setNewQ({ label: "", type: "stars", options: "" }); };
   const removeQ = id => setEd(e => ({ ...e, questions: e.questions.filter(q => q.id !== id) }));
@@ -2247,24 +2409,26 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     const totalAnterior = fbSemanaAnterior.length;
     const diffTotal = totalAtual - totalAnterior;
     const sqs = est.questions.filter(q => q.type === "stars");
-    const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+    const _npsId = est.questions.find(q => q.type === "nps")?.id || "q_nps";
+    const _textId = est.questions.find(q => q.type === "text")?.id || "q_sug";
+    const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.[_npsId]).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
     const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
     const npsAtual = calcNps(fbSemana);
     const npsAnterior = calcNps(fbSemanaAnterior);
     const notaAtual = calcNota(fbSemana);
     const notaAnterior = calcNota(fbSemanaAnterior);
-    const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
-    const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
+    const negativos = fbSemana.filter(f => (f.answers?.[_npsId]||0) <= 6 && f.answers?.[_npsId] !== undefined);
+    const promotores = fbSemana.filter(f => (f.answers?.[_npsId]||0) >= 9);
     const staffQ = est.questions.find(q => q.type === "staff");
     const staffMap = {};
     if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n] = {t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
     const ranking = Object.entries(staffMap).map(([n,d])=>({n,avg:d.c?(d.t/d.c).toFixed(1):0})).sort((a,b)=>b.avg-a.avg).slice(0,3);
     const comoMap = {};
-    fbSemana.forEach(f => { const v = f.answers?.q_como; if (v) comoMap[v] = (comoMap[v]||0)+1; });
+    fbSemana.forEach(f => { const comoQ = est.questions.find(q => q.label.toLowerCase().includes("conheceu")); const v = comoQ ? f.answers?.[comoQ.id] : null; if (v) comoMap[v] = (comoMap[v]||0)+1; });
     const comoList = Object.entries(comoMap).sort((a,b)=>b[1]-a[1]).slice(0,4);
-    const comentarios = fbSemana.filter(f => f.answers?.q_sug && f.answers.q_sug.trim().length > 5).slice(0,3);
+    const comentarios = fbSemana.filter(f => f.answers?.[_textId] && f.answers[_textId].trim().length > 5).slice(0,3);
     const precoMap = {};
-    fbSemana.forEach(f => { const v = f.answers?.q_preco; if (v) precoMap[v] = (precoMap[v]||0)+1; });
+    fbSemana.forEach(f => { const precoQ = est.questions.find(q => q.label.toLowerCase().includes("preço") && q.type === "choice"); const v = precoQ ? f.answers?.[precoQ.id] : null; if (v) precoMap[v] = (precoMap[v]||0)+1; });
     const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
     const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
     const fmt = (d) => d.toLocaleDateString("pt-BR");
@@ -2302,7 +2466,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😍 Promotores</div>
           </div>
           <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:#f0c96e;">${fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div>
+            <div style="font-size:22px;font-weight:900;color:#f0c96e;">${fbSemana.filter(f=>{const n=f.answers?.[_npsId];return n===7||n===8;}).length}</div>
             <div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:4px;">😐 Neutros</div>
           </div>
           <div style="background:#181818;border-radius:12px;padding:14px;text-align:center;">
@@ -2313,7 +2477,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
 
         ${negativos.length > 0 ? `<div style="background:#1a0505;border:1px solid #f8717133;border-radius:12px;padding:16px;margin-bottom:20px;">
           <div style="font-size:13px;font-weight:800;color:#f87171;margin-bottom:8px;">⚠️ ${negativos.length} feedback${negativos.length>1?"s negativos":"negativo"} esta semana</div>
-          ${negativos.slice(0,2).map(f=>`<div style="background:#111;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;"><strong>${f.nome||"Anônimo"}</strong> · NPS ${f.answers?.q_nps??"-"}${f.answers?.q_sug?`<br/><span style="color:#aaa;font-style:italic;">"${f.answers.q_sug}"</span>`:""}</div>`).join("")}
+          ${negativos.slice(0,2).map(f=>`<div style="background:#111;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;"><strong>${f.nome||"Anônimo"}</strong> · NPS ${f.answers?.[_npsId]??"-"}${f.answers?.[_textId]?`<br/><span style="color:#aaa;font-style:italic;">"${f.answers[_textId]}"</span>`:""}</div>`).join("")}
         </div>` : `<div style="background:#0a1f0a;border:1px solid #4ade8033;border-radius:12px;padding:14px;margin-bottom:20px;text-align:center;">
           <div style="font-size:13px;font-weight:800;color:#4ade80;">✅ Nenhum feedback negativo esta semana!</div>
         </div>`}
@@ -2337,7 +2501,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
 
         ${comentarios.length > 0 ? `<div style="margin-bottom:20px;">
           <div style="font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">💬 Comentários da semana</div>
-          ${comentarios.map(f=>`<div style="background:#181818;border-left:3px solid ${ac};border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;font-style:italic;color:#ccc;">"${f.answers.q_sug}"<div style="font-size:11px;color:#555;margin-top:4px;font-style:normal;">${f.nome||"Anônimo"}</div></div>`).join("")}
+          ${comentarios.map(f=>`<div style="background:#181818;border-left:3px solid ${ac};border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;font-style:italic;color:#ccc;">"${f.answers[_textId]}"<div style="font-size:11px;color:#555;margin-top:4px;font-style:normal;">${f.nome||"Anônimo"}</div></div>`).join("")}
         </div>` : ""}
 
         <div style="text-align:center;padding-top:16px;border-top:1px solid #222;">
@@ -2396,8 +2560,8 @@ function OwnerDash({ est, onUpdate, onLogout }) {
             <div className="metric"><div className="metric-val">{est.feedbacks.length}</div><div className="metric-lbl">Avaliações</div></div>
             <div className="metric"><div className="metric-val">⭐ {overall()}</div><div className="metric-lbl">Nota geral</div></div>
             <div className="metric"><div className="metric-val">📊 {npsAvg()}</div><div className="metric-lbl">NPS médio</div></div>
-            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length}</div><div className="metric-lbl">Promotores</div></div>
-            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => f.answers?.q_first === "Sim").length}</div><div className="metric-lbl">Clientes novos</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => (f.answers?.[npsId] || 0) >= 9).length}</div><div className="metric-lbl">Promotores</div></div>
+            <div className="metric"><div className="metric-val">{est.feedbacks.filter(f => { const prim = est.questions.find(q => q.type === "choice" && q.label.toLowerCase().includes("primeira")); return prim && f.answers?.[prim.id] === "Sim"; }).length}</div><div className="metric-lbl">Clientes novos</div></div>
             <div className="metric"><div className="metric-val" style={{ fontSize: 20 }}>{est.googleUrl ? "✅" : "❌"}</div><div className="metric-lbl">Google Reviews</div></div>
           </div>
           <div className="chart-wrap"><div className="chart-title">📅 Feedbacks — últimos 7 dias</div><MiniBarChart data={chartData} /></div>
@@ -2497,12 +2661,12 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="main-title">💬 Feedbacks</div>
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.q_nps; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>{[["q_atend", "👨‍💼"], ["q_first", "🆕"], ["q_hora", "⏰"], ["q_mesa", "🪑"], ["q_como", "📍"], ["q_preco", "💰"]].map(([key, icon]) => { const v = f.answers?.[key]; if (!v) return null; const sl = { q_atend: "Atend", q_first: "1ªvez", q_hora: "Hora", q_mesa: "Mesa", q_como: "Via", q_preco: "Preço" }[key]; return (<div key={key} style={{ background: "var(--d3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 8px", fontSize: 11, display: "flex", gap: 3, alignItems: "center" }}><span>{icon}</span><span style={{ color: "var(--muted2)", fontSize: 10 }}>{sl}:</span><span style={{ color: "var(--text)", fontWeight: 600 }}>{String(v).replace("Outro:", "")}</span></div>); })}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace("Como avalia nosso ", "").replace("Como avalia a qualidade dos ", "").replace("Como avalia a qualidade das ", "").replace("Como avalia o ", "").replace("?", ""); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{f.answers?.q_sug && <div className="fb-comment">💬 "{f.answers.q_sug}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
+          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.[npsId]; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; const textQ = est.questions.find(q => q.type === "text"); const sugVal = textQ ? f.answers?.[textQ.id] : null; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace(/^Como avalia (o |a |os |as |nosso |nossa )?/i, "").replace("?", "").slice(0,28); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{sugVal && <div className="fb-comment">💬 "{sugVal}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
           {insights().map((ins, i) => (<div className="insight" key={i}><div className="insight-icon">{ins.icon}</div><div className="insight-text">{ins.text}</div></div>))}
-          <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) >= 9).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = f.answers?.q_nps; return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => (f.answers?.q_nps || 0) <= 6 && f.answers?.q_nps !== undefined).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
+          <div className="chart-wrap" style={{ marginTop: 16 }}><div className="chart-title">📊 Distribuição NPS</div><div style={{ display: "flex", gap: 10 }}>{[["😍 Promotores", "9-10", "var(--green)", est.feedbacks.filter(f => (f.answers?.[npsId] || 0) >= 9).length], ["😐 Neutros", "7-8", "var(--yellow)", est.feedbacks.filter(f => { const n = f.answers?.[npsId]; return n === 7 || n === 8; }).length], ["😞 Detratores", "0-6", "var(--red)", est.feedbacks.filter(f => (f.answers?.[npsId] || 0) <= 6 && f.answers?.[npsId] !== undefined).length]].map(([lbl, range, color, count]) => (<div key={lbl} style={{ flex: 1, background: "var(--d2)", border: `1px solid ${color}33`, borderRadius: 10, padding: 12, textAlign: "center" }}><div style={{ fontSize: 20, fontFamily: "var(--ff-head)", color }}>{count}</div><div style={{ fontSize: 10, color: "var(--muted)", marginTop: 3 }}>{lbl}</div><div style={{ fontSize: 9, color, marginTop: 2 }}>NPS {range}</div></div>))}</div></div>
           <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
@@ -2511,13 +2675,15 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           const fbSemana = getFeedbacksSemana(0);
           const fbAnterior = getFeedbacksSemana(1);
           const sqs = est.questions.filter(q => q.type === "stars");
+          const _nid = est.questions.find(q => q.type === "nps")?.id || "q_nps";
+          const _tid = est.questions.find(q => q.type === "text")?.id || "q_sug";
           const calcNota = (fbs) => { if (!sqs.length || !fbs.length) return "-"; const v = fbs.flatMap(f => sqs.map(q => f.answers?.[q.id]||0).filter(v=>v>0)); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
-          const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.q_nps).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
+          const calcNps = (fbs) => { const v = fbs.map(f => f.answers?.[_nid]).filter(v => v !== undefined); return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : "-"; };
           const notaAtual = calcNota(fbSemana); const notaAnterior = calcNota(fbAnterior);
           const npsAtual = calcNps(fbSemana); const npsAnterior = calcNps(fbAnterior);
           const diff = fbSemana.length - fbAnterior.length;
-          const negativos = fbSemana.filter(f => (f.answers?.q_nps||0) <= 6 && f.answers?.q_nps !== undefined);
-          const promotores = fbSemana.filter(f => (f.answers?.q_nps||0) >= 9);
+          const negativos = fbSemana.filter(f => (f.answers?.[_nid]||0) <= 6 && f.answers?.[_nid] !== undefined);
+          const promotores = fbSemana.filter(f => (f.answers?.[_nid]||0) >= 9);
           const seta = (a, b) => { if (a==="-"||b==="-") return null; const d = parseFloat(a)-parseFloat(b); return d > 0 ? <span style={{color:"var(--green)",fontSize:11}}>▲ +{d.toFixed(1)}</span> : d < 0 ? <span style={{color:"var(--red)",fontSize:11}}>▼ {d.toFixed(1)}</span> : <span style={{color:"var(--muted)",fontSize:11}}>= igual</span>; };
           const dataInicio = new Date(); dataInicio.setDate(dataInicio.getDate()-7);
           const dataFim = new Date(); dataFim.setDate(dataFim.getDate()-1);
@@ -2526,7 +2692,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           const staffMap = {};
           if (staffQ) fbSemana.forEach(f => { const n = f.answers?.[staffQ.id]; if (!n) return; if (!staffMap[n]) staffMap[n]={t:0,c:0}; const s=sqs.map(q=>f.answers?.[q.id]||0).filter(v=>v>0); if(s.length){staffMap[n].t+=s.reduce((a,b)=>a+b,0)/s.length;staffMap[n].c++;} });
           const ranking = Object.entries(staffMap).map(([n,d])=>({n,avg:d.c?(d.t/d.c).toFixed(1):0})).sort((a,b)=>b.avg-a.avg).slice(0,3);
-          const comentarios = fbSemana.filter(f => f.answers?.q_sug && f.answers.q_sug.trim().length > 5).slice(0,3);
+          const comentarios = fbSemana.filter(f => f.answers?.[_tid] && f.answers[_tid].trim().length > 5).slice(0,3);
           return (<>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
               <div className="main-title" style={{marginBottom:0}}>📋 Relatório Semanal</div>
@@ -2544,19 +2710,19 @@ function OwnerDash({ est, onUpdate, onLogout }) {
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
               <div style={{background:"var(--d1)",border:"1px solid var(--green)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--green)"}}>{promotores.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😍 Promotores</div></div>
-              <div style={{background:"var(--d1)",border:"1px solid var(--yellow)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--yellow)"}}>{fbSemana.filter(f=>{const n=f.answers?.q_nps;return n===7||n===8;}).length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😐 Neutros</div></div>
+              <div style={{background:"var(--d1)",border:"1px solid var(--yellow)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--yellow)"}}>{fbSemana.filter(f=>{const n=f.answers?.[_nid];return n===7||n===8;}).length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😐 Neutros</div></div>
               <div style={{background:"var(--d1)",border:"1px solid var(--red)33",borderRadius:12,padding:14,textAlign:"center"}}><div style={{fontFamily:"var(--ff-head)",fontSize:22,color:"var(--red)"}}>{negativos.length}</div><div style={{fontSize:10,color:"var(--muted)",textTransform:"uppercase",marginTop:4}}>😞 Detratores</div></div>
             </div>
 
             {negativos.length > 0 && (<div style={{background:"#1a0505",border:"1px solid var(--red)33",borderRadius:12,padding:16,marginBottom:14}}>
               <div style={{fontSize:13,fontWeight:800,color:"var(--red)",marginBottom:8}}>⚠️ {negativos.length} feedback{negativos.length>1?"s negativos":"negativo"} esta semana</div>
-              {negativos.slice(0,2).map((f,i)=>(<div key={i} style={{background:"var(--dark)",borderRadius:8,padding:10,marginBottom:6,fontSize:12}}><strong>{f.nome||"Anônimo"}</strong> · NPS {f.answers?.q_nps??"-"}{f.answers?.q_sug&&<div style={{color:"var(--muted2)",fontStyle:"italic",marginTop:3}}>"{f.answers.q_sug}"</div>}</div>))}
+              {negativos.slice(0,2).map((f,i)=>(<div key={i} style={{background:"var(--dark)",borderRadius:8,padding:10,marginBottom:6,fontSize:12}}><strong>{f.nome||"Anônimo"}</strong> · NPS {f.answers?.[_nid]??"-"}{f.answers?.[_tid]&&<div style={{color:"var(--muted2)",fontStyle:"italic",marginTop:3}}>"{f.answers[_tid]}"</div>}</div>))}
             </div>)}
             {negativos.length === 0 && fbSemana.length > 0 && (<div style={{background:"#0a1f0a",border:"1px solid var(--green)33",borderRadius:12,padding:14,marginBottom:14,textAlign:"center",fontSize:13,fontWeight:800,color:"var(--green)"}}>✅ Nenhum feedback negativo esta semana!</div>)}
 
             {ranking.length > 0 && (<div className="chart-wrap"><div className="chart-title">🏆 Ranking de colaboradores</div>{ranking.map((r,i)=>(<div className="rank-row" key={r.n}><div className="rank-num">{i+1}</div><div className="rank-name">{r.n}</div><div className="rank-bar"><div className="rank-fill" style={{width:`${(r.avg/5)*100}%`}}/></div><div className="rank-score">{r.avg}</div></div>))}</div>)}
 
-            {comentarios.length > 0 && (<div className="chart-wrap"><div className="chart-title">💬 Comentários da semana</div>{comentarios.map((f,i)=>(<div key={i} style={{borderLeft:"3px solid var(--ac)",padding:"8px 12px",background:"var(--dark)",borderRadius:"0 8px 8px 0",marginBottom:8,fontSize:13,fontStyle:"italic",color:"#bbb"}}>"{f.answers.q_sug}"<div style={{fontSize:11,color:"var(--muted)",marginTop:3,fontStyle:"normal"}}>{f.nome||"Anônimo"}</div></div>))}</div>)}
+            {comentarios.length > 0 && (<div className="chart-wrap"><div className="chart-title">💬 Comentários da semana</div>{comentarios.map((f,i)=>(<div key={i} style={{borderLeft:"3px solid var(--ac)",padding:"8px 12px",background:"var(--dark)",borderRadius:"0 8px 8px 0",marginBottom:8,fontSize:13,fontStyle:"italic",color:"#bbb"}}>"{f.answers[_tid]}"<div style={{fontSize:11,color:"var(--muted)",marginTop:3,fontStyle:"normal"}}>{f.nome||"Anônimo"}</div></div>))}</div>)}
 
             {fbSemana.length === 0 && (<div style={{textAlign:"center",padding:40,color:"var(--muted)",fontSize:14}}>Nenhum feedback recebido esta semana.<br/><span style={{fontSize:12}}>O relatório mostra os dados dos últimos 7 dias.</span></div>)}
 
