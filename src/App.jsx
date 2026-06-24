@@ -3306,7 +3306,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           ? <div style={{textAlign:"center",color:"var(--muted)",padding:40,fontSize:14}}>
               Nenhum registro encontrado.
             </div>
-          : fbsFiltrados.map((f, i) => <CardVisitaComp key={i} f={f} />
+          : fbsFiltrados.map((f, i) => <CardVisitaComp key={i} f={f} />)
       )}
 
       {clienteModal && (
