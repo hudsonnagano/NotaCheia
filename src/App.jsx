@@ -2877,6 +2877,7 @@ function Sidebar({ est, tab, setTab, onLogout, isMaster = false }) {
         { id: "clientes", icon: "👥", lbl: "Clientes" },
         { id: "insights", icon: "💡", lbl: "Insights" },
         { id: "relatorio", icon: "📋", lbl: "Relatório" },
+{ id: "clientes", icon: "👥", lbl: "Clientes" },
         { id: "qrcode", icon: "📱", lbl: "Meu QR Code" },
         ...(temCardapio ? [{ id: "cardapio", icon: "🍽️", lbl: "Cardápio Digital" }] : []),
         { id: "setup", icon: "⚙️", lbl: "Configurar" },
@@ -3587,7 +3588,209 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="chart-wrap"><div className="chart-title">💰 Percepção de preço</div><MiniBarChart data={["Barato pelo que oferece", "Ideal pelo que oferece", "Caro pelo que oferece"].map(v => ({ lbl: v === "Barato pelo que oferece" ? "Barato" : v === "Ideal pelo que oferece" ? "Ideal" : "Caro", val: est.feedbacks.filter(f => f.answers?.q_preco === v).length }))} color="var(--yellow)" /></div>
         </>)}
         {tab === "qrcode" && (<><div className="main-title">📱 Meu QR Code</div><QRCodeView est={est} /></>)}
+{tab === "clientes" && (() => {
+  const [clienteBusca, setClienteBusca] = React.useState("");
+  const [clientePeriodo, setClientePeriodo] = React.useState("todos");
+  const [clienteVista, setClienteVista] = React.useState("agrupado");
+  const [clienteModal, setClienteModal] = React.useState(null);
 
+  const filtrarPorPeriodo = (fbs) => {
+    if (clientePeriodo === "todos") return fbs;
+    const agora = new Date();
+    const dias = clientePeriodo === "semana" ? 7 : clientePeriodo === "mes" ? 30 : 90;
+    return fbs.filter(f => {
+      if (!f.data) return false;
+      try {
+        const partes = f.data.split(/[/, :]/);
+        const d = new Date(partes[2], partes[1]-1, partes[0]);
+        return (agora - d) / (1000*60*60*24) <= dias;
+      } catch { return false; }
+    });
+  };
+
+  const normalizar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+  const fbsFiltrados = filtrarPorPeriodo(est.feedbacks).filter(f =>
+    !clienteBusca || normalizar(f.nome).includes(normalizar(clienteBusca))
+  );
+
+  const calcMediaEstrelas = (fb) => {
+    const sqs = est.questions.filter(q => q.type === "stars");
+    const vals = sqs.map(q => fb.answers?.[q.id] || 0).filter(v => v > 0);
+    return vals.length ? (vals.reduce((a,b) => a+b,0) / vals.length).toFixed(1) : null;
+  };
+
+  const agrupar = () => {
+    const map = {};
+    fbsFiltrados.forEach(f => {
+      const wpp = f.answers?.wpp || f.whatsapp || "";
+      const chave = wpp ? `wpp_${wpp}` : `nome_${normalizar(f.nome)}`;
+      if (!map[chave]) map[chave] = { nome: f.nome, wpp, visitas: [] };
+      map[chave].visitas.push(f);
+    });
+    return Object.values(map).sort((a,b) => b.visitas.length - a.visitas.length);
+  };
+
+  const TYPE_ICON = { stars:"⭐", choice:"☑️", nps:"📊", text:"💬", staff:"👤" };
+
+  const renderModal = () => {
+    if (!clienteModal) return null;
+    const f = clienteModal;
+    const media = calcMediaEstrelas(f);
+    return (
+      <div className="modal-bg" onClick={() => setClienteModal(null)}>
+        <div className="modal" onClick={e => e.stopPropagation()} style={{ maxHeight:"85vh", overflowY:"auto" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+            <div>
+              <div style={{ fontFamily:"var(--ff-head)", fontSize:18 }}>👤 {f.nome || "Anônimo"}</div>
+              <div style={{ fontSize:12, color:"var(--muted)", marginTop:3 }}>🗓️ {f.data || "—"}</div>
+              {media && <div style={{ fontSize:13, color:"var(--ac)", fontWeight:700, marginTop:3 }}>⭐ {media} média</div>}
+            </div>
+            <button onClick={() => setClienteModal(null)} style={{ background:"none", border:"none", color:"var(--muted)", fontSize:22, cursor:"pointer", padding:"0 4px" }}>✕</button>
+          </div>
+
+          <div className="div" />
+
+          {est.questions.map(q => {
+            const resp = f.answers?.[q.id];
+            if (resp === undefined || resp === null || resp === "") return null;
+            return (
+              <div key={q.id} style={{ padding:"10px 0", borderBottom:"1px solid var(--border)" }}>
+                <div style={{ fontSize:11, color:"var(--muted)", fontWeight:700, marginBottom:5 }}>
+                  {TYPE_ICON[q.type]} {q.label}
+                </div>
+                {q.type === "stars" && (
+                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <div style={{ display:"flex", gap:2 }}>
+                      {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize:16, filter: s <= resp ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}
+                    </div>
+                    <span style={{ fontSize:12, fontWeight:800, color: resp >= 4 ? "var(--green)" : resp >= 3 ? "var(--yellow)" : "var(--red)" }}>
+                      {["","Ruim","Regular","Bom","Ótimo","Excelente"][resp]}
+                    </span>
+                  </div>
+                )}
+                {q.type === "nps" && (
+                  <div style={{ display:"inline-flex", alignItems:"center", gap:8 }}>
+                    <span style={{ fontFamily:"var(--ff-head)", fontSize:22, color: resp >= 9 ? "var(--green)" : resp >= 7 ? "var(--yellow)" : "var(--red)" }}>{resp}</span>
+                    <span style={{ fontSize:11, color:"var(--muted)" }}>{resp >= 9 ? "😍 Promotor" : resp >= 7 ? "😐 Neutro" : "😞 Detrator"}</span>
+                  </div>
+                )}
+                {(q.type === "choice" || q.type === "staff") && (
+                  <span style={{ background:"var(--d3)", border:"1px solid var(--border)", borderRadius:20, padding:"4px 12px", fontSize:13, fontWeight:700 }}>
+                    {String(resp).replace("Outro:","").trim()}
+                  </span>
+                )}
+                {q.type === "text" && (
+                  <div style={{ background:"var(--dark)", borderLeft:"3px solid var(--ac)44", borderRadius:"0 8px 8px 0", padding:"8px 12px", fontSize:13, fontStyle:"italic", color:"#bbb" }}>
+                    "{resp}"
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {f.premio && (
+            <div style={{ marginTop:14, display:"flex", alignItems:"center", gap:8 }}>
+              <span style={{ fontSize:13, fontWeight:800, color:"var(--ac)" }}>🎁 Prêmio ganho:</span>
+              <span style={{ background:"var(--d2)", border:"1px solid var(--ac)33", borderRadius:20, padding:"4px 12px", fontSize:13, fontWeight:700 }}>{f.premio}</span>
+            </div>
+          )}
+
+          {(f.answers?.wpp || f.whatsapp) && (
+            <a href={`https://wa.me/55${(f.answers?.wpp || f.whatsapp || "").replace(/\D/g,"")}`}
+              target="_blank" rel="noreferrer"
+              style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginTop:16, background:"#25d366", color:"#fff", borderRadius:12, padding:"12px", fontWeight:800, fontSize:14, textDecoration:"none" }}>
+              💬 Falar no WhatsApp
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const CardVisita = ({ f, compact = false }) => {
+    const media = calcMediaEstrelas(f);
+    return (
+      <div onClick={() => setClienteModal(f)}
+        style={{ display:"flex", alignItems:"center", gap:10, padding: compact ? "8px 10px" : "12px 14px", background: compact ? "var(--dark)" : "var(--d2)", borderRadius:10, marginBottom:6, cursor:"pointer", border:"1px solid var(--border)", transition:"border-color 0.15s" }}>
+        <div style={{ flex:1, minWidth:0 }}>
+          {!compact && <div style={{ fontWeight:800, fontSize:13, marginBottom:2 }}>{f.nome || "Anônimo"}</div>}
+          <div style={{ fontSize:11, color:"var(--muted2)" }}>🗓️ {f.data?.split(" ")?.[0] || "—"}</div>
+        </div>
+        {media && <div style={{ fontSize:12, fontWeight:800, color:"var(--ac)", flexShrink:0 }}>⭐ {media}</div>}
+        {f.premio && <div style={{ fontSize:11, color:"var(--muted)", flexShrink:0, maxWidth:80, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎁 {f.premio}</div>}
+        <span style={{ fontSize:16, color:"var(--muted)", flexShrink:0 }}>›</span>
+      </div>
+    );
+  };
+
+  const grupos = agrupar();
+
+  return (
+    <>
+      <div className="main-title">👥 Clientes</div>
+
+      <input className="field" placeholder="🔍 Buscar por nome..." value={clienteBusca} onChange={e => setClienteBusca(e.target.value)} style={{ marginBottom:10 }} />
+
+      <div className="filter-row" style={{ marginBottom:10 }}>
+        {[["todos","Todos"],["semana","Última semana"],["mes","Último mês"],["trimestre","Últimos 3 meses"]].map(([k,l]) => (
+          <button key={k} className={`filter-btn ${clientePeriodo === k ? "on" : ""}`} onClick={() => setClientePeriodo(k)}>{l}</button>
+        ))}
+      </div>
+
+      <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+        {[["agrupado","👤 Agrupado"],["lista","📋 Lista"]].map(([k,l]) => (
+          <button key={k} onClick={() => setClienteVista(k)}
+            style={{ padding:"7px 16px", borderRadius:20, fontFamily:"var(--ff-body)", fontSize:12, fontWeight:700, cursor:"pointer", border:`1.5px solid ${clienteVista===k?"var(--ac)":"var(--border)"}`, background:clienteVista===k?"var(--ac)22":"var(--d2)", color:clienteVista===k?"var(--text)":"var(--muted2)" }}>
+            {l}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ fontSize:12, color:"var(--muted)", marginBottom:12 }}>
+        {clienteVista === "agrupado"
+          ? <><strong style={{color:"var(--text)"}}>{grupos.length}</strong> cliente{grupos.length!==1?"s":""} · <strong style={{color:"var(--ac)"}}>{fbsFiltrados.length}</strong> visita{fbsFiltrados.length!==1?"s":""}</>
+          : <><strong style={{color:"var(--ac)"}}>{fbsFiltrados.length}</strong> registro{fbsFiltrados.length!==1?"s":""}</>
+        }
+      </div>
+
+      {clienteVista === "agrupado" && (
+        grupos.length === 0
+          ? <div style={{textAlign:"center",color:"var(--muted)",padding:40}}>Nenhum cliente encontrado.</div>
+          : grupos.map((g, i) => (
+            <div key={i} style={{ background:"var(--d1)", border:"1px solid var(--border)", borderRadius:14, padding:14, marginBottom:10 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
+                <div style={{ width:36, height:36, borderRadius:"50%", background:"var(--d3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>👤</div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontWeight:800, fontSize:14 }}>{g.nome || "Anônimo"}</div>
+                  <div style={{ fontSize:11, color:"var(--muted)", marginTop:2 }}>
+                    🔄 {g.visitas.length} visita{g.visitas.length!==1?"s":""}
+                    {g.visitas.length >= 3 && <span style={{color:"var(--green)",marginLeft:6,fontWeight:700}}>⭐ Cliente fiel!</span>}
+                  </div>
+                </div>
+                {g.wpp && (
+                  <a href={`https://wa.me/55${g.wpp.replace(/\D/g,"")}`} target="_blank" rel="noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    style={{ background:"#25d366", color:"#fff", borderRadius:8, padding:"6px 10px", fontSize:12, fontWeight:700, textDecoration:"none", flexShrink:0 }}>
+                    💬
+                  </a>
+                )}
+              </div>
+              {g.visitas.map((f, j) => <CardVisita key={j} f={f} compact />)}
+            </div>
+          ))
+      )}
+
+      {clienteVista === "lista" && (
+        fbsFiltrados.length === 0
+          ? <div style={{textAlign:"center",color:"var(--muted)",padding:40}}>Nenhum registro encontrado.</div>
+          : fbsFiltrados.map((f, i) => <CardVisita key={i} f={f} />)
+      )}
+
+      {renderModal()}
+    </>
+  );
+})()}
         {tab === "relatorio" && (() => {
           const fbSemana = getFeedbacksSemana(0);
           const fbAnterior = getFeedbacksSemana(1);
