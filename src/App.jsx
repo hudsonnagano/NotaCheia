@@ -1875,7 +1875,7 @@ async function saveMasterPass(newPass) {
   MASTER.pass = newPass;
 }
 const uid = () => Math.random().toString(36).slice(2, 8);
-const genCoupon = () => "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+const genCoupon = (nome = "") => { const prefix = nome.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 3); return (prefix ? prefix + "-" : "") + "NTC-" + Math.random().toString(36).slice(2, 6).toUpperCase(); };
 const addDays = (d) => { const dt = new Date(); dt.setDate(dt.getDate() + d); return dt.toLocaleDateString("pt-BR"); };
 
 function canLeaveFeedback(estId, intervalDays, masterMode = false) {
@@ -2943,7 +2943,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [nome, setNome] = useState("");
   const [answers, setAnswers] = useState({});
   const [prize, setPrize] = useState(null);
-  const [coupon] = useState(genCoupon());
+  const [coupon] = useState(genCoupon(est.name))
   const [avgStars, setAvgStars] = useState(0);
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
