@@ -2948,6 +2948,8 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
   const [saving, setSaving] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
   const [savedNome, setSavedNome] = useState("");
+  const [wpp, setWpp] = useState("");
+  const [savedWpp, setSavedWpp] = useState("");
   const [lgpd, setLgpd] = useState(false);
   const required = est.questions.filter(q => q.required);
   const answered = required.filter(q => { const a = answers[q.id]; if (a === undefined || a === null || a === "") return false; if (q.type === "choice" && a === "Outro:") return false; return true; });
@@ -3030,7 +3032,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <button className="btn btn-red" onClick={() => {
             const sqs = est.questions.filter(q => q.type === "stars");
             setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
-            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("confirm");
+            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("resgate");
           }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
@@ -3038,7 +3040,25 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
       </div>
     </div>
   );
-
+if (step === "resgate") return (
+    <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
+      <div className="card">
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ fontSize: 44, marginBottom: 10 }}>🎁</div>
+          <div style={{ fontFamily: "var(--ff-head)", fontSize: 22, color: "var(--ac)" }}>Quase lá!</div>
+          <div style={{ fontSize: 13, color: "var(--muted2)", marginTop: 6, lineHeight: 1.6 }}>Preencha seus dados para receber o brinde</div>
+        </div>
+        <label className="lbl">Seu nome *</label>
+        <input className="field" placeholder="Como você se chama?" value={nome} onChange={e => setNome(e.target.value)} maxLength={50} />
+        <label className="lbl">WhatsApp (opcional)</label>
+        <input className="field" placeholder="(41) 99999-0000" value={wpp} onChange={e => setWpp(e.target.value)} maxLength={20} />
+        <button className="btn btn-red" onClick={() => { setSavedNome(nome.trim() || "Anônimo"); setSavedWpp(wpp.trim()); setStep("confirm"); }} disabled={!nome.trim()}>
+          {nome.trim() ? "Girar a roleta! 🎰" : "Digite seu nome para continuar"}
+        </button>
+      </div>
+    </div>
+  );
+  
   if (step === "confirm") return (
     <div className="page page-center fade-up" style={{ background: `radial-gradient(ellipse at 50% 30%, ${est.color}20, transparent 60%), var(--dark)` }}>
       <div className="card">
