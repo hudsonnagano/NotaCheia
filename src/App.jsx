@@ -3476,7 +3476,89 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           <div className="main-title">💬 Feedbacks</div>
           <div className="filter-row">{[["todos", "Todos"], ["positivos", "😍 Promotores"], ["neutros", "😐 Neutros"], ["negativos", "😞 Detratores"]].map(([k, l]) => (<button key={k} className={`filter-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>{l}</button>))}</div>
           {filteredFeedbacks().length === 0 && <div style={{ color: "var(--muted)", textAlign: "center", marginTop: 40 }}>Nenhum feedback neste filtro.</div>}
-          {filteredFeedbacks().map((f, i) => { const nps = f.answers?.[npsId]; const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)"; const textQ = est.questions.find(q => q.type === "text"); const sugVal = textQ ? f.answers?.[textQ.id] : null; return (<div className="fb" key={f.id || i}><div className="fb-top"><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div><div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div></div>{nps !== undefined && (<div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}><div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div><div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div></div>)}</div><div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>{starQs.map(q => { const v = f.answers?.[q.id]; if (!v) return null; const sn = q.label.replace(/^Como avalia (o |a |os |as |nosso |nossa )?/i, "").replace("?", "").slice(0,28); return (<div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}><span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span><div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div><span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span></div>); })}</div>{sugVal && <div className="fb-comment">💬 "{sugVal}"</div>}{f.premio && <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}><div className="fb-prize">🎁 {f.premio}</div>{!f.brinde_entregue ? (<button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>) : (<span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>)}</div>}</div>); })}
+                 {filteredFeedbacks().map((f, i) => {
+            const nps = f.answers?.[npsId];
+            const npsColor = nps >= 9 ? "var(--green)" : nps >= 7 ? "var(--yellow)" : "var(--red)";
+            const textQ = est.questions.find(q => q.type === "text");
+            const sugVal = textQ ? f.answers?.[textQ.id] : null;
+            const choiceQs = est.questions.filter(q => q.type === "choice");
+            const staffQ = est.questions.find(q => q.type === "staff");
+            return (
+              <div className="fb" key={f.id || i}>
+                <div className="fb-top">
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--d3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div>
+                    <div><div className="fb-name">{f.nome}</div><div className="fb-date">{f.data || "Agora"}</div></div>
+                  </div>
+                  {nps !== undefined && (
+                    <div style={{ background: "var(--d3)", border: `1px solid ${npsColor}44`, borderRadius: 10, padding: "4px 10px", textAlign: "center" }}>
+                      <div style={{ fontSize: 14, fontFamily: "var(--ff-head)", color: npsColor }}>{nps}</div>
+                      <div style={{ fontSize: 9, color: "var(--muted)", textTransform: "uppercase" }}>NPS</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Colaborador */}
+                {staffQ && f.answers?.[staffQ.id] && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600 }}>👤 Atendente:</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: "var(--text)" }}>{f.answers[staffQ.id]}</span>
+                  </div>
+                )}
+
+                {/* Estrelas */}
+                {starQs.filter(q => f.answers?.[q.id]).length > 0 && (
+                  <div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>
+                    {starQs.map(q => {
+                      const v = f.answers?.[q.id];
+                      if (!v) return null;
+                      const sn = q.label.replace(/^Como avalia (o |a |os |as |nosso |nossa )?/i, "").replace("?", "").slice(0, 28);
+                      return (
+                        <div key={q.id} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontSize: 11, color: "var(--muted)", minWidth: 90, fontWeight: 600 }}>{sn}</span>
+                          <div style={{ display: "flex", gap: 2 }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 12, filter: s <= v ? "none" : "grayscale(1) opacity(0.2)" }}>⭐</span>)}</div>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: v >= 4 ? "var(--green)" : v >= 3 ? "var(--yellow)" : "var(--red)" }}>{["", "Ruim", "Regular", "Bom", "Ótimo", "Excelente"][v]}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Múltipla escolha */}
+                {choiceQs.filter(q => f.answers?.[q.id]).length > 0 && (
+                  <div style={{ background: "var(--dark)", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>
+                    {choiceQs.map(q => {
+                      const v = f.answers?.[q.id];
+                      if (!v) return null;
+                      const label = q.label.replace("?", "").slice(0, 35);
+                      return (
+                        <div key={q.id} style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, minWidth: 110, flexShrink: 0 }}>{label}:</span>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{v.replace("Outro:", "")}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Comentário */}
+                {sugVal && <div className="fb-comment">💬 "{sugVal}"</div>}
+
+                {/* Brinde */}
+                {f.premio && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <div className="fb-prize">🎁 {f.premio}</div>
+                    {!f.brinde_entregue ? (
+                      <button className="btn-sm btn-sm-ghost" style={{ fontSize: 11 }} onClick={async () => { await marcarBrindeEntregue(f.id); onUpdate({ ...est, feedbacks: est.feedbacks.map(fb => fb.id === f.id ? { ...fb, brinde_entregue: true } : fb) }); }}>Marcar brinde entregue</button>
+                    ) : (
+                      <span style={{ fontSize: 11, color: "var(--green)", fontWeight: 700 }}>✅ Brinde entregue</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
         </>)}
         {tab === "insights" && (<>
           <div className="main-title">💡 Insights</div>
