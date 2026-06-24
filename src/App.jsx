@@ -3165,6 +3165,21 @@ function MiniBarChart({ data, color = "var(--ac)" }) {
 }
 
 function OwnerDash({ est, onUpdate, onLogout }) {
+  function CardVisita({ f, compact, setClienteModal, calcMediaEstrelas }) {
+  const media = calcMediaEstrelas(f);
+  return (
+    <div onClick={() => setClienteModal(f)}
+      style={{ display:"flex", alignItems:"center", gap:10, padding: compact ? "8px 10px" : "12px 14px", background: compact ? "var(--dark)" : "var(--d2)", borderRadius:10, marginBottom:6, cursor:"pointer", border:"1px solid var(--border)" }}>
+      <div style={{ flex:1, minWidth:0 }}>
+        {!compact && <div style={{ fontWeight:800, fontSize:13, marginBottom:2 }}>{f.nome || "Anônimo"}</div>}
+        <div style={{ fontSize:11, color:"var(--muted2)" }}>🗓️ {f.data?.split(" ")?.[0] || "—"}</div>
+      </div>
+      {media && <div style={{ fontSize:12, fontWeight:800, color:"var(--ac)", flexShrink:0 }}>⭐ {media}</div>}
+      {f.premio && <div style={{ fontSize:11, color:"var(--muted)", flexShrink:0, maxWidth:80, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎁 {f.premio}</div>}
+      <span style={{ fontSize:16, color:"var(--muted)", flexShrink:0 }}>›</span>
+    </div>
+  );
+}
   function AbaClientes({ est }) {
   const [clienteBusca, setClienteBusca] = React.useState("");
   const [clientePeriodo, setClientePeriodo] = React.useState("todos");
@@ -3291,7 +3306,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
           ? <div style={{textAlign:"center",color:"var(--muted)",padding:40,fontSize:14}}>
               Nenhum registro encontrado.
             </div>
-          : fbsFiltrados.map((f, i) => <CardVisita key={i} f={f} />)
+          : fbsFiltrados.map((f, i) => <CardVisitaComp key={i} f={f} />
       )}
 
       {clienteModal && (
@@ -3908,21 +3923,9 @@ function OwnerDash({ est, onUpdate, onLogout }) {
     );
   };
 
-  const CardVisita = ({ f, compact = false }) => {
-    const media = calcMediaEstrelas(f);
-    return (
-      <div onClick={() => setClienteModal(f)}
-        style={{ display:"flex", alignItems:"center", gap:10, padding: compact ? "8px 10px" : "12px 14px", background: compact ? "var(--dark)" : "var(--d2)", borderRadius:10, marginBottom:6, cursor:"pointer", border:"1px solid var(--border)", transition:"border-color 0.15s" }}>
-        <div style={{ flex:1, minWidth:0 }}>
-          {!compact && <div style={{ fontWeight:800, fontSize:13, marginBottom:2 }}>{f.nome || "Anônimo"}</div>}
-          <div style={{ fontSize:11, color:"var(--muted2)" }}>🗓️ {f.data?.split(" ")?.[0] || "—"}</div>
-        </div>
-        {media && <div style={{ fontSize:12, fontWeight:800, color:"var(--ac)", flexShrink:0 }}>⭐ {media}</div>}
-        {f.premio && <div style={{ fontSize:11, color:"var(--muted)", flexShrink:0, maxWidth:80, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🎁 {f.premio}</div>}
-        <span style={{ fontSize:16, color:"var(--muted)", flexShrink:0 }}>›</span>
-      </div>
-    );
-  };
+  const CardVisitaComp = ({ f, compact = false }) => (
+  <CardVisita f={f} compact={compact} setClienteModal={setClienteModal} calcMediaEstrelas={calcMediaEstrelas} />
+);
 
   const grupos = agrupar();
 
@@ -3976,7 +3979,7 @@ function OwnerDash({ est, onUpdate, onLogout }) {
                   </a>
                 )}
               </div>
-              {g.visitas.map((f, j) => <CardVisita key={j} f={f} compact />)}
+              {g.visitas.map((f, j) => <CardVisitaComp key={j} f={f} compact />)}
             </div>
           ))
       )}
