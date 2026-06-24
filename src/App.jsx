@@ -3053,7 +3053,7 @@ if (step === "resgate") return (
         <label className="lbl">WhatsApp (opcional)</label>
         <input className="field" placeholder="(41) 99999-0000" value={wpp} onChange={e => setWpp(e.target.value)} maxLength={20} />
 <button className="btn btn-red" onClick={() => { setSavedNome(nome.trim() || "Anônimo"); setSavedWpp(wpp.trim()); setStep("prize"); }} disabled={!nome.trim()}>
-          {nome.trim() ? "Girar a roleta!" : "Digite seu nome para continuar"}
+          {nome.trim() ? "Resgatar meu prêmio! 🎁" : "Digite seu nome para continuar"}
         </button>
       </div>
     </div>
