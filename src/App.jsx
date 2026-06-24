@@ -3032,7 +3032,7 @@ function ClientApp({ est, onSubmit, masterMode = false }) {
           <button className="btn btn-red" onClick={() => {
             const sqs = est.questions.filter(q => q.type === "stars");
             setAvgStars(sqs.length ? sqs.reduce((s, q) => s + (answers[q.id] || 0), 0) / sqs.length : 5);
-            setSavedAnswers(answers); setSavedNome(nome || "Anônimo"); setStep("resgate");
+           setSavedAnswers(answers); setSavedNome(""); setStep("confirm");
           }} disabled={!allDone}>
             {allDone ? "Enviar e girar a roleta! 🎰" : `Responda mais ${required.length - answered.length} pergunta${required.length - answered.length !== 1 ? "s" : ""}`}
           </button>
@@ -3052,7 +3052,7 @@ if (step === "resgate") return (
         <input className="field" placeholder="Como você se chama?" value={nome} onChange={e => setNome(e.target.value)} maxLength={50} />
         <label className="lbl">WhatsApp (opcional)</label>
         <input className="field" placeholder="(41) 99999-0000" value={wpp} onChange={e => setWpp(e.target.value)} maxLength={20} />
-        <button className="btn btn-red" onClick={() => { setSavedNome(nome.trim() || "Anônimo"); setSavedWpp(wpp.trim()); setStep("confirm"); }} disabled={!nome.trim()}>
+        <button className="btn btn-red" onClick={() => { setSavedNome(nome.trim() || "Anônimo"); setSavedWpp(wpp.trim()); setStep("prize");
           {nome.trim() ? "Girar a roleta! 🎰" : "Digite seu nome para continuar"}
         </button>
       </div>
@@ -3092,7 +3092,7 @@ if (step === "resgate") return (
                 });
               } catch (e) { console.log("Erro ao enviar email:", e); }
             }
-            setStep("prize");
+           setStep("resgate");
           }} />
           {saving && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>Salvando...</div>}
         </div>
